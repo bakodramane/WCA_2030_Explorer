@@ -1,0 +1,29 @@
+{
+  "name": "wca-2030-adviser",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "ingest": "npx tsx scripts/chunk.ts",
+    "embed": "npx tsx scripts/embed.ts",
+    "build-index": "npx tsx scripts/build-index.ts",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@xenova/transformers": "^2.17.2",
+    "minisearch": "^7.2.0",
+    "pdf-parse": "^2.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "@types/pdf-parse": "^1.1.5",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16",
+    "vite-plugin-pwa": "^1.3.0",
+    "vitest": "^4.1.8"
+  }
+}
