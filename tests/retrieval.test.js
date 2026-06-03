@@ -337,8 +337,11 @@ describe('RetrievalEngine — section methods', () => {
             const results = await sectionEngine.sectionSearch('essential items', 10);
             const ess = results.find(r => r.sectionTitle === 'ESSENTIAL ITEMS');
             // "ESSENTIAL ITEMS" matches both "essential" and "items" (2 content words)
-            // raw avg = 0.52 × 0.8 = 0.416; boosted = 0.416 × 1.25² = 0.416 × 1.5625 = 0.65
-            expect(ess.score).toBeCloseTo(0.65, 5);
+            // raw cosine = 0.52 × 0.8 = 0.416
+            // exact-match boost  (text contains "essential" and "items"): × 1.10 → 0.4576
+            // title boost (2 content words in title):                     × 1.25² = 1.5625
+            // final = 0.4576 × 1.5625 = 0.715
+            expect(ess.score).toBeCloseTo(0.715, 5);
         });
         it('Fix 3: stop words in the query do not trigger the title boost', async () => {
             // All tokens ("the", "of", "is") are stop words → content word list is empty
@@ -354,10 +357,13 @@ describe('RetrievalEngine — section methods', () => {
         });
         it('Fix 3: a 4-character non-stop-word token qualifies as a content word', async () => {
             // "data" is exactly 4 chars (> 3) and not a stop word.
-            // "OTHER DATA" title contains "data" → score = 0.44 × 1.25 = 0.55.
+            // raw cosine for od1 = 0.55 × 0.8 = 0.44
+            // exact-match boost  (text contains "data"):    × 1.10 → 0.484
+            // title boost ("OTHER DATA" title contains "data"): × 1.25
+            // final = 0.484 × 1.25 = 0.605
             const results = await sectionEngine.sectionSearch('data census', 10);
             const other = results.find(r => r.sectionTitle === 'OTHER DATA');
-            expect(other.score).toBeCloseTo(0.55, 5);
+            expect(other.score).toBeCloseTo(0.605, 5);
         });
         // General structure ───────────────────────────────────────────────────────
         it('topChunks in each SectionResult have matchType: semantic', async () => {

@@ -1,3 +1,4 @@
+import { STOP_WORDS } from '../engine/stopwords';
 // ── Safety helpers ────────────────────────────────────────────────────────────
 function esc(s) {
     return s
@@ -11,13 +12,18 @@ function escRe(s) {
 }
 // ── Term highlighting ─────────────────────────────────────────────────────────
 // 1. Escape the verbatim text so no raw HTML leaks through.
-// 2. Wrap every occurrence of a query token (≥ 3 chars) with <mark>.
+// 2. Split on non-word characters so trailing punctuation (e.g. "holder?")
+//    does not prevent a match in the chunk text.
+// 3. Keep only content words: length ≥ 4 AND not in STOP_WORDS.
+//    For "what is the definition of a holder?" this leaves only
+//    "definition" and "holder" — stop words like "what", "the", "is"
+//    are never highlighted.
 function highlight(text, query) {
     const escaped = esc(text);
     const tokens = query
         .toLowerCase()
-        .split(/\s+/)
-        .filter(t => t.length >= 3)
+        .split(/\W+/)
+        .filter(t => t.length >= 4 && !STOP_WORDS.has(t))
         .map(escRe);
     if (tokens.length === 0)
         return escaped;

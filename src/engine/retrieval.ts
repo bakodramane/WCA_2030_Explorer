@@ -1,6 +1,7 @@
 import MiniSearch from 'minisearch';
 import { pipeline, env } from '@xenova/transformers';
 import type { Chunk, RankedResult, SectionResult, SectionDebugEntry } from './types';
+import { STOP_WORDS } from './stopwords';
 
 // ── Offline-first configuration ───────────────────────────────────────────────
 // Set before any pipeline() call so the browser loads everything from the
@@ -25,6 +26,9 @@ try {
 const MODEL_NAME        = 'Xenova/all-MiniLM-L6-v2';
 const DIM               = 384;
 const HIGH_PRIORITY_K   = 1.15;
+/** 1.10× boost applied when a chunk's verbatim text contains at least one
+ *  content word from the query.  Stacks multiplicatively with HIGH_PRIORITY_K. */
+const EXACT_MATCH_K     = 1.10;
 
 // ── Internal document type for MiniSearch ─────────────────────────────────────
 
@@ -33,20 +37,6 @@ interface IndexDoc {
   text: string;
   sectionTitle: string;
 }
-
-// Common English stop words excluded from BM25 indexing and search so that
-// off-topic queries like "What is the capital of France?" don't match
-// agricultural documents purely via function words.
-const STOP_WORDS = new Set([
-  'a','an','the','and','or','but','in','on','at','to','for','of','with',
-  'by','from','is','are','was','were','be','been','being','have','has',
-  'had','do','does','did','will','would','could','should','may','might',
-  'it','its','this','that','these','those','i','you','he','she','we',
-  'they','what','which','who','whom','whose','how','when','where','why',
-  'not','no','nor','so','yet','both','either','each','any','all','some',
-  'more','most','other','such','as','if','than','then','there','here',
-  'also','just','now','up','out','about','into','through','during',
-]);
 
 // ── RetrievalEngine ───────────────────────────────────────────────────────────
 
@@ -103,11 +93,24 @@ export class RetrievalEngine {
     // out.data is a Float32Array of length DIM
     const qVec = new Float32Array(out.data as ArrayLike<number>);
 
+    // Pre-compute content words once for the exact-match boost check below.
+    const contentWords = this.contentWordsFromQuery(query);
+
     const scored = this.chunks.map((chunk, i) => {
       const ev = this.vecs[i];
       let dot = 0;
       for (let k = 0; k < DIM; k++) dot += qVec[k] * ev[k];
-      const score = chunk.priority === 'high' ? dot * HIGH_PRIORITY_K : dot;
+      // 1.15× boost for high-priority regions (Concepts, Essential Items, Glossary).
+      let score = chunk.priority === 'high' ? dot * HIGH_PRIORITY_K : dot;
+      // 1.10× exact-match boost when the chunk's verbatim text contains at least
+      // one content word from the query.  Stacks with the priority boost so
+      // e.g. a high-priority chunk that also mentions "holder" gets ×1.15×1.10.
+      if (
+        contentWords.length > 0 &&
+        contentWords.some(w => chunk.text.toLowerCase().includes(w))
+      ) {
+        score *= EXACT_MATCH_K;
+      }
       return { chunk, score };
     });
 
