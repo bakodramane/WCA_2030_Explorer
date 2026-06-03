@@ -188,14 +188,52 @@ Deploy the `dist/` directory to any static host:
 # Netlify
 netlify deploy --prod --dir dist
 
-# GitHub Pages (requires a custom domain for HTTPS, required for service workers)
-gh-pages -d dist
-
 # Any static host supporting HTTPS
 ```
 
 Users visit the URL, the service worker installs on first load, and the app can
 then be installed to the home screen and used fully offline.
+
+### GitHub Pages (Option A — commit `dist/` directly)
+
+This repo is configured to deploy from the committed `dist/` folder on the
+`main` branch. The Vite build uses `base: '/WCA_2030_Adviser/'` so all asset
+URLs resolve correctly under the GitHub Pages subdirectory.
+
+**One-time setup** (do this once in the GitHub web UI):
+
+1. Go to **Settings → Pages** in the repository.
+2. Under **Source**, choose **Deploy from a branch**.
+3. Set the branch to **`main`** and the folder to **`/dist`**.
+4. Click **Save**. GitHub Pages will publish from `dist/` on every push to `main`.
+
+**Expected URL:** `https://bakodramane.github.io/WCA_2030_Adviser/`
+
+**Re-deploying after a guidelines update:**
+
+```bash
+# 1. Regenerate the content index (run once after replacing the source PDF)
+npm run build-index
+
+# 2. Copy the fresh index into the public directory
+# PowerShell
+New-Item -ItemType Directory -Force -Path public\data | Out-Null
+Copy-Item src\data\chunks.json public\data\chunks.json
+# Git Bash
+mkdir -p public/data && cp src/data/chunks.json public/data/chunks.json
+
+# 3. Rebuild with the correct base path
+npm run build
+
+# 4. Commit dist/ and push — GitHub Pages updates automatically
+git add dist/
+git commit -m "chore: rebuild dist for updated guidelines"
+git push
+```
+
+> **Note:** `dist/` is intentionally committed to this repo (not gitignored).
+> `public/data/` and `public/models/` remain gitignored — they are
+> intermediate build artefacts that Vite copies into `dist/` at build time.
 
 ### Air-gapped / offline-only use
 

@@ -3,5 +3,4 @@ src/data/chunks.json
 public/data/
 public/models/
 node_modules/
-dist/
 .cache/
