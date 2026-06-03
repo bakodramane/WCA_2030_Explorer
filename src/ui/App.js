@@ -15,6 +15,7 @@ export class App {
     constructor() {
         this.engine = new RetrievalEngine();
         this.searchBar = new SearchBar();
+        this.introCollapsed = false;
         this.firstSearchDone = false;
     }
     async mount(selector) {
@@ -54,8 +55,9 @@ export class App {
         <span class="status-dot" id="sw-dot" title="Offline status"></span>
       </footer>`;
         root.appendChild(layout);
-        // Mount search bar into header
+        // Mount intro panel, then search bar into header
         const header = layout.querySelector('.app-header');
+        header.appendChild(this.buildIntroPanel());
         header.appendChild(this.searchBar.element);
         // Suggestion chips — hidden after first search
         this.chipsEl = document.createElement('div');
@@ -101,6 +103,7 @@ export class App {
         if (!this.firstSearchDone) {
             this.firstSearchDone = true;
             this.chipsEl.style.display = 'none';
+            this.collapseIntro();
         }
         this.searchBar.setLoading(true);
         this.clearResults();
@@ -141,6 +144,60 @@ export class App {
     }
     clearResults() {
         this.resultsArea.innerHTML = '';
+    }
+    // ── Intro panel ──────────────────────────────────────────────────────────
+    buildIntroPanel() {
+        const panel = document.createElement('div');
+        panel.className = 'intro-panel';
+        this.introBody = document.createElement('div');
+        this.introBody.className = 'intro-body';
+        this.introBody.innerHTML = `
+      <div class="intro-grid">
+        <section class="intro-section">
+          <h2 class="intro-heading">The WCA 2030</h2>
+          <p class="intro-text">The World Programme for the Census of Agriculture (WCA) provides
+          guidance to FAO Member Countries for conducting national agricultural censuses. The
+          WCA 2030 — the eleventh decennial programme — underpins censuses to be implemented
+          worldwide between 2026 and 2035.</p>
+        </section>
+        <section class="intro-section">
+          <h2 class="intro-heading">About this Explorer</h2>
+          <p class="intro-text">An offline-first tool grounded strictly in the official WCA 2030
+          guidelines. Ask a question; receive the exact paragraph from the source document,
+          complete with section title and page reference. Every answer is verbatim extracted
+          text — no generation, no guesswork. Designed for national statistical officers, census
+          planners, and agricultural data specialists who need authoritative answers anywhere,
+          even without internet. No server. No data leaves your device.</p>
+        </section>
+      </div>`;
+        this.introToggle = document.createElement('button');
+        this.introToggle.type = 'button';
+        this.introToggle.className = 'intro-toggle';
+        this.introToggle.textContent = '▾ About this Explorer';
+        this.introToggle.setAttribute('aria-expanded', 'true');
+        this.introToggle.addEventListener('click', () => this.toggleIntro());
+        panel.appendChild(this.introBody);
+        panel.appendChild(this.introToggle);
+        return panel;
+    }
+    collapseIntro() {
+        if (this.introCollapsed)
+            return;
+        this.introCollapsed = true;
+        this.introBody.classList.add('intro-body--collapsed');
+        this.introToggle.textContent = '▸ About this Explorer';
+        this.introToggle.setAttribute('aria-expanded', 'false');
+    }
+    toggleIntro() {
+        if (this.introCollapsed) {
+            this.introCollapsed = false;
+            this.introBody.classList.remove('intro-body--collapsed');
+            this.introToggle.textContent = '▾ About this Explorer';
+            this.introToggle.setAttribute('aria-expanded', 'true');
+        }
+        else {
+            this.collapseIntro();
+        }
     }
     // ── Offline status dot ───────────────────────────────────────────────────
     initOfflineDot(dot) {

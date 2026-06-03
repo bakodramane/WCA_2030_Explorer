@@ -397,6 +397,67 @@ body {
   margin-bottom: 0.2rem;
 }
 
+/* ── Intro panel ─────────────────────────────────────────────────────── */
+.intro-panel {
+  margin-bottom: 1.25rem;
+}
+
+.intro-body {
+  max-height: 800px;
+  overflow: hidden;
+  transition: max-height 300ms ease;
+}
+
+.intro-body--collapsed {
+  max-height: 0;
+}
+
+.intro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.intro-heading {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 0.5rem;
+}
+
+.intro-text {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--ink);
+  line-height: 1.7;
+}
+
+.intro-toggle {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+.intro-toggle:hover { opacity: 0.7; }
+
+@media (max-width: 600px) {
+  .intro-grid { grid-template-columns: 1fr; }
+}
+
 /* ── Suggestion chips ────────────────────────────────────────────────── */
 .suggestion-chips {
   display: flex;
