@@ -1,6 +1,6 @@
-# CLAUDE.md — WCA 2030 Adviser (Offline Extractive RAG PWA)
+# CLAUDE.md — WCA 2030 Explorer (Offline Extractive RAG PWA)
 
-> **Project root:** `C:\Users\BAKO\OneDrive - Food and Agriculture Organization\Documents\GitHub\WCA_2030_Adviser`
+> **Project root:** `C:\Users\BAKO\OneDrive - Food and Agriculture Organization\Documents\GitHub\WCA_2030_Explorer`
 > All script paths below are **relative to that root**. Use `path.join()` throughout — never hardcode backslashes.
 
 ---
@@ -29,7 +29,7 @@ The WCA 2030 source document is a proper PDF file:
 
 ```
 Relative path : ./source/Census-2030_EN-DTP-9.pdf
-Absolute path : C:\Users\BAKO\OneDrive - Food and Agriculture Organization\Documents\GitHub\WCA_2030_Adviser\source\Census-2030_EN-DTP-9.pdf
+Absolute path : C:\Users\BAKO\OneDrive - Food and Agriculture Organization\Documents\GitHub\WCA_2030_Explorer\source\Census-2030_EN-DTP-9.pdf
 ```
 
 > **Before running any script**, confirm the file exists at the path above.
@@ -69,7 +69,7 @@ Chunks from these regions receive a `priority: 'high'` flag and a `1.15×` retri
 Create this exact layout before writing any logic:
 
 ```
-WCA_2030_Adviser/
+WCA_2030_Explorer/
 ├── CLAUDE.md                          ← this file
 ├── source/
 │   └── Census-2030_EN-DTP-9.pdf      ← WCA 2030 source (already present)
@@ -144,7 +144,7 @@ dist/
            maximumFileSizeToCacheInBytes: 200 * 1024 * 1024, // 200 MB for chunks.json
          },
          manifest: {
-           name: 'WCA 2030 Adviser',
+           name: 'WCA 2030 Explorer',
            short_name: 'WCA Guide',
            description: 'Offline Q&A grounded in WCA 2030 official guidelines',
            theme_color: '#1a3a2a',

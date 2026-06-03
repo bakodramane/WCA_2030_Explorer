@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  base: '/WCA_2030_Adviser/',
+  base: '/WCA_2030_Explorer/',
   build: { outDir: 'docs' },
   plugins: [
     VitePWA({
@@ -12,8 +12,8 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 200 * 1024 * 1024,
       },
       manifest: {
-        name: 'WCA 2030 Adviser',
-        short_name: 'WCA Guide',
+        name: 'WCA 2030 Explorer',
+        short_name: 'WCA Explorer',
         description: 'Offline Q&A grounded in WCA 2030 official guidelines',
         theme_color: '#1a3a2a',
         background_color: '#f5f0e8',

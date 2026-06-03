@@ -1,1 +1,1 @@
-if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/WCA_2030_Adviser/sw.js', { scope: '/WCA_2030_Adviser/' })})}
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/WCA_2030_Explorer/sw.js', { scope: '/WCA_2030_Explorer/' })})}

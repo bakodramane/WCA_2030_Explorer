@@ -32,7 +32,7 @@ export class App {
     layout.className = 'layout';
     layout.innerHTML = `
       <header class="app-header">
-        <h1 class="app-title">WCA 2030 Adviser</h1>
+        <h1 class="app-title">WCA 2030 Explorer</h1>
       </header>
       <main class="app-main" id="wca-results" aria-live="polite" aria-label="Search results"></main>
       <footer class="app-footer">
@@ -108,7 +108,7 @@ export class App {
         this.resultsArea.appendChild(ResultCard.renderNotFound(response));
       }
     } catch (err) {
-      console.error('[WCA Adviser] search error:', err);
+      console.error('[WCA Explorer] search error:', err);
       const p = document.createElement('p');
       p.className   = 'search-error';
       p.textContent = 'An error occurred during search. Please try again.';

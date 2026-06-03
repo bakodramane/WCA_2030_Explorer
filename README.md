@@ -1,4 +1,4 @@
-# WCA 2030 Adviser
+# WCA 2030 Explorer
 
 An **offline-first Progressive Web App** that answers questions exclusively from the
 *World Programme for the Census of Agriculture 2030* (WCA 2030) guidelines.
@@ -9,7 +9,7 @@ precise section title and page number.
 
 ## 1. Purpose & constraints
 
-The WCA 2030 Adviser is a retrieval tool — not a generative AI. It enforces the following hard constraints:
+The WCA 2030 Explorer is a retrieval tool — not a generative AI. It enforces the following hard constraints:
 
 - **Answers are extracted text only.** The retrieved chunk is the answer; no paraphrasing or generation occurs.
 - **No external API calls at runtime.** After the first load, the app works with zero internet access. All model inference runs in-browser via WebAssembly.
@@ -68,8 +68,8 @@ npm run build
 ```
 
 Compiles TypeScript, bundles the app, and generates:
-- `dist/` — the production bundle
-- `dist/sw.js` — the Workbox service worker with a 16-entry pre-cache manifest (~71 MB total)
+- `docs/` — the production bundle
+- `docs/sw.js` — the Workbox service worker with a 16-entry pre-cache manifest (~71 MB total)
 
 ### Step 3 — Preview locally
 
@@ -182,11 +182,11 @@ Subsequent loads use the cache entirely — no network traffic.
 
 ### Hosted PWA
 
-Deploy the `dist/` directory to any static host:
+Deploy the `docs/` directory to any static host:
 
 ```bash
 # Netlify
-netlify deploy --prod --dir dist
+netlify deploy --prod --dir docs
 
 # Any static host supporting HTTPS
 ```
@@ -194,20 +194,20 @@ netlify deploy --prod --dir dist
 Users visit the URL, the service worker installs on first load, and the app can
 then be installed to the home screen and used fully offline.
 
-### GitHub Pages (Option A — commit `dist/` directly)
+### GitHub Pages (Option A — commit `docs/` directly)
 
-This repo is configured to deploy from the committed `dist/` folder on the
-`main` branch. The Vite build uses `base: '/WCA_2030_Adviser/'` so all asset
+This repo is configured to deploy from the committed `docs/` folder on the
+`main` branch. The Vite build uses `base: '/WCA_2030_Explorer/'` so all asset
 URLs resolve correctly under the GitHub Pages subdirectory.
 
 **One-time setup** (do this once in the GitHub web UI):
 
 1. Go to **Settings → Pages** in the repository.
 2. Under **Source**, choose **Deploy from a branch**.
-3. Set the branch to **`main`** and the folder to **`/dist`**.
-4. Click **Save**. GitHub Pages will publish from `dist/` on every push to `main`.
+3. Set the branch to **`main`** and the folder to **`/docs`**.
+4. Click **Save**. GitHub Pages will publish from `docs/` on every push to `main`.
 
-**Expected URL:** `https://bakodramane.github.io/WCA_2030_Adviser/`
+**Expected URL:** `https://bakodramane.github.io/WCA_2030_Explorer/`
 
 **Re-deploying after a guidelines update:**
 
@@ -225,15 +225,15 @@ mkdir -p public/data && cp src/data/chunks.json public/data/chunks.json
 # 3. Rebuild with the correct base path
 npm run build
 
-# 4. Commit dist/ and push — GitHub Pages updates automatically
-git add dist/
-git commit -m "chore: rebuild dist for updated guidelines"
+# 4. Commit docs/ and push — GitHub Pages updates automatically
+git add docs/
+git commit -m "chore: rebuild docs for updated guidelines"
 git push
 ```
 
-> **Note:** `dist/` is intentionally committed to this repo (not gitignored).
+> **Note:** `docs/` is intentionally committed to this repo (not gitignored).
 > `public/data/` and `public/models/` remain gitignored — they are
-> intermediate build artefacts that Vite copies into `dist/` at build time.
+> intermediate build artefacts that Vite copies into `docs/` at build time.
 
 ### Air-gapped / offline-only use
 
@@ -241,11 +241,11 @@ For environments with no internet access at all:
 
 ```bash
 # Serve locally (Node.js must be installed on the target machine)
-npx serve dist
+npx serve docs
 # → http://localhost:3000
 ```
 
-Or zip `dist/` and serve it on any local web server (Nginx, Apache, Python's
+Or zip `docs/` and serve it on any local web server (Nginx, Apache, Python's
 `http.server`). A proper HTTPS origin is required for service-worker installation;
 for internal networks a self-signed certificate is sufficient.
 
