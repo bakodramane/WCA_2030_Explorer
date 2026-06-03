@@ -84,7 +84,7 @@ export class App {
                 score: s.score,
                 matchType: 'semantic',
             }));
-            const response = evaluate(semanticResults, () => this.engine.lexicalSearch(query, 10));
+            const response = evaluate(semanticResults, () => this.engine.lexicalSearch(query, 10), 'enum');
             if (response.answered && response.results) {
                 for (const r of response.results) {
                     this.resultsArea.appendChild(ResultCard.render(r, query));

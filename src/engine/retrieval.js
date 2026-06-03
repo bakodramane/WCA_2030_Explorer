@@ -152,10 +152,12 @@ export class RetrievalEngine {
             const top3 = scored.slice(0, 3);
             // Fix 1: average of top-3 (not sum) so section size cannot inflate score.
             const avgScore = top3.reduce((sum, c) => sum + c.score, 0) / top3.length;
-            // Fix 3: lift sections whose title shares a content word with the query.
+            // Fix 3: compound title boost — multiply by 1.25 for each content word
+            // from the query that appears in the section title.  A title matching
+            // two words gets 1.25² ≈ 1.56×, three words 1.25³ ≈ 1.95×, and so on.
             const titleLower = title.toLowerCase();
-            const hasTitleMatch = contentWords.some(w => titleLower.includes(w));
-            const score = hasTitleMatch ? avgScore * 1.25 : avgScore;
+            const matchCount = contentWords.filter(w => titleLower.includes(w)).length;
+            const score = matchCount > 0 ? avgScore * Math.pow(1.25, matchCount) : avgScore;
             scoredSections.push({
                 sectionTitle: title,
                 pageStart,

@@ -1,10 +1,15 @@
 // ── Threshold ─────────────────────────────────────────────────────────────────
-/** Hard-coded default — override at runtime via localStorage ('wca_threshold'). */
+/** Hard-coded default for chunk-level (lookup) queries. */
 export const CONFIDENCE_THRESHOLD = 0.42;
 /**
- * Read the effective threshold at call time so a developer can tune it live:
- *   localStorage.setItem('wca_threshold', '0.38')
- * Falls back to CONFIDENCE_THRESHOLD when localStorage is unavailable or invalid.
+ * Hard-coded default for section-level (enumeration) queries.
+ * Lower than the lookup default because section scores are averaged across
+ * multiple chunks, so fewer scores reach the high end of the range.
+ */
+export const ENUM_CONFIDENCE_THRESHOLD = 0.35;
+/**
+ * Read the lookup threshold at call time.
+ * Override live: localStorage.setItem('wca_threshold', '0.38')
  */
 function readThreshold() {
     try {
@@ -22,6 +27,26 @@ function readThreshold() {
     }
     return CONFIDENCE_THRESHOLD;
 }
+/**
+ * Read the enumeration threshold at call time.
+ * Override live: localStorage.setItem('wca_enum_threshold', '0.30')
+ */
+function readEnumThreshold() {
+    try {
+        const stored = typeof localStorage !== 'undefined'
+            ? localStorage.getItem('wca_enum_threshold')
+            : null;
+        if (stored !== null) {
+            const v = parseFloat(stored);
+            if (Number.isFinite(v) && v > 0 && v < 1)
+                return v;
+        }
+    }
+    catch {
+        // localStorage is absent in Node.js / test environments without a stub
+    }
+    return ENUM_CONFIDENCE_THRESHOLD;
+}
 // ── evaluate ──────────────────────────────────────────────────────────────────
 /**
  * Three-tier answer cascade:
@@ -34,8 +59,8 @@ function readThreshold() {
  *
  * `lexicalFallback` is invoked lazily — it is never called when semantic passes.
  */
-export function evaluate(semanticResults, lexicalFallback) {
-    const threshold = readThreshold();
+export function evaluate(semanticResults, lexicalFallback, mode = 'lookup') {
+    const threshold = mode === 'enum' ? readEnumThreshold() : readThreshold();
     // ── (1) Semantic pass ────────────────────────────────────────────────────
     const semanticPassing = semanticResults.filter(r => r.score >= threshold);
     if (semanticPassing.length > 0) {

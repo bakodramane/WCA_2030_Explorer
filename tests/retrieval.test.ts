@@ -399,11 +399,12 @@ describe('RetrievalEngine — section methods', () => {
       expect(ess.score).toBeGreaterThan(other.score);
     });
 
-    it('Fix 3: boosted section score equals raw average × 1.25', async () => {
+    it('Fix 3: boosted score equals raw average × 1.25^(number of matching content words)', async () => {
       const results = await sectionEngine.sectionSearch('essential items', 10);
       const ess = results.find(r => r.sectionTitle === 'ESSENTIAL ITEMS')!;
-      // raw avg = 0.52 × 0.8 = 0.416; boosted = 0.416 × 1.25 = 0.52
-      expect(ess.score).toBeCloseTo(0.52, 5);
+      // "ESSENTIAL ITEMS" matches both "essential" and "items" (2 content words)
+      // raw avg = 0.52 × 0.8 = 0.416; boosted = 0.416 × 1.25² = 0.416 × 1.5625 = 0.65
+      expect(ess.score).toBeCloseTo(0.65, 5);
     });
 
     it('Fix 3: stop words in the query do not trigger the title boost', async () => {

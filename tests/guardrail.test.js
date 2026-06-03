@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { evaluate, CONFIDENCE_THRESHOLD } from '../src/engine/guardrail';
+import { evaluate, CONFIDENCE_THRESHOLD, ENUM_CONFIDENCE_THRESHOLD } from '../src/engine/guardrail';
 // ── Helper ─────────────────────────────────────────────────────────────────────
 function mkResult(score, opts = {}) {
     return {
@@ -125,5 +125,37 @@ describe('guardrail — evaluate()', () => {
         // Score well above default 0.42 → should still pass
         const res = evaluate([mkResult(0.8, { id: 'a' })], noLexical);
         expect(res.answered).toBe(true);
+    });
+    // ── 5. Enum mode threshold (Fix B) ────────────────────────────────────────────
+    it('enum mode uses ENUM_CONFIDENCE_THRESHOLD (0.35) by default, passing a score that lookup would block', () => {
+        // 0.36 is above the enum default (0.35) but below the lookup default (0.42).
+        const res = evaluate([mkResult(0.36, { id: 'a' })], noLexical, 'enum');
+        expect(res.answered).toBe(true);
+        // Same score in lookup mode must fail.
+        const resLookup = evaluate([mkResult(0.36, { id: 'b' })], noLexical, 'lookup');
+        expect(resLookup.answered).toBe(false);
+    });
+    it('enum mode blocks scores below ENUM_CONFIDENCE_THRESHOLD', () => {
+        // One point below the default → not answered even in enum mode.
+        const justBelow = ENUM_CONFIDENCE_THRESHOLD - 0.01;
+        const res = evaluate([mkResult(justBelow, { id: 'a' })], noLexical, 'enum');
+        expect(res.answered).toBe(false);
+    });
+    it('enum mode reads threshold from wca_enum_threshold localStorage key', () => {
+        vi.stubGlobal('localStorage', {
+            getItem: vi.fn((key) => key === 'wca_enum_threshold' ? '0.5' : null),
+        });
+        // 0.36 is above the default 0.35 but below the overridden 0.5 → blocked.
+        const res = evaluate([mkResult(0.36, { id: 'a' })], noLexical, 'enum');
+        expect(res.answered).toBe(false);
+    });
+    it('lookup mode is unaffected by wca_enum_threshold', () => {
+        vi.stubGlobal('localStorage', {
+            getItem: vi.fn((key) => key === 'wca_enum_threshold' ? '0.1' : null),
+        });
+        // 0.36 < 0.42 lookup default → still blocked in lookup mode
+        // even though enum threshold is overridden to a permissive 0.1.
+        const res = evaluate([mkResult(0.36, { id: 'a' })], noLexical);
+        expect(res.answered).toBe(false);
     });
 });

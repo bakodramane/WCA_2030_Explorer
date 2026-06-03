@@ -97,6 +97,7 @@ export class App {
       const response = evaluate(
         semanticResults,
         () => this.engine.lexicalSearch(query, 10),
+        'enum',
       );
 
       if (response.answered && response.results) {
