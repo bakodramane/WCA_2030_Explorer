@@ -1,6 +1,7 @@
 import MiniSearch from 'minisearch';
 import { pipeline, env } from '@xenova/transformers';
 import { STOP_WORDS } from './stopwords';
+import { expandQuery } from './query';
 // ── Offline-first configuration ───────────────────────────────────────────────
 // Set before any pipeline() call so the browser loads everything from the
 // service-worker-cached models/ path and never reaches the network.
@@ -68,7 +69,7 @@ export class RetrievalEngine {
      * surfaces preferentially for relevant queries.
      */
     async semanticSearch(query, topK = 5) {
-        const out = await this.extractor(query, { pooling: 'mean', normalize: true });
+        const out = await this.extractor(expandQuery(query), { pooling: 'mean', normalize: true });
         // out.data is a Float32Array of length DIM
         const qVec = new Float32Array(out.data);
         // Pre-compute content words once for the exact-match boost check below.

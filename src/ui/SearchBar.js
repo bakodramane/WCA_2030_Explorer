@@ -53,4 +53,8 @@ export class SearchBar {
         this.btn.disabled = on;
     }
     focus() { this.input.focus(); }
+    setValue(text) {
+        this.input.value = text;
+        this.input.focus();
+    }
 }

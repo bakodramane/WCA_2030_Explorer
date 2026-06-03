@@ -40,8 +40,9 @@ function scoreBar(score, matchType) {
     return Math.min(Math.max(pct, 0), 100);
 }
 function scoreLabel(score, matchType) {
+    const displayScore = Math.min(score, 1.0);
     return matchType === 'semantic'
-        ? `${(score * 100).toFixed(0)}%`
+        ? `${(displayScore * 100).toFixed(0)}%`
         : score.toFixed(1);
 }
 // ── Public API ────────────────────────────────────────────────────────────────
