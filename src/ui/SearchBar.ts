@@ -70,4 +70,9 @@ export class SearchBar {
   }
 
   focus(): void { this.input.focus(); }
+
+  setValue(text: string): void {
+    this.input.value = text;
+    this.input.focus();
+  }
 }

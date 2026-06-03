@@ -49,8 +49,9 @@ function scoreBar(score: number, matchType: 'semantic' | 'lexical'): number {
 }
 
 function scoreLabel(score: number, matchType: 'semantic' | 'lexical'): string {
+  const displayScore = Math.min(score, 1.0);
   return matchType === 'semantic'
-    ? `${(score * 100).toFixed(0)}%`
+    ? `${(displayScore * 100).toFixed(0)}%`
     : score.toFixed(1);
 }
 

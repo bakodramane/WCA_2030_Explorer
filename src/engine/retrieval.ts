@@ -2,6 +2,7 @@ import MiniSearch from 'minisearch';
 import { pipeline, env } from '@xenova/transformers';
 import type { Chunk, RankedResult, SectionResult, SectionDebugEntry } from './types';
 import { STOP_WORDS } from './stopwords';
+import { expandQuery } from './query';
 
 // ── Offline-first configuration ───────────────────────────────────────────────
 // Set before any pipeline() call so the browser loads everything from the
@@ -89,7 +90,7 @@ export class RetrievalEngine {
    * surfaces preferentially for relevant queries.
    */
   async semanticSearch(query: string, topK = 5): Promise<RankedResult[]> {
-    const out  = await this.extractor(query, { pooling: 'mean', normalize: true });
+    const out  = await this.extractor(expandQuery(query), { pooling: 'mean', normalize: true });
     // out.data is a Float32Array of length DIM
     const qVec = new Float32Array(out.data as ArrayLike<number>);
 

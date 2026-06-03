@@ -3,10 +3,22 @@ import { evaluate }         from '../engine/guardrail';
 import { SearchBar }        from './SearchBar';
 import { ResultCard }       from './ResultCard';
 
+const SUGGESTION_CHIPS = [
+  'What is an agricultural holding?',
+  'What are the agricultural census modalities?',
+  'List of essential items',
+  'What is the cut-off threshold for agricultural holdings?',
+  'How is land classified in the WCA 2030?',
+  'What is the census reference period?',
+  'What are the themes of the WCA 2030?',
+];
+
 export class App {
   private engine      = new RetrievalEngine();
   private searchBar   = new SearchBar();
   private resultsArea!: HTMLElement;
+  private chipsEl!: HTMLElement;
+  private firstSearchDone = false;
 
   async mount(selector: string): Promise<void> {
     const root = document.querySelector<HTMLElement>(selector);
@@ -38,13 +50,35 @@ export class App {
       <footer class="app-footer">
         <span class="footer-note">
           Answers are drawn exclusively from WCA 2030 official guidelines.
+          <a class="footer-link"
+             href="https://openknowledge.fao.org/items/96f7d26a-f0ed-499c-a658-d2ecb68cdfbd"
+             target="_blank"
+             rel="noopener noreferrer">Official guidelines ↗</a>
         </span>
         <span class="status-dot" id="sw-dot" title="Offline status"></span>
       </footer>`;
     root.appendChild(layout);
 
     // Mount search bar into header
-    layout.querySelector('.app-header')!.appendChild(this.searchBar.element);
+    const header = layout.querySelector('.app-header')!;
+    header.appendChild(this.searchBar.element);
+
+    // Suggestion chips — hidden after first search
+    this.chipsEl = document.createElement('div');
+    this.chipsEl.className = 'suggestion-chips';
+    for (const label of SUGGESTION_CHIPS) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'chip';
+      btn.textContent = label;
+      btn.addEventListener('click', () => {
+        this.searchBar.setValue(label);
+        void this.runSearch(label);
+      });
+      this.chipsEl.appendChild(btn);
+    }
+    header.appendChild(this.chipsEl);
+
     this.resultsArea = layout.querySelector<HTMLElement>('#wca-results')!;
 
     // Offline status indicator
@@ -77,6 +111,10 @@ export class App {
   // ── Search cascade ───────────────────────────────────────────────────────
 
   private async runSearch(query: string): Promise<void> {
+    if (!this.firstSearchDone) {
+      this.firstSearchDone = true;
+      this.chipsEl.style.display = 'none';
+    }
     this.searchBar.setLoading(true);
     this.clearResults();
 

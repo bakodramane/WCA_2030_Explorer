@@ -397,6 +397,39 @@ body {
   margin-bottom: 0.2rem;
 }
 
+/* ── Suggestion chips ────────────────────────────────────────────────── */
+.suggestion-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.85rem;
+}
+
+.chip {
+  background: var(--bg);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  padding: 0.28rem 0.75rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+  min-height: 32px;
+}
+.chip:hover { background: var(--accent); color: #fff; }
+
+/* ── Footer link ─────────────────────────────────────────────────────── */
+.footer-link {
+  display: inline-block;
+  margin-left: 0.4rem;
+  color: var(--accent);
+  font-size: 0.72rem;
+  text-underline-offset: 2px;
+}
+.footer-link:hover { opacity: 0.75; }
+
 /* ── Generic error ───────────────────────────────────────────────────── */
 .search-error {
   font-size: 0.88rem;
