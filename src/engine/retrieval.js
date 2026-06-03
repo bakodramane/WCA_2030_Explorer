@@ -2,15 +2,18 @@ import MiniSearch from 'minisearch';
 import { pipeline, env } from '@xenova/transformers';
 // ── Offline-first configuration ───────────────────────────────────────────────
 // Set before any pipeline() call so the browser loads everything from the
-// service-worker-cached /models/ path and never reaches the network.
-env.localModelPath = '/models/';
+// service-worker-cached models/ path and never reaches the network.
+// import.meta.env.BASE_URL is injected by Vite at build time (e.g.
+// '/WCA_2030_Explorer/' on GitHub Pages, '/' in local dev) so the paths
+// resolve correctly regardless of the deployment subdirectory.
+env.localModelPath = import.meta.env.BASE_URL + 'models/';
 env.allowRemoteModels = false;
 // Override the ONNX Runtime WASM file path. The library defaults to the
-// jsDelivr CDN; we point it to our pre-cached /models/ directory instead.
+// jsDelivr CDN; we point it to our pre-cached models/ directory instead.
 try {
     const backends = env.backends;
     if (backends?.onnx?.wasm) {
-        backends.onnx.wasm.wasmPaths = '/models/';
+        backends.onnx.wasm.wasmPaths = import.meta.env.BASE_URL + 'models/';
     }
 }
 catch { /* env.backends not present in test mock — safe to ignore */ }
@@ -46,7 +49,7 @@ export class RetrievalEngine {
      */
     async init() {
         // 1. Load the content index (fetch works in both browser and test contexts)
-        const res = await fetch('./data/chunks.json');
+        const res = await fetch(import.meta.env.BASE_URL + 'data/chunks.json');
         const raw = await res.json();
         this.chunks = raw;
         // Convert each embedding array to Float32Array for fast SIMD-friendly loops

@@ -4,16 +4,19 @@ import type { Chunk, RankedResult, SectionResult, SectionDebugEntry } from './ty
 
 // ── Offline-first configuration ───────────────────────────────────────────────
 // Set before any pipeline() call so the browser loads everything from the
-// service-worker-cached /models/ path and never reaches the network.
-(env as Record<string, unknown>).localModelPath    = '/models/';
+// service-worker-cached models/ path and never reaches the network.
+// import.meta.env.BASE_URL is injected by Vite at build time (e.g.
+// '/WCA_2030_Explorer/' on GitHub Pages, '/' in local dev) so the paths
+// resolve correctly regardless of the deployment subdirectory.
+(env as Record<string, unknown>).localModelPath    = import.meta.env.BASE_URL + 'models/';
 (env as Record<string, unknown>).allowRemoteModels = false;
 
 // Override the ONNX Runtime WASM file path. The library defaults to the
-// jsDelivr CDN; we point it to our pre-cached /models/ directory instead.
+// jsDelivr CDN; we point it to our pre-cached models/ directory instead.
 try {
   const backends = (env as any).backends;
   if (backends?.onnx?.wasm) {
-    backends.onnx.wasm.wasmPaths = '/models/';
+    backends.onnx.wasm.wasmPaths = import.meta.env.BASE_URL + 'models/';
   }
 } catch { /* env.backends not present in test mock — safe to ignore */ }
 
@@ -61,7 +64,7 @@ export class RetrievalEngine {
    */
   async init(): Promise<void> {
     // 1. Load the content index (fetch works in both browser and test contexts)
-    const res = await fetch('./data/chunks.json');
+    const res = await fetch(import.meta.env.BASE_URL + 'data/chunks.json');
     const raw: Chunk[] = await res.json();
 
     this.chunks = raw;
