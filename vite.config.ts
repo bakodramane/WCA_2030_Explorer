@@ -3,6 +3,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   base: '/WCA_2030_Adviser/',
+  build: { outDir: 'docs' },
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',
