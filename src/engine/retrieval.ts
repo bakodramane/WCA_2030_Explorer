@@ -1,6 +1,6 @@
 import MiniSearch from 'minisearch';
 import { pipeline, env } from '@xenova/transformers';
-import type { Chunk, RankedResult } from './types';
+import type { Chunk, RankedResult, SectionResult, SectionDebugEntry } from './types';
 
 // ── Offline-first configuration ───────────────────────────────────────────────
 // Set before any pipeline() call so the browser loads everything from the
@@ -140,5 +140,134 @@ export class RetrievalEngine {
         score:     r.score,
         matchType: 'lexical' as const,
       }));
+  }
+
+  /**
+   * Section-level search: scores and ranks whole document sections rather than
+   * individual chunks, fixing three failure modes of naive sum-based approaches:
+   *
+   * Fix 1 — Average scoring: uses the average of the top-3 chunk scores per
+   *   section so a large section with many moderate chunks cannot dominate a
+   *   small section that has a few highly-relevant chunks.
+   *
+   * Fix 2 — Size guard: sections spanning more than 40 pages are excluded as
+   *   likely chunking artefacts.  When every section exceeds the limit the
+   *   method falls back to returning individual chunk results directly.
+   *
+   * Fix 3 — Title relevance boost: any section whose title contains at least
+   *   one content word from the query (token > 3 chars, not a stop word)
+   *   receives a 1.25× score multiplier.
+   */
+  async sectionSearch(query: string, topK = 5): Promise<SectionResult[]> {
+    // Score every chunk so section aggregation has the full picture.
+    const allResults = await this.semanticSearch(query, this.chunks.length);
+
+    // Group chunk results by sectionTitle, preserving descending-score order
+    // within each group (since allResults is already sorted descending).
+    const sectionMap = new Map<string, {
+      scored: Array<{ chunk: Chunk; score: number }>;
+      pages:  number[];
+    }>();
+
+    for (const r of allResults) {
+      const key = r.chunk.sectionTitle;
+      if (!sectionMap.has(key)) sectionMap.set(key, { scored: [], pages: [] });
+      const s = sectionMap.get(key)!;
+      s.scored.push({ chunk: r.chunk, score: r.score });
+      s.pages.push(r.chunk.pageRef);
+    }
+
+    const contentWords = this.contentWordsFromQuery(query);
+
+    const scoredSections: SectionResult[] = [];
+
+    for (const [title, { scored, pages }] of sectionMap) {
+      const pageStart = Math.min(...pages);
+      const pageEnd   = Math.max(...pages);
+
+      // Fix 2a: skip front-matter and table-of-contents pages (≤ 10).
+      // These pages list section titles verbatim, giving them artificially high
+      // semantic similarity to any query that echoes chapter names.
+      if (pageEnd <= 10) continue;
+
+      // Fix 2b: skip sections whose page span suggests a chunking artefact.
+      if (pageEnd - pageStart > 40) continue;
+
+      // scored is already in descending order; take the top 3.
+      const top3     = scored.slice(0, 3);
+      // Fix 1: average of top-3 (not sum) so section size cannot inflate score.
+      const avgScore = top3.reduce((sum, c) => sum + c.score, 0) / top3.length;
+
+      // Fix 3: lift sections whose title shares a content word with the query.
+      const titleLower = title.toLowerCase();
+      const hasTitleMatch = contentWords.some(w => titleLower.includes(w));
+      const score = hasTitleMatch ? avgScore * 1.25 : avgScore;
+
+      scoredSections.push({
+        sectionTitle: title,
+        pageStart,
+        pageEnd,
+        score,
+        topChunks: top3.map(c => ({
+          chunk:     c.chunk,
+          score:     c.score,
+          matchType: 'semantic' as const,
+        })),
+      });
+    }
+
+    // Fix 2 fallback: if every section was excluded by the size guard, fall
+    // back to returning individual chunk results so the caller always gets data.
+    if (scoredSections.length === 0) {
+      return allResults.slice(0, topK).map(r => ({
+        sectionTitle: r.chunk.sectionTitle,
+        pageStart:    r.chunk.pageRef,
+        pageEnd:      r.chunk.pageRef,
+        score:        r.score,
+        topChunks:    [r],
+      }));
+    }
+
+    scoredSections.sort((a, b) => b.score - a.score);
+    return scoredSections.slice(0, topK);
+  }
+
+  /**
+   * Extract content words from a query for Fix 3 title matching.
+   * Content words are tokens longer than 3 characters that are not stop words.
+   */
+  private contentWordsFromQuery(query: string): string[] {
+    return query
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(t => t.length > 3 && !STOP_WORDS.has(t));
+  }
+
+  /**
+   * Debug helper: returns the top 10 sections by chunk count after init().
+   * Call after init() to inspect how chunks are distributed across sections
+   * and identify oversized artefact sections before running sectionSearch.
+   */
+  debugSectionIndex(): SectionDebugEntry[] {
+    const sectionMap = new Map<string, { count: number; pages: number[] }>();
+    for (const c of this.chunks) {
+      if (!sectionMap.has(c.sectionTitle)) {
+        sectionMap.set(c.sectionTitle, { count: 0, pages: [] });
+      }
+      const s = sectionMap.get(c.sectionTitle)!;
+      s.count++;
+      s.pages.push(c.pageRef);
+    }
+
+    return [...sectionMap.entries()]
+      .map(([title, { count, pages }], i) => ({
+        sectionId:    `sec-${i.toString().padStart(4, '0')}`,
+        sectionTitle: title,
+        chunkCount:   count,
+        pageStart:    Math.min(...pages),
+        pageEnd:      Math.max(...pages),
+      }))
+      .sort((a, b) => b.chunkCount - a.chunkCount)
+      .slice(0, 10);
   }
 }

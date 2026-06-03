@@ -71,7 +71,19 @@ export class App {
         this.searchBar.setLoading(true);
         this.clearResults();
         try {
-            const semanticResults = await this.engine.semanticSearch(query, 10);
+            // sectionSearch averages the top-3 chunk scores per section (Fix 1),
+            // excludes artefact sections spanning > 40 pages (Fix 2), and boosts
+            // sections whose title contains query content words (Fix 3).
+            // We take the top chunk from each section result as the display unit
+            // so the guardrail and ResultCard APIs remain unchanged.
+            const sectionResults = await this.engine.sectionSearch(query, 10);
+            const semanticResults = sectionResults
+                .filter(s => s.topChunks.length > 0)
+                .map(s => ({
+                chunk: s.topChunks[0].chunk,
+                score: s.score,
+                matchType: 'semantic',
+            }));
             const response = evaluate(semanticResults, () => this.engine.lexicalSearch(query, 10));
             if (response.answered && response.results) {
                 for (const r of response.results) {

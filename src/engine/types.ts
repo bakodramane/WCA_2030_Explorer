@@ -12,3 +12,19 @@ export interface RankedResult {
   score: number;
   matchType: 'semantic' | 'lexical';
 }
+
+export interface SectionResult {
+  sectionTitle: string;
+  pageStart: number;
+  pageEnd: number;
+  score: number;
+  topChunks: RankedResult[];
+}
+
+export interface SectionDebugEntry {
+  sectionId: string;
+  sectionTitle: string;
+  chunkCount: number;
+  pageStart: number;
+  pageEnd: number;
+}
