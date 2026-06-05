@@ -1,5 +1,6 @@
 import { RetrievalEngine } from '../engine/retrieval';
 import { evaluate }         from '../engine/guardrail';
+import { logQuery, getLog, clearLog, toCSV } from '../engine/logger';
 import { SearchBar }        from './SearchBar';
 import { ResultCard }       from './ResultCard';
 
@@ -20,8 +21,9 @@ export class App {
   private chipsEl!: HTMLElement;
   private introBody!: HTMLElement;
   private introToggle!: HTMLButtonElement;
-  private introCollapsed = false;
+  private introCollapsed  = false;
   private firstSearchDone = false;
+  private logCtrlEl!: HTMLSpanElement;
 
   async mount(selector: string): Promise<void> {
     const root = document.querySelector<HTMLElement>(selector);
@@ -60,6 +62,7 @@ export class App {
         </span>
         <span class="status-dot" id="sw-dot" title="Offline status"></span>
       </footer>`;
+    // Log controls are appended to the footer after it is in the DOM
     root.appendChild(layout);
 
     // Mount intro panel, then search bar into header
@@ -88,6 +91,9 @@ export class App {
     // Offline status indicator
     this.initOfflineDot(layout.querySelector<HTMLElement>('#sw-dot')!);
 
+    // Query-log export controls (appended to footer, hidden when log empty)
+    this.initLogControls(layout.querySelector<HTMLElement>('.app-footer')!);
+
     // Service-worker update banner
     this.initSWUpdateBanner(root);
 
@@ -115,6 +121,9 @@ export class App {
   // ── Search cascade ───────────────────────────────────────────────────────
 
   private async runSearch(query: string): Promise<void> {
+    // Never log or process an empty query
+    if (!query.trim()) return;
+
     if (!this.firstSearchDone) {
       this.firstSearchDone = true;
       this.chipsEl.style.display = 'none';
@@ -125,19 +134,21 @@ export class App {
 
     try {
       // ── Tier 1: curated Q&A match ──────────────────────────────────────────
-      // Embed the query and compare against pre-embedded question vectors.
-      // If the best cosine score meets QA_THRESHOLD (default 0.60), return the
-      // curated answer directly — no document search needed.
       const qaResult = await this.engine.qaSearch(query);
       if (qaResult) {
+        logQuery({
+          timestamp: new Date().toISOString(),
+          query,
+          tier:    'verified',
+          score:   qaResult.score,
+          matched: qaResult.row.question,
+        });
         this.resultsArea.appendChild(ResultCard.renderQA(qaResult, query));
+        this.refreshLogControls();
         return;
       }
 
-      // ── Tier 2: document search (unchanged) ────────────────────────────────
-      // sectionSearch averages the top-3 chunk scores per section (Fix 1),
-      // excludes artefact sections spanning > 40 pages (Fix 2), and boosts
-      // sections whose title contains query content words (Fix 3).
+      // ── Tier 2: document search ────────────────────────────────────────────
       const sectionResults = await this.engine.sectionSearch(query, 10);
       const semanticResults = sectionResults
         .filter(s => s.topChunks.length > 0)
@@ -155,12 +166,29 @@ export class App {
       );
 
       if (response.answered && response.results) {
+        const best = response.results[0];
+        logQuery({
+          timestamp: new Date().toISOString(),
+          query,
+          tier:    'document',
+          score:   best.score,
+          matched: best.chunk.sectionTitle,
+        });
         for (const r of response.results) {
           this.resultsArea.appendChild(ResultCard.render(r, query));
         }
       } else {
+        logQuery({
+          timestamp: new Date().toISOString(),
+          query,
+          tier:    'not-found',
+          score:   0,
+          matched: '',
+        });
         this.resultsArea.appendChild(ResultCard.renderNotFound(response));
       }
+      this.refreshLogControls();
+
     } catch (err) {
       console.error('[WCA Explorer] search error:', err);
       const p = document.createElement('p');
@@ -233,6 +261,67 @@ export class App {
     } else {
       this.collapseIntro();
     }
+  }
+
+  // ── Query-log controls ───────────────────────────────────────────────────
+
+  /**
+   * Create and append the log export/clear controls to the footer.
+   * Both controls are hidden when the log is empty and revealed automatically
+   * after each search via refreshLogControls().
+   */
+  private initLogControls(footer: HTMLElement): void {
+    this.logCtrlEl = document.createElement('span');
+    this.logCtrlEl.className = 'log-controls';
+
+    const exportBtn = document.createElement('button');
+    exportBtn.type      = 'button';
+    exportBtn.className = 'log-export-btn';
+    exportBtn.addEventListener('click', () => this.exportLog());
+
+    const clearBtn = document.createElement('button');
+    clearBtn.type        = 'button';
+    clearBtn.className   = 'log-clear-btn';
+    clearBtn.textContent = 'Clear log';
+    clearBtn.addEventListener('click', () => {
+      clearLog();
+      this.refreshLogControls();
+    });
+
+    this.logCtrlEl.appendChild(exportBtn);
+    this.logCtrlEl.appendChild(clearBtn);
+    footer.appendChild(this.logCtrlEl);
+
+    this.refreshLogControls();  // set initial visibility
+  }
+
+  /** Update the export button count and show/hide the controls block. */
+  private refreshLogControls(): void {
+    const count     = getLog().length;
+    const exportBtn = this.logCtrlEl.querySelector<HTMLButtonElement>('.log-export-btn')!;
+    exportBtn.textContent      = `Export query log (${count})`;
+    this.logCtrlEl.style.display = count === 0 ? 'none' : '';
+  }
+
+  /** Build a UTF-8 CSV (with BOM) from the log and trigger a browser download. */
+  private exportLog(): void {
+    const log = getLog();
+    if (log.length === 0) return;
+
+    // Prepend UTF-8 BOM so Excel/LibreOffice open the file correctly
+    const csv      = '﻿' + toCSV(log);
+    const date     = new Date().toISOString().slice(0, 10);   // YYYY-MM-DD
+    const filename = `wca-query-log-${date}.csv`;
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
   // ── Offline status dot ───────────────────────────────────────────────────

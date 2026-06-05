@@ -553,3 +553,43 @@ body {
   .score-bar-track  { width: 52px; }
   .search-btn       { padding: 0 0.75rem; font-size: 0.82rem; }
 }
+
+/* ── Query-log footer controls ────────────────────────────────────────── */
+/* Both controls are small and muted so they don't compete with footer text. */
+.log-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 0.75rem;
+  flex-shrink: 0;
+}
+
+.log-export-btn {
+  font-family: var(--font-mono);
+  font-size:   0.8rem;
+  color:       var(--muted);
+  background:  none;
+  border:      1px solid var(--border);
+  border-radius: 3px;
+  padding:     2px 8px;
+  cursor:      pointer;
+  white-space: nowrap;
+  transition:  border-color 0.15s, color 0.15s;
+  /* min tap target */
+  min-height: 24px;
+}
+.log-export-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+.log-clear-btn {
+  font-family:     var(--font-body);
+  font-size:       0.8rem;
+  color:           var(--muted);
+  background:      none;
+  border:          none;
+  padding:         0;
+  cursor:          pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space:     nowrap;
+}
+.log-clear-btn:hover { color: var(--accent); }
