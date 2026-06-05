@@ -4,3 +4,10 @@ public/data/
 public/models/
 node_modules/
 .cache/
+dist/
+
+# TypeScript must never emit .js files alongside .ts sources.
+# tsconfig.json enforces noEmit:true; these patterns are a belt-and-suspenders
+# safeguard so accidental tsc emits are never tracked by git.
+src/**/*.js
+scripts/**/*.js
