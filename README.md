@@ -253,7 +253,7 @@ for internal networks a self-signed certificate is sufficient.
 
 ## 6. Privacy note
 
-All processing is **local to the device**:
+All search processing is **local to the device**:
 
 - The PDF text and its embeddings never leave the machine that runs `npm run build-index`.
 - At query time, the user's question is encoded in-browser by the ONNX model running
@@ -263,6 +263,13 @@ All processing is **local to the device**:
   Hugging Face during `npm run embed` (controlled by `env.allowRemoteModels`).
   In production, `env.allowRemoteModels = false` is set in `src/engine/retrieval.ts`,
   making the runtime fully air-gapped.
+
+**Optional query log sharing:** The **Share query log** button in the footer is the
+one optional action that transmits data outside the browser. When a user clicks it,
+their query history (timestamps, query text, result tier, and relevance scores) is
+downloaded as a local CSV file **and**, if a Google Sheets endpoint is configured in
+`src/ui/App.ts`, sent to the maintainer to help improve the app. This transmission
+occurs only when the user explicitly clicks the button — no data is sent automatically.
 
 ---
 

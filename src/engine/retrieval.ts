@@ -327,6 +327,11 @@ export class RetrievalEngine {
     return { row: this.qaItems[bestIndex], score: bestScore };
   }
 
+  /** Returns all question strings from the curated Q&A bank, in load order. */
+  getQaQuestions(): string[] {
+    return this.qaItems.map(r => r.question);
+  }
+
   /**
    * Debug helper: returns the top 10 sections by chunk count after init().
    * Call after init() to inspect how chunks are distributed across sections
