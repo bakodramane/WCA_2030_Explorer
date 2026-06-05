@@ -1,4 +1,4 @@
-import type { RankedResult } from '../engine/types';
+import type { RankedResult, QaResult } from '../engine/types';
 import type { GuardrailResponse } from '../engine/guardrail';
 import { STOP_WORDS } from '../engine/stopwords';
 
@@ -102,6 +102,69 @@ export class ResultCard {
     `;
 
     // Wire the copy button after innerHTML is set
+    card
+      .querySelector<HTMLButtonElement>('.copy-btn')!
+      .addEventListener('click', ResultCard.handleCopy);
+
+    return card;
+  }
+
+  /**
+   * Tier-1 verified-answer card.
+   *
+   * Layout:
+   *   VERIFIED ANSWER badge (forest green)
+   *   answer text (prominent)
+   *   excerpt in a blockquote
+   *   section_title + page_number citation
+   *   Copy citation button
+   *
+   * Never shown without its excerpt and page citation.
+   */
+  static renderQA(result: QaResult, query: string): HTMLElement {
+    const { row, score } = result;
+    const pct = Math.min(score * 100, 100).toFixed(0);
+
+    const citationText =
+      `WCA 2030, ${row.section_title} (p.${row.page_number}): ` +
+      `${row.excerpt.slice(0, 80)}…`;
+
+    const card = document.createElement('article');
+    card.className = 'result-card result-card--verified';
+
+    card.innerHTML = `
+      <header class="card-header">
+        <span class="verified-badge">VERIFIED ANSWER</span>
+        <span class="card-page">Page ${esc(row.page_number)}</span>
+      </header>
+      <div class="card-body">
+        <p class="qa-answer">${highlight(esc(row.answer), query)}</p>
+        <blockquote class="qa-excerpt">
+          <p>${highlight(esc(row.excerpt), query)}</p>
+        </blockquote>
+        <p class="qa-citation">
+          <span class="card-section">§ ${esc(row.section_title)}</span>
+        </p>
+      </div>
+      <footer class="card-footer">
+        <div class="card-score">
+          <div class="score-bar-track"
+               role="progressbar"
+               aria-valuenow="${pct}"
+               aria-valuemin="0"
+               aria-valuemax="100">
+            <div class="score-bar-fill" style="width:${pct}%"></div>
+          </div>
+          <span class="score-label">${pct}%</span>
+        </div>
+        <span class="match-badge match-badge--verified">verified</span>
+        <button class="copy-btn" type="button"
+                data-citation="${esc(citationText)}">
+          Copy citation
+        </button>
+      </footer>
+    `;
+
     card
       .querySelector<HTMLButtonElement>('.copy-btn')!
       .addEventListener('click', ResultCard.handleCopy);

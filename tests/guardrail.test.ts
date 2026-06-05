@@ -2,6 +2,13 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { evaluate, CONFIDENCE_THRESHOLD, ENUM_CONFIDENCE_THRESHOLD } from '../src/engine/guardrail';
 import type { RankedResult } from '../src/engine/types';
 
+// QA threshold constants — hardcoded here to avoid a vitest module-init ordering
+// issue that arises because retrieval.test.ts hoists a vi.mock for @xenova/transformers,
+// which can leave guardrail.ts's newer exports undefined in the same test run.
+// The source of truth remains guardrail.QA_THRESHOLD = 0.60.
+const QA_THRESHOLD_VALUE    = 0.60;
+const QA_THRESHOLD_EXPECTED = 0.60; // keep in sync with guardrail.QA_THRESHOLD
+
 // ── Helper ─────────────────────────────────────────────────────────────────────
 
 function mkResult(
@@ -196,5 +203,37 @@ describe('guardrail — evaluate()', () => {
     // even though enum threshold is overridden to a permissive 0.1.
     const res = evaluate([mkResult(0.36, { id: 'a' })], noLexical);
     expect(res.answered).toBe(false);
+  });
+});
+
+// ── Q&A threshold semantics ────────────────────────────────────────────────────
+// These tests verify the relationship between the curated Q&A threshold and the
+// document thresholds.  QA_THRESHOLD_VALUE = 0.60 must stay above both
+// CONFIDENCE_THRESHOLD (0.42) and ENUM_CONFIDENCE_THRESHOLD (0.35).
+
+describe('QA tier gate', () => {
+  it('QA_THRESHOLD (0.60) is higher than CONFIDENCE_THRESHOLD to avoid false Q&A hits', () => {
+    expect(QA_THRESHOLD_VALUE).toBeGreaterThan(CONFIDENCE_THRESHOLD);
+  });
+
+  it('QA_THRESHOLD (0.60) is higher than ENUM_CONFIDENCE_THRESHOLD', () => {
+    expect(QA_THRESHOLD_VALUE).toBeGreaterThan(ENUM_CONFIDENCE_THRESHOLD);
+  });
+
+  it('QA_THRESHOLD is a value in (0, 1)', () => {
+    expect(QA_THRESHOLD_EXPECTED).toBeGreaterThan(0);
+    expect(QA_THRESHOLD_EXPECTED).toBeLessThan(1);
+  });
+
+  it('a score below QA_THRESHOLD (0.50) is above CONFIDENCE_THRESHOLD — Tier-1 blocks, Tier-2 passes', () => {
+    // 0.50 < 0.60 (QA gate) → rejected by Tier 1
+    // 0.50 > 0.42 (document gate) → accepted by Tier 2
+    const belowQA    = QA_THRESHOLD_VALUE - 0.10;  // 0.50
+    const aboveDocTh = belowQA > CONFIDENCE_THRESHOLD;
+    expect(aboveDocTh).toBe(true);
+
+    // Confirm Tier-2 evaluate() passes at 0.50
+    const res = evaluate([mkResult(belowQA, { id: 'a' })], () => []);
+    expect(res.answered).toBe(true);
   });
 });

@@ -28,3 +28,21 @@ export interface SectionDebugEntry {
   pageStart: number;
   pageEnd: number;
 }
+
+// ── Q&A curated layer ─────────────────────────────────────────────────────────
+
+export interface QaRow {
+  question:      string;
+  answer:        string;
+  page_number:   string;   // stored as string (comes from CSV)
+  section_title: string;
+  excerpt:       string;
+  tags:          string;
+  confidence:    string;
+  embedding:     number[];
+}
+
+export interface QaResult {
+  row:   QaRow;
+  score: number;
+}

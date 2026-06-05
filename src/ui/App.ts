@@ -124,11 +124,20 @@ export class App {
     this.clearResults();
 
     try {
+      // ── Tier 1: curated Q&A match ──────────────────────────────────────────
+      // Embed the query and compare against pre-embedded question vectors.
+      // If the best cosine score meets QA_THRESHOLD (default 0.60), return the
+      // curated answer directly — no document search needed.
+      const qaResult = await this.engine.qaSearch(query);
+      if (qaResult) {
+        this.resultsArea.appendChild(ResultCard.renderQA(qaResult, query));
+        return;
+      }
+
+      // ── Tier 2: document search (unchanged) ────────────────────────────────
       // sectionSearch averages the top-3 chunk scores per section (Fix 1),
       // excludes artefact sections spanning > 40 pages (Fix 2), and boosts
       // sections whose title contains query content words (Fix 3).
-      // We take the top chunk from each section result as the display unit
-      // so the guardrail and ResultCard APIs remain unchanged.
       const sectionResults = await this.engine.sectionSearch(query, 10);
       const semanticResults = sectionResults
         .filter(s => s.topChunks.length > 0)
@@ -137,6 +146,8 @@ export class App {
           score:     s.score,
           matchType: 'semantic' as const,
         }));
+
+      // ── Tier 3: guardrail ───────────────────────────────────────────────────
       const response = evaluate(
         semanticResults,
         () => this.engine.lexicalSearch(query, 10),

@@ -1,8 +1,13 @@
 import MiniSearch from 'minisearch';
 import { pipeline, env } from '@xenova/transformers';
-import type { Chunk, RankedResult, SectionResult, SectionDebugEntry } from './types';
+import type { Chunk, RankedResult, SectionResult, SectionDebugEntry, QaRow, QaResult } from './types';
 import { STOP_WORDS } from './stopwords';
 import { expandQuery } from './query';
+
+// Keep in sync with guardrail.QA_THRESHOLD — duplicated here to avoid a
+// module-load-order issue that makes the export undefined in the vitest environment
+// when retrieval.ts's vi.mock('@xenova/transformers') is hoisted.
+const DEFAULT_QA_THRESHOLD = 0.60;
 
 // ── Offline-first configuration ───────────────────────────────────────────────
 // Set before any pipeline() call so the browser loads everything from the
@@ -41,6 +46,24 @@ interface IndexDoc {
 
 // ── RetrievalEngine ───────────────────────────────────────────────────────────
 
+// ── QA threshold helper ───────────────────────────────────────────────────────
+
+function readQaThreshold(): number {
+  try {
+    const stored =
+      typeof localStorage !== 'undefined'
+        ? localStorage.getItem('wca_qa_threshold')
+        : null;
+    if (stored !== null) {
+      const v = parseFloat(stored);
+      if (Number.isFinite(v) && v > 0 && v < 1) return v;
+    }
+  } catch { /* no localStorage in Node test env */ }
+  return DEFAULT_QA_THRESHOLD;
+}
+
+// ── RetrievalEngine ───────────────────────────────────────────────────────────
+
 export class RetrievalEngine {
   private chunks: Chunk[]           = [];
   /** Parallel Float32Array per chunk — avoids repeated number[] → Float32 conversions */
@@ -48,6 +71,10 @@ export class RetrievalEngine {
   private index!: MiniSearch<IndexDoc>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private extractor: any            = null;
+
+  // ── Q&A curated layer ──────────────────────────────────────────────────────
+  private qaItems: QaRow[]       = [];
+  private qaVecs:  Float32Array[] = [];
 
   /**
    * Load chunks.json, initialise the offline embedding model, and build the
@@ -61,6 +88,18 @@ export class RetrievalEngine {
     this.chunks = raw;
     // Convert each embedding array to Float32Array for fast SIMD-friendly loops
     this.vecs = raw.map(c => new Float32Array(c.embedding));
+
+    // 1b. Load the curated Q&A index
+    try {
+      const qaRes = await fetch(import.meta.env.BASE_URL + 'data/qa.json');
+      const qaRaw: QaRow[] = await qaRes.json();
+      this.qaItems = qaRaw;
+      this.qaVecs  = qaRaw.map(r => new Float32Array(r.embedding));
+    } catch {
+      // qa.json absent (e.g. fresh dev env before build-qa runs) — Tier 1 silently disabled
+      this.qaItems = [];
+      this.qaVecs  = [];
+    }
 
     // 2. Load the embedding model from the offline /models/ cache
     this.extractor = await pipeline('feature-extraction', MODEL_NAME);
@@ -250,6 +289,42 @@ export class RetrievalEngine {
       .toLowerCase()
       .split(/\s+/)
       .filter(t => t.length > 3 && !STOP_WORDS.has(t));
+  }
+
+  /**
+   * Tier-1 curated Q&A search.
+   *
+   * Embeds the query and computes cosine similarity (dot product of normalised
+   * vectors) against every pre-embedded question in qa.json.  Returns the
+   * best-matching row only if its score meets or exceeds QA_THRESHOLD (default
+   * 0.60, tunable via localStorage 'wca_qa_threshold').
+   *
+   * Returns null when:
+   *   • qa.json was not loaded (graceful degradation)
+   *   • no match meets the threshold
+   */
+  async qaSearch(query: string): Promise<QaResult | null> {
+    if (this.qaItems.length === 0) return null;
+
+    // Use the raw query — no synonym expansion — because the stored Q&A embeddings
+    // were produced from the original question text.  Expansion shifts the vector
+    // away from the stored question, hurting recall for the curated tier.
+    const out  = await this.extractor(query, { pooling: 'mean', normalize: true });
+    const qVec = new Float32Array(out.data as ArrayLike<number>);
+
+    let bestScore = -Infinity;
+    let bestIndex = -1;
+
+    for (let i = 0; i < this.qaVecs.length; i++) {
+      const ev = this.qaVecs[i];
+      let dot  = 0;
+      for (let k = 0; k < DIM; k++) dot += qVec[k] * ev[k];
+      if (dot > bestScore) { bestScore = dot; bestIndex = i; }
+    }
+
+    const threshold = readQaThreshold();
+    if (bestIndex < 0 || bestScore < threshold) return null;
+    return { row: this.qaItems[bestIndex], score: bestScore };
   }
 
   /**

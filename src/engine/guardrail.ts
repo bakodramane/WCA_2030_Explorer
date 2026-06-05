@@ -15,6 +15,15 @@ export interface GuardrailResponse {
 export const CONFIDENCE_THRESHOLD = 0.42;
 
 /**
+ * Default threshold for Tier-1 curated Q&A matches.
+ * Higher than CONFIDENCE_THRESHOLD because question-to-question cosine
+ * similarity is tighter than question-to-chunk, so a higher bar avoids
+ * false Q&A hits on loosely related queries.
+ * Override live: localStorage.setItem('wca_qa_threshold', '0.55')
+ */
+export const QA_THRESHOLD = 0.60;
+
+/**
  * Hard-coded default for section-level (enumeration) queries.
  * Lower than the lookup default because section scores are averaged across
  * multiple chunks, so fewer scores reach the high end of the range.

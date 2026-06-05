@@ -341,8 +341,56 @@ body {
   letter-spacing: 0.05em;
   flex-shrink: 0;
 }
-.match-badge--semantic { background: var(--mark-bg); color: var(--accent); }
-.match-badge--lexical  { background: #e8e2d4; color: #5c4a22; }
+.match-badge--semantic  { background: var(--mark-bg); color: var(--accent); }
+.match-badge--lexical   { background: #e8e2d4; color: #5c4a22; }
+.match-badge--verified  { background: #1a3a2a; color: #fff; }
+
+/* ── Verified-answer card (Tier-1 curated Q&A) ───────────────────────────── */
+.result-card--verified {
+  border-left: 4px solid #1a3a2a;
+}
+
+.verified-badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: #1a3a2a;
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.qa-answer {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 0.75rem;
+  line-height: 1.55;
+}
+
+.qa-excerpt {
+  margin: 0 0 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border-left: 3px solid #1a3a2a;
+  background: #f0f5f1;
+  border-radius: 0 3px 3px 0;
+}
+
+.qa-excerpt p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #2d4a35;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.qa-citation {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
 
 /* Copy citation button */
 .copy-btn {
