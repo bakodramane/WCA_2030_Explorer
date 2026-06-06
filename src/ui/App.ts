@@ -6,7 +6,7 @@ import { ResultCard }       from './ResultCard';
 
 // Replace with your Google Apps Script Web App /exec URL to enable auto-transfer.
 // Leave as empty string to skip the network POST (local CSV download still works).
-const LOG_ENDPOINT = 'https://script.google.com/macros/s/AKfycby7vwujpcmC8LGdjecne5rKtSEGeVPanQ5HXADc7Grbbq7O41FD4NJYU3S5cjE0TtQI/exec';
+const LOG_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKZ9cyvReHP4DWfWDgIh1SCR-Z9LpwztMjd8A1C7M5ch1xUQwgO0IT0fk1KZqfwrRT/exec';
 
 export class App {
   private engine      = new RetrievalEngine();
