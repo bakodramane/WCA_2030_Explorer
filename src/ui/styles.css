@@ -282,9 +282,11 @@ body {
   color: var(--ink);
 }
 
-.card-text mark {
-  background: var(--mark-bg);
-  color: var(--accent);
+.card-text mark,
+.qa-answer mark,
+.qa-excerpt p mark {
+  background: #39ff14;
+  color: #0a0a0a;
   border-radius: 2px;
   padding: 0 1px;
   font-style: normal;
@@ -368,6 +370,14 @@ body {
   color: var(--ink);
   margin: 0 0 0.75rem;
   line-height: 1.55;
+}
+
+.qa-excerpt-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0 0 0.45rem;
+  letter-spacing: 0.02em;
 }
 
 .qa-excerpt {

@@ -134,11 +134,12 @@ export class ResultCard {
 
     card.innerHTML = `
       <header class="card-header">
-        <span class="verified-badge">VERIFIED ANSWER</span>
+        <span class="verified-badge">ANSWER</span>
         <span class="card-page">Page ${esc(row.page_number)}</span>
       </header>
       <div class="card-body">
         <p class="qa-answer">${highlight(esc(row.answer), query)}</p>
+        <p class="qa-excerpt-label">WCA 2030 excerpt (Page ${esc(String(row.page_number))})</p>
         <blockquote class="qa-excerpt">
           <p>${highlight(esc(row.excerpt), query)}</p>
         </blockquote>
