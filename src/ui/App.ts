@@ -3,6 +3,7 @@ import { evaluate }         from '../engine/guardrail';
 import { logQuery, getLog, clearLog, toCSV } from '../engine/logger';
 import { SearchBar }        from './SearchBar';
 import { ResultCard }       from './ResultCard';
+import type { ItemRow }     from '../engine/types';
 
 // Replace with your Google Apps Script Web App /exec URL to enable auto-transfer.
 // Leave as empty string to skip the network POST (local CSV download still works).
@@ -62,12 +63,13 @@ export class App {
     const header = layout.querySelector('.app-header')!;
     header.appendChild(this.buildIntroPanel());
 
-    // Search bar row: input + "Browse" button
+    // Search bar row: input + browse buttons
     const searchRow = document.createElement('div');
     searchRow.className = 'search-row';
     searchRow.appendChild(this.searchBar.element);
-    const browseBtn = this.buildBrowseButton();
-    searchRow.appendChild(browseBtn);
+    searchRow.appendChild(this.buildBrowseButton());
+    searchRow.appendChild(this.buildItemsBrowseButton('essential'));
+    searchRow.appendChild(this.buildItemsBrowseButton('additional'));
     header.appendChild(searchRow);
 
     // Suggestion chips — populated after engine loads; hidden after first search
@@ -217,6 +219,82 @@ export class App {
     });
   }
 
+  private buildItemsBrowseButton(category: 'essential' | 'additional'): HTMLButtonElement {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'browse-btn';
+    btn.textContent = category === 'essential' ? 'Discover essential items' : 'Explore additional items';
+    btn.setAttribute('aria-label', `Browse ${category} items`);
+    btn.addEventListener('click', () => this.openItemsModal(category));
+    return btn;
+  }
+
+  private openItemsModal(category: 'essential' | 'additional'): void {
+    const items = this.engine.getItems(category).slice().sort((a, b) => a.code.localeCompare(b.code));
+    const title = category === 'essential' ? 'Essential Items' : 'Additional Items';
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop';
+    backdrop.setAttribute('role', 'dialog');
+    backdrop.setAttribute('aria-modal', 'true');
+    backdrop.setAttribute('aria-label', title);
+
+    const panel = document.createElement('div');
+    panel.className = 'modal-panel';
+
+    const modalHeader = document.createElement('div');
+    modalHeader.className = 'modal-header';
+    modalHeader.innerHTML = `<h2 class="modal-title">${escHtml(title)}</h2>`;
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'modal-close';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.textContent = '×';
+    modalHeader.appendChild(closeBtn);
+
+    const listEl = document.createElement('div');
+    listEl.className = 'modal-list';
+
+    for (const item of items) {
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'modal-item-row';
+      row.innerHTML =
+        `<span class="modal-item-code">${escHtml(item.code)}</span>` +
+        `<span class="modal-item-sep"> — </span>` +
+        `<span class="modal-item-name">${escHtml(item.name)}</span>`;
+      row.addEventListener('click', () => {
+        this.showItemCard(item);
+        closeModal();
+      });
+      listEl.appendChild(row);
+    }
+
+    panel.appendChild(modalHeader);
+    panel.appendChild(listEl);
+    backdrop.appendChild(panel);
+    document.body.appendChild(backdrop);
+
+    const closeModal = () => backdrop.remove();
+    closeBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) closeModal();
+    });
+    document.addEventListener('keydown', function onKey(e) {
+      if (e.key === 'Escape') { closeModal(); document.removeEventListener('keydown', onKey); }
+    });
+  }
+
+  private showItemCard(item: ItemRow): void {
+    if (!this.firstSearchDone) {
+      this.firstSearchDone = true;
+      this.chipsEl.style.display = 'none';
+      this.collapseIntro();
+    }
+    this.clearResults();
+    this.resultsArea.appendChild(ResultCard.renderItem(item));
+  }
+
   // ── Search cascade ───────────────────────────────────────────────────────
 
   private async runSearch(query: string): Promise<void> {
@@ -231,6 +309,24 @@ export class App {
     this.clearResults();
 
     try {
+      // ── Tier 0: exact item-code lookup ─────────────────────────────────────
+      const itemCode = extractItemCode(query);
+      if (itemCode) {
+        const item = this.engine.lookupItem(itemCode);
+        if (item) {
+          logQuery({
+            timestamp: new Date().toISOString(),
+            query,
+            tier:    'item',
+            score:   1,
+            matched: `${item.code} ${item.name}`,
+          });
+          this.showItemCard(item);
+          this.refreshLogControls();
+          return;
+        }
+      }
+
       // ── Tier 1: curated Q&A match ──────────────────────────────────────────
       const qaResult = await this.engine.qaSearch(query);
       if (qaResult) {
@@ -484,6 +580,29 @@ export class App {
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
+
+function escHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/**
+ * Extract a normalised 4-digit item code from a query string.
+ * Accepts: "item 115", "item 0115", "0115", "115" → "0115".
+ * Returns null if no 3-to-4-digit number is found or if the number is out of
+ * the valid 4-digit range (0001–9999).
+ */
+function extractItemCode(query: string): string | null {
+  const clean = query.trim().replace(/^item\s+/i, '').trim();
+  const m = clean.match(/\b(\d{3,4})\b/);
+  if (!m) return null;
+  const n = parseInt(m[1], 10);
+  if (!n || n > 9999) return null;
+  return String(n).padStart(4, '0');
+}
 
 function randomSample<T>(arr: T[], n: number): T[] {
   const copy = arr.slice();

@@ -1,6 +1,6 @@
 import MiniSearch from 'minisearch';
 import { pipeline, env } from '@xenova/transformers';
-import type { Chunk, RankedResult, SectionResult, SectionDebugEntry, QaRow, QaResult } from './types';
+import type { Chunk, RankedResult, SectionResult, SectionDebugEntry, QaRow, QaResult, ItemRow } from './types';
 import { STOP_WORDS } from './stopwords';
 import { expandQuery } from './query';
 
@@ -76,6 +76,9 @@ export class RetrievalEngine {
   private qaItems: QaRow[]       = [];
   private qaVecs:  Float32Array[] = [];
 
+  // ── Item catalogue ─────────────────────────────────────────────────────────
+  private items: ItemRow[] = [];
+
   /**
    * Load chunks.json, initialise the offline embedding model, and build the
    * BM25 lexical index.  Must be called once before any search method.
@@ -99,6 +102,14 @@ export class RetrievalEngine {
       // qa.json absent (e.g. fresh dev env before build-qa runs) — Tier 1 silently disabled
       this.qaItems = [];
       this.qaVecs  = [];
+    }
+
+    // 1c. Load the item catalogue
+    try {
+      const itemsRes = await fetch(import.meta.env.BASE_URL + 'data/items.json');
+      this.items = await itemsRes.json();
+    } catch {
+      this.items = [];
     }
 
     // 2. Load the embedding model from the offline /models/ cache
@@ -330,6 +341,16 @@ export class RetrievalEngine {
   /** Returns all question strings from the curated Q&A bank, in load order. */
   getQaQuestions(): string[] {
     return this.qaItems.map(r => r.question);
+  }
+
+  /** Return all items, optionally filtered by category, in load order. */
+  getItems(category?: 'essential' | 'additional'): ItemRow[] {
+    return category ? this.items.filter(i => i.category === category) : this.items;
+  }
+
+  /** Return the item with the given 4-digit zero-padded code, or null. */
+  lookupItem(code: string): ItemRow | null {
+    return this.items.find(i => i.code === code) ?? null;
   }
 
   /**

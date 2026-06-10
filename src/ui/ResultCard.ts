@@ -1,4 +1,4 @@
-import type { RankedResult, QaResult } from '../engine/types';
+import type { RankedResult, QaResult, ItemRow } from '../engine/types';
 import type { GuardrailResponse } from '../engine/guardrail';
 import { STOP_WORDS } from '../engine/stopwords';
 
@@ -196,6 +196,58 @@ export class ResultCard {
       </p>
       ${listHtml}
     `;
+
+    return card;
+  }
+
+  /** Render an item-catalogue entry as a detail card. */
+  static renderItem(item: ItemRow): HTMLElement {
+    const citationText = `WCA 2030, Item ${item.code} ${item.name} (p.${item.page})`;
+    const badgeClass   = item.category === 'essential' ? 'item-badge--essential' : 'item-badge--additional';
+    const badgeLabel   = item.category === 'essential' ? 'Essential' : 'Additional';
+
+    const card = document.createElement('article');
+    card.className = 'result-card result-card--item';
+
+    card.innerHTML = `
+      <header class="card-header">
+        <span class="item-badge ${badgeClass}">${badgeLabel}</span>
+        <span class="card-page">Page ${item.page} (printed)</span>
+      </header>
+      <div class="card-body">
+        <h3 class="item-heading">
+          <span class="item-code">${esc(item.code)}</span><span class="item-name">${esc(item.name)}</span>
+        </h3>
+        <div class="item-fields">
+          <div class="item-field">
+            <span class="item-field-label">Description</span>
+            <p class="item-field-value">${esc(item.description)}</p>
+          </div>
+          <div class="item-field">
+            <span class="item-field-label">Reference period</span>
+            <p class="item-field-value">${esc(item.referencePeriod)}</p>
+          </div>
+          <div class="item-field">
+            <span class="item-field-label">Theme</span>
+            <p class="item-field-value">${esc(item.theme)}</p>
+          </div>
+          <div class="item-field">
+            <span class="item-field-label">Page</span>
+            <p class="item-field-value">Page ${item.page} (printed)</p>
+          </div>
+        </div>
+      </div>
+      <footer class="card-footer">
+        <span class="match-badge match-badge--item">item</span>
+        <button class="copy-btn" type="button"
+                data-citation="${esc(citationText)}">
+          Copy citation
+        </button>
+      </footer>
+    `;
+
+    card.querySelector<HTMLButtonElement>('.copy-btn')!
+      .addEventListener('click', ResultCard.handleCopy);
 
     return card;
   }
