@@ -40,26 +40,17 @@ npm run build-index
 ```
 
 This runs `scripts/chunk.ts` (PDF extraction + chunking) and then `scripts/embed.ts`
-(downloads `Xenova/all-MiniLM-L6-v2` on first run and embeds 876 chunks).
-Outputs:
-- `src/data/chunks-raw.json` — raw chunks without embeddings
-- `src/data/chunks.json` — chunks with 384-dimensional embeddings (~10 MB)
+(downloads `Xenova/all-MiniLM-L6-v2` on first run and embeds ~876 chunks).
+Outputs — all written to the canonical source locations under `public/`:
+- `src/data/chunks-raw.json` — intermediate raw chunks (no embeddings; gitignored)
+- `public/data/chunks.json` — chunks with 384-dimensional embeddings (~10 MB)
 - `public/models/` — ONNX model weights + WASM runtime files
 
 > The model download (~23 MB) requires internet access on the first run only.
 > Subsequent runs use the local `.cache/` directory and are fully offline.
 
-Before running the PWA build, copy the content index to the public directory so
-Vite serves it correctly:
-
-```bash
-# PowerShell
-New-Item -ItemType Directory -Force -Path public\data | Out-Null
-Copy-Item src\data\chunks.json public\data\chunks.json
-
-# Git Bash
-mkdir -p public/data && cp src/data/chunks.json public/data/chunks.json
-```
+**No manual copy step is needed.** `public/data/` is the canonical source;
+`npm run build` (Step 2) copies everything from `public/` into `docs/` automatically.
 
 ### Step 2 — Build the PWA
 
@@ -150,8 +141,8 @@ When a new edition of the WCA guidelines is released:
    ```bash
    npm run build-index
    ```
-4. Copy the regenerated `src/data/chunks.json` to `public/data/chunks.json`.
-5. Bump the `version` field in `src/data/model-meta.json`:
+   This writes the updated `public/data/chunks.json` directly — no copy step needed.
+4. Bump the `version` field in `src/data/model-meta.json`:
    ```json
    { "model": "Xenova/all-MiniLM-L6-v2", "dim": 384, "version": "wca2030-v2" }
    ```
@@ -214,26 +205,22 @@ URLs resolve correctly under the GitHub Pages subdirectory.
 ```bash
 # 1. Regenerate the content index (run once after replacing the source PDF)
 npm run build-index
+# → writes public/data/chunks.json and public/models/ directly; no copy needed
 
-# 2. Copy the fresh index into the public directory
-# PowerShell
-New-Item -ItemType Directory -Force -Path public\data | Out-Null
-Copy-Item src\data\chunks.json public\data\chunks.json
-# Git Bash
-mkdir -p public/data && cp src/data/chunks.json public/data/chunks.json
-
-# 3. Rebuild with the correct base path
+# 2. Rebuild with the correct base path
 npm run build
+# → Vite copies public/ into docs/ automatically
 
-# 4. Commit docs/ and push — GitHub Pages updates automatically
-git add docs/
+# 3. Commit and push — GitHub Pages updates automatically
+git add public/data/chunks.json docs/
 git commit -m "chore: rebuild docs for updated guidelines"
 git push
 ```
 
-> **Note:** `docs/` is intentionally committed to this repo (not gitignored).
-> `public/data/` and `public/models/` remain gitignored — they are
-> intermediate build artefacts that Vite copies into `docs/` at build time.
+> **Note:** `docs/` is intentionally committed to this repo (not gitignored) and is
+> the build output that GitHub Pages serves. `public/data/` and `public/models/` are
+> the **canonical sources** — also committed so that `npm run build` is always
+> self-contained and requires no manual file-copying.
 
 ### Air-gapped / offline-only use
 

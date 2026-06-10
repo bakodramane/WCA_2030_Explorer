@@ -1,7 +1,5 @@
 src/data/chunks-raw.json
 src/data/chunks.json
-public/data/
-public/models/
 node_modules/
 .cache/
 dist/

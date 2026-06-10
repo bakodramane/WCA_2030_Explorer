@@ -7,8 +7,9 @@ import path from 'node:path';
 const ROOT         = process.cwd();
 const CACHE_DIR    = path.join(ROOT, '.cache');
 const PUBLIC_MODELS= path.join(ROOT, 'public', 'models');
+const PUBLIC_DATA  = path.join(ROOT, 'public', 'data');
 const CHUNKS_RAW   = path.join(ROOT, 'src', 'data', 'chunks-raw.json');
-const CHUNKS_OUT   = path.join(ROOT, 'src', 'data', 'chunks.json');
+const CHUNKS_OUT   = path.join(PUBLIC_DATA, 'chunks.json');
 const META_OUT     = path.join(ROOT, 'src', 'data', 'model-meta.json');
 
 // ── Constants ─────────────────────────────────────────────────────────────────
