@@ -1,4 +1,4 @@
-import type { RankedResult, QaResult, ItemRow } from '../engine/types';
+import type { RankedResult, QaResult, ItemRow, DescriptionBlock } from '../engine/types';
 import type { GuardrailResponse } from '../engine/guardrail';
 import { STOP_WORDS } from '../engine/stopwords';
 
@@ -221,7 +221,7 @@ export class ResultCard {
         <div class="item-fields">
           <div class="item-field">
             <span class="item-field-label">Description</span>
-            ${splitDescParagraphs(item.description)}
+            <div class="item-desc-blocks">${renderDescBlocks(item.descriptionBlocks)}</div>
           </div>
           <div class="item-field">
             <span class="item-field-label">Reference period</span>
@@ -266,18 +266,12 @@ export class ResultCard {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-/**
- * Split an item description into separate paragraphs at each paragraph-number
- * marker of the form N.N.N (e.g. 7.1.6, 7.2.18).  Returns an HTML string of
- * <p> elements so the layout matches the source document structure.
- */
-function splitDescParagraphs(description: string): string {
-  // Split just before a paragraph-number marker that follows whitespace.
-  // The pattern \d{1,3}\.\d{1,3}\.\d{1,3} covers forms like 7.1.6 and 7.2.18.
-  const parts = description.split(/\s+(?=\d{1,3}\.\d{1,3}\.\d{1,3}\b)/);
-  return parts
-    .map(p => p.trim())
-    .filter(p => p.length > 0)
-    .map(p => `<p class="item-field-value">${esc(p)}</p>`)
-    .join('');
+function renderDescBlocks(blocks: DescriptionBlock[]): string {
+  return blocks.map(block => {
+    if (block.type === 'paragraph') {
+      return `<p class="item-desc-para">${esc(block.text)}</p>`;
+    }
+    const lis = block.items.map(it => `<li class="item-desc-li">${esc(it)}</li>`).join('');
+    return `<ul class="item-desc-bullets">${lis}</ul>`;
+  }).join('');
 }

@@ -241,7 +241,7 @@ If a question does not make any sense, or is not factually coherent, explain why
         <div class="item-fields">
           <div class="item-field">
             <span class="item-field-label">Description</span>
-            ${splitDescParagraphs(t.description)}
+            <div class="item-desc-blocks">${renderDescBlocks(t.descriptionBlocks)}</div>
           </div>
           <div class="item-field">
             <span class="item-field-label">Reference period</span>
@@ -264,7 +264,7 @@ If a question does not make any sense, or is not factually coherent, explain why
           Copy citation
         </button>
       </footer>
-    `,a.querySelector(`.copy-btn`).addEventListener(`click`,e.handleCopy),a}static async handleCopy(){let e=this.dataset.citation??``;try{await navigator.clipboard.writeText(e),this.textContent=`Copied!`}catch{this.textContent=`Copy failed`}setTimeout(()=>{this.textContent=`Copy citation`},2e3)}};function splitDescParagraphs(e){return e.split(/\s+(?=\d{1,3}\.\d{1,3}\.\d{1,3}\b)/).map(e=>e.trim()).filter(e=>e.length>0).map(e=>`<p class="item-field-value">${esc(e)}</p>`).join(``)}var App=class{constructor(){this.engine=new RetrievalEngine,this.searchBar=new SearchBar,this.introCollapsed=!1,this.firstSearchDone=!1}async mount(e){let t=document.querySelector(e);if(!t)throw Error(`Mount target '${e}' not found`);t.innerHTML=``;let n=document.createElement(`div`);n.className=`loading-overlay`,n.setAttribute(`role`,`status`),n.setAttribute(`aria-live`,`polite`),n.innerHTML=`
+    `,a.querySelector(`.copy-btn`).addEventListener(`click`,e.handleCopy),a}static async handleCopy(){let e=this.dataset.citation??``;try{await navigator.clipboard.writeText(e),this.textContent=`Copied!`}catch{this.textContent=`Copy failed`}setTimeout(()=>{this.textContent=`Copy citation`},2e3)}};function renderDescBlocks(e){return e.map(e=>e.type===`paragraph`?`<p class="item-desc-para">${esc(e.text)}</p>`:`<ul class="item-desc-bullets">${e.items.map(e=>`<li class="item-desc-li">${esc(e)}</li>`).join(``)}</ul>`).join(``)}var App=class{constructor(){this.engine=new RetrievalEngine,this.searchBar=new SearchBar,this.introCollapsed=!1,this.firstSearchDone=!1}async mount(e){let t=document.querySelector(e);if(!t)throw Error(`Mount target '${e}' not found`);t.innerHTML=``;let n=document.createElement(`div`);n.className=`loading-overlay`,n.setAttribute(`role`,`status`),n.setAttribute(`aria-live`,`polite`),n.innerHTML=`
       <div class="loading-box">
         <p class="loading-text">Loading WCA 2030 index…</p>
         <div class="progress-track">

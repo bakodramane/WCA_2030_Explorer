@@ -31,14 +31,19 @@ export interface SectionDebugEntry {
 
 // ── Item catalogue ────────────────────────────────────────────────────────────
 
+export type DescriptionBlock =
+  | { type: 'paragraph'; text: string }
+  | { type: 'bullets';   items: string[] };
+
 export interface ItemRow {
-  code:            string;   // 4-digit zero-padded, e.g. '0115'
-  name:            string;
-  description:     string;   // verbatim WCA 2030 text
-  referencePeriod: string;
-  theme:           string;
-  page:            number;   // printed page number
-  category:        'essential' | 'additional';
+  code:              string;           // 4-digit zero-padded, e.g. '0115'
+  name:              string;
+  description:       string;           // flat verbatim text (search / citation)
+  descriptionBlocks: DescriptionBlock[]; // structured rendering
+  referencePeriod:   string;
+  theme:             string;
+  page:              number;           // true printed page number
+  category:          'essential' | 'additional';
 }
 
 // ── Query log ─────────────────────────────────────────────────────────────────

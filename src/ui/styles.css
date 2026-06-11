@@ -806,6 +806,35 @@ body {
   margin: 0;
 }
 
+/* ── Item description blocks ─────────────────────────────────────────── */
+.item-desc-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.item-desc-para {
+  font-size: 0.875rem;
+  color: var(--ink);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.item-desc-bullets {
+  list-style: disc;
+  padding-left: 1.4rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.item-desc-li {
+  font-size: 0.875rem;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
 .match-badge--item { background: var(--mark-bg); color: var(--accent); }
 
 /* ── Item browse modal rows ──────────────────────────────────────────── */
