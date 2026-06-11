@@ -587,19 +587,19 @@ body {
 
 .browse-btn {
   flex-shrink: 0;
-  padding: 0 0.9rem;
-  background: none;
-  border: 1.5px solid var(--accent);
+  padding: 0 1.1rem;
+  background: var(--accent);
+  border: none;
   border-radius: var(--radius);
-  color: var(--accent);
+  color: #fff;
   font-family: var(--font-body);
   font-size: 0.82rem;
   cursor: pointer;
   white-space: nowrap;
   min-height: 44px;
-  transition: background 0.15s, color 0.15s;
+  transition: opacity 0.15s;
 }
-.browse-btn:hover { background: var(--accent); color: #fff; }
+.browse-btn:hover { opacity: 0.88; }
 
 /* ── Modal overlay ───────────────────────────────────────────────────── */
 .modal-backdrop {
