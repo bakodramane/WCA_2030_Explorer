@@ -185,7 +185,7 @@ body {
 
 .search-input {
   width: 100%;
-  padding: 0.75rem 2.4rem 0.75rem 0.875rem;
+  padding: 0.65rem 2.4rem 0.65rem 0.875rem;
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
@@ -194,10 +194,13 @@ body {
   color: var(--ink);
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
-  min-height: 52px;
+  /* 0.65rem top+bottom padding = 20.8px; line-height 1.4 at 1rem = 22.4px/line.
+     Two lines need 44.8px content; 68px − 20.8px = 47.2px available → safe. */
+  min-height: 68px;
   resize: none;
   overflow: hidden;
-  line-height: 1.55;
+  line-height: 1.4;
+  vertical-align: top;
 }
 .search-input:focus {
   border-color: var(--accent);
@@ -578,7 +581,7 @@ body {
 }
 
 .search-row .search-bar {
-  flex: 1;
+  flex: 1 1 100%;  /* always occupy its own full row; browse buttons wrap below */
   min-width: 0;
 }
 
