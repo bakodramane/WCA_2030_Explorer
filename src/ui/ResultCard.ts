@@ -221,7 +221,7 @@ export class ResultCard {
         <div class="item-fields">
           <div class="item-field">
             <span class="item-field-label">Description</span>
-            <p class="item-field-value">${esc(item.description)}</p>
+            ${splitDescParagraphs(item.description)}
           </div>
           <div class="item-field">
             <span class="item-field-label">Reference period</span>
@@ -262,4 +262,22 @@ export class ResultCard {
     }
     setTimeout(() => { this.textContent = 'Copy citation'; }, 2000);
   }
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+/**
+ * Split an item description into separate paragraphs at each paragraph-number
+ * marker of the form N.N.N (e.g. 7.1.6, 7.2.18).  Returns an HTML string of
+ * <p> elements so the layout matches the source document structure.
+ */
+function splitDescParagraphs(description: string): string {
+  // Split just before a paragraph-number marker that follows whitespace.
+  // The pattern \d{1,3}\.\d{1,3}\.\d{1,3} covers forms like 7.1.6 and 7.2.18.
+  const parts = description.split(/\s+(?=\d{1,3}\.\d{1,3}\.\d{1,3}\b)/);
+  return parts
+    .map(p => p.trim())
+    .filter(p => p.length > 0)
+    .map(p => `<p class="item-field-value">${esc(p)}</p>`)
+    .join('');
 }

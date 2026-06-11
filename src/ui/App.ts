@@ -5,9 +5,6 @@ import { SearchBar }        from './SearchBar';
 import { ResultCard }       from './ResultCard';
 import type { ItemRow }     from '../engine/types';
 
-// Replace with your Google Apps Script Web App /exec URL to enable auto-transfer.
-// Leave as empty string to skip the network POST (local CSV download still works).
-const LOG_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKZ9cyvReHP4DWfWDgIh1SCR-Z9LpwztMjd8A1C7M5ch1xUQwgO0IT0fk1KZqfwrRT/exec';
 
 export class App {
   private engine      = new RetrievalEngine();
@@ -521,21 +518,9 @@ export class App {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    // Fire-and-forget POST to configured endpoint
-    if (LOG_ENDPOINT) {
-      try {
-        await fetch(LOG_ENDPOINT, {
-          method:  'POST',
-          mode:    'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body:    JSON.stringify({ entries: getLog() }),
-        });
-      } catch (_) { /* fire-and-forget; local download already succeeded */ }
-    }
-
     // Brief confirmation message
     const prev = btn.textContent;
-    btn.textContent = 'Thank you — downloaded and shared ✓';
+    btn.textContent = 'Thank you — downloaded ✓';
     btn.disabled = true;
     setTimeout(() => {
       btn.textContent = prev;

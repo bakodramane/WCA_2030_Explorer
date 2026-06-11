@@ -1,6 +1,6 @@
 export class SearchBar {
   private wrapper: HTMLElement;
-  private input: HTMLInputElement;
+  private input: HTMLTextAreaElement;
   private spinner: HTMLElement;
   private btn: HTMLButtonElement;
 
@@ -13,10 +13,10 @@ export class SearchBar {
     const inputWrap = document.createElement('div');
     inputWrap.className = 'search-input-wrapper';
 
-    this.input = document.createElement('input');
-    this.input.type = 'text';
+    this.input = document.createElement('textarea');
     this.input.className = 'search-input';
-    this.input.placeholder = 'Ask a question about WCA 2030 methodology…';
+    this.input.placeholder = 'Search a word or a phrase';
+    this.input.rows = 1;
     this.input.setAttribute('autocomplete', 'off');
     this.input.setAttribute('spellcheck', 'false');
     this.input.setAttribute('aria-label', 'Search the WCA 2030 guidelines');
@@ -37,11 +37,17 @@ export class SearchBar {
 
     this.wrapper.append(inputWrap, this.btn);
 
-    // Submit on Enter
+    // Enter submits (no newline); Shift+Enter is blocked too for a search field
     this.input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') this.submit();
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        this.submit();
+      }
     });
     this.btn.addEventListener('click', () => this.submit());
+
+    // Auto-resize textarea as content grows
+    this.input.addEventListener('input', () => this.resize());
 
     // Press / anywhere on the page to focus the input
     document.addEventListener('keydown', (e) => {
@@ -50,6 +56,11 @@ export class SearchBar {
         this.input.focus();
       }
     });
+  }
+
+  private resize(): void {
+    this.input.style.height = 'auto';
+    this.input.style.height = `${this.input.scrollHeight}px`;
   }
 
   private submit(): void {
@@ -73,6 +84,7 @@ export class SearchBar {
 
   setValue(text: string): void {
     this.input.value = text;
+    this.resize();
     this.input.focus();
   }
 }

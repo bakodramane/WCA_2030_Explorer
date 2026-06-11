@@ -251,12 +251,11 @@ All search processing is **local to the device**:
   In production, `env.allowRemoteModels = false` is set in `src/engine/retrieval.ts`,
   making the runtime fully air-gapped.
 
-**Optional query log sharing:** The **Share query log** button in the footer is the
-one optional action that transmits data outside the browser. When a user clicks it,
-their query history (timestamps, query text, result tier, and relevance scores) is
-downloaded as a local CSV file **and**, if a Google Sheets endpoint is configured in
-`src/ui/App.ts`, sent to the maintainer to help improve the app. This transmission
-occurs only when the user explicitly clicks the button — no data is sent automatically.
+**Query log download:** The **Share query log** button in the footer downloads the
+user's query history (timestamps, query text, result tier, and relevance scores) as
+a local CSV file to the user's own device. No data is transmitted to any external
+server — the log is only ever downloaded locally and never sent anywhere automatically
+or otherwise.
 
 ---
 
