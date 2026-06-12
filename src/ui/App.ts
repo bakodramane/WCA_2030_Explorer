@@ -296,7 +296,7 @@ export class App {
   }
 
   private openGlossaryModal(): void {
-    const allEntries = this.engine.getGlossary();
+    const allEntries: GlossaryEntry[] = this.engine.getGlossary();
 
     const backdrop = document.createElement('div');
     backdrop.className = 'modal-backdrop';
