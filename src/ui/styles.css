@@ -1348,3 +1348,41 @@ body {
   font-size: 0.875rem;
   line-height: 1.4;
 }
+
+/* ── Hub modal choice rows ───────────────────────────────────────────── */
+.hub-modal-list {
+  padding: 0.25rem 0;
+}
+
+.hub-choice-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 0.85rem 1.25rem;
+  cursor: pointer;
+  min-height: 64px;
+  gap: 0.2rem;
+  transition: background 0.12s;
+}
+.hub-choice-row:last-of-type { border-bottom: none; }
+.hub-choice-row:hover { background: #f0f5f1; }
+
+.hub-choice-label {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.4;
+}
+
+.hub-choice-desc {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.5;
+}

@@ -64,13 +64,8 @@ export class App {
     const searchRow = document.createElement('div');
     searchRow.className = 'search-row';
     searchRow.appendChild(this.searchBar.element);
-    searchRow.appendChild(this.buildLearnButton());
-    searchRow.appendChild(this.buildTestButton());
-    searchRow.appendChild(this.buildBrowseButton());
-    searchRow.appendChild(this.buildItemsBrowseButton('essential'));
-    searchRow.appendChild(this.buildItemsBrowseButton('additional'));
-    searchRow.appendChild(this.buildThemeButton());
-    searchRow.appendChild(this.buildGlossaryButton());
+    searchRow.appendChild(this.buildLearnHubButton());
+    searchRow.appendChild(this.buildBrowseHubButton());
     header.appendChild(searchRow);
 
     // Suggestion chips — populated after engine loads; hidden after first search
@@ -133,16 +128,6 @@ export class App {
   }
 
   // ── Questions Bank modal ─────────────────────────────────────────────────
-
-  private buildBrowseButton(): HTMLButtonElement {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'browse-btn';
-    btn.textContent = 'Browse questions';
-    btn.setAttribute('aria-label', 'Browse the questions bank');
-    btn.addEventListener('click', () => this.openQaModal());
-    return btn;
-  }
 
   private openQaModal(): void {
     const questions = this.engine.getQaQuestions();
@@ -220,16 +205,6 @@ export class App {
     });
   }
 
-  private buildItemsBrowseButton(category: 'essential' | 'additional'): HTMLButtonElement {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'browse-btn';
-    btn.textContent = category === 'essential' ? 'Discover essential items' : 'Explore additional items';
-    btn.setAttribute('aria-label', `Browse ${category} items`);
-    btn.addEventListener('click', () => this.openItemsModal(category));
-    return btn;
-  }
-
   private openItemsModal(category: 'essential' | 'additional'): void {
     const items = this.engine.getItems(category).slice().sort((a, b) => a.code.localeCompare(b.code));
     const title = category === 'essential' ? 'Essential Items' : 'Additional Items';
@@ -287,16 +262,6 @@ export class App {
   }
 
   // ── Self-test modal ──────────────────────────────────────────────────────
-
-  private buildTestButton(): HTMLButtonElement {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'browse-btn browse-btn--test';
-    btn.textContent = 'Test yourself';
-    btn.setAttribute('aria-label', 'Test yourself with flashcard questions');
-    btn.addEventListener('click', () => this.openTestModal());
-    return btn;
-  }
 
   private openTestModal(): void {
     const allRows = this.engine.getAllQa();
@@ -459,16 +424,6 @@ export class App {
   }
 
   // ── Learn modal ──────────────────────────────────────────────────────────
-
-  private buildLearnButton(): HTMLButtonElement {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'browse-btn browse-btn--learn';
-    btn.textContent = 'Learn the WCA 2030';
-    btn.setAttribute('aria-label', 'Learn the WCA 2030 with guided modules');
-    btn.addEventListener('click', () => this.openLearnModal());
-    return btn;
-  }
 
   private readLearnProgress(): Record<string, number[]> {
     try {
@@ -688,16 +643,6 @@ export class App {
 
   // ── Theme explorer modal ──────────────────────────────────────────────────
 
-  private buildThemeButton(): HTMLButtonElement {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'browse-btn';
-    btn.textContent = 'Explore by theme';
-    btn.setAttribute('aria-label', 'Explore items by theme');
-    btn.addEventListener('click', () => this.openThemeModal());
-    return btn;
-  }
-
   private openThemeModal(): void {
     const themes = this.engine.getThemes();
 
@@ -810,16 +755,6 @@ export class App {
   }
 
   // ── Glossary modal ───────────────────────────────────────────────────────
-
-  private buildGlossaryButton(): HTMLButtonElement {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'browse-btn';
-    btn.textContent = 'Glossary';
-    btn.setAttribute('aria-label', 'Browse the WCA 2030 glossary');
-    btn.addEventListener('click', () => this.openGlossaryModal());
-    return btn;
-  }
 
   private openGlossaryModal(): void {
     const allEntries: GlossaryEntry[] = this.engine.getGlossary();
@@ -937,6 +872,138 @@ export class App {
     backdrop.addEventListener('click', (e) => {
       if (e.target === backdrop) closeModal();
     });
+    document.addEventListener('keydown', function onKey(e) {
+      if (e.key === 'Escape') { closeModal(); document.removeEventListener('keydown', onKey); }
+    });
+  }
+
+  // ── Hub buttons & modals ─────────────────────────────────────────────────
+
+  private buildLearnHubButton(): HTMLButtonElement {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'browse-btn';
+    btn.textContent = 'Learn';
+    btn.setAttribute('aria-label', 'Learn the WCA 2030');
+    btn.addEventListener('click', () => this.openLearnHubModal());
+    return btn;
+  }
+
+  private buildBrowseHubButton(): HTMLButtonElement {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'browse-btn';
+    btn.textContent = 'Browse';
+    btn.setAttribute('aria-label', 'Browse WCA 2030 content');
+    btn.addEventListener('click', () => this.openBrowseHubModal());
+    return btn;
+  }
+
+  private openLearnHubModal(): void {
+    this.openHubModal('Learn', 'Learn the WCA 2030', [
+      {
+        label:       'Guided learning path',
+        description: 'Work through the WCA 2030 module by module with questions and verified answers.',
+        action:      (close) => { close(); this.openLearnModal(); },
+      },
+      {
+        label:       'Test yourself',
+        description: 'Flashcard self-check — draw random questions and mark what you know.',
+        action:      (close) => { close(); this.openTestModal(); },
+      },
+      {
+        label:       'Glossary',
+        description: 'Browse and search WCA 2030 terms with verbatim definitions.',
+        action:      (close) => { close(); this.openGlossaryModal(); },
+      },
+    ]);
+  }
+
+  private openBrowseHubModal(): void {
+    this.openHubModal('Browse', 'Browse WCA 2030 content', [
+      {
+        label:       'Questions bank',
+        description: 'Browse all curated questions drawn from the WCA 2030 guidelines.',
+        action:      (close) => { close(); this.openQaModal(); },
+      },
+      {
+        label:       'Items catalogue',
+        description: 'Essential and additional census items with descriptions and reference periods.',
+        action:      (close) => { close(); this.openItemsSubHubModal(); },
+      },
+      {
+        label:       'Explore by theme',
+        description: 'Items grouped by the twelve WCA 2030 data themes.',
+        action:      (close) => { close(); this.openThemeModal(); },
+      },
+    ]);
+  }
+
+  private openItemsSubHubModal(): void {
+    this.openHubModal('Items catalogue', 'Items catalogue', [
+      {
+        label:       'Essential items',
+        description: 'The core set of items that all countries are expected to collect.',
+        action:      (close) => { close(); this.openItemsModal('essential'); },
+      },
+      {
+        label:       'Additional items',
+        description: 'Supplementary items for countries wishing to collect more in-depth data.',
+        action:      (close) => { close(); this.openItemsModal('additional'); },
+      },
+    ]);
+  }
+
+  private openHubModal(
+    title: string,
+    ariaLabel: string,
+    choices: Array<{ label: string; description: string; action: (close: () => void) => void }>,
+  ): void {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop';
+    backdrop.setAttribute('role', 'dialog');
+    backdrop.setAttribute('aria-modal', 'true');
+    backdrop.setAttribute('aria-label', ariaLabel);
+
+    const panel = document.createElement('div');
+    panel.className = 'modal-panel';
+
+    const modalHeader = document.createElement('div');
+    modalHeader.className = 'modal-header';
+    const titleEl = document.createElement('h2');
+    titleEl.className = 'modal-title';
+    titleEl.textContent = title;
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'modal-close';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.textContent = '×';
+    modalHeader.appendChild(titleEl);
+    modalHeader.appendChild(closeBtn);
+
+    const listEl = document.createElement('div');
+    listEl.className = 'modal-list hub-modal-list';
+
+    const closeModal = () => backdrop.remove();
+
+    for (const choice of choices) {
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'hub-choice-row';
+      row.innerHTML =
+        `<span class="hub-choice-label">${escHtml(choice.label)}</span>` +
+        `<span class="hub-choice-desc">${escHtml(choice.description)}</span>`;
+      row.addEventListener('click', () => choice.action(closeModal));
+      listEl.appendChild(row);
+    }
+
+    panel.appendChild(modalHeader);
+    panel.appendChild(listEl);
+    backdrop.appendChild(panel);
+    document.body.appendChild(backdrop);
+
+    closeBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', (e) => { if (e.target === backdrop) closeModal(); });
     document.addEventListener('keydown', function onKey(e) {
       if (e.key === 'Escape') { closeModal(); document.removeEventListener('keydown', onKey); }
     });
