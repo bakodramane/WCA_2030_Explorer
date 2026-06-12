@@ -947,6 +947,85 @@ body {
   text-align: center;
 }
 
+/* ── Test button ─────────────────────────────────────────────────────── */
+.browse-btn--test {
+  background: var(--surface);
+  color: var(--warn);
+  border: 2px solid var(--warn);
+}
+.browse-btn--test:hover { background: var(--warn); color: #fff; opacity: 1; }
+
+/* ── Test modal header (title + tally + close in one row) ────────────── */
+.test-modal-header {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.test-tally {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  margin-left: auto;
+  margin-right: 0.5rem;
+}
+.test-tally-known  { color: #16a34a; font-weight: 700; }
+.test-tally-review { color: var(--warn); font-weight: 700; }
+.test-tally-total  { color: var(--muted); }
+.test-tally-sep    { color: var(--muted); }
+
+/* ── Disclaimer banner ───────────────────────────────────────────────── */
+.test-disclaimer {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+  font-style: italic;
+  text-align: center;
+  padding: 0.4rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  margin: 0;
+  background: var(--bg);
+}
+
+/* ── Question card ───────────────────────────────────────────────────── */
+.test-question {
+  font-size: 1.05rem;
+  padding: 1.5rem 1.25rem 1rem;
+}
+
+/* ── Mark buttons (I knew this / Review again) ───────────────────────── */
+.test-mark-row {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem 1.25rem;
+}
+
+.test-mark-btn {
+  flex: 1;
+  padding: 0.65rem 0.5rem;
+  border: 2px solid;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+.test-mark-btn--known {
+  background: #f0fdf4;
+  border-color: #16a34a;
+  color: #15803d;
+}
+.test-mark-btn--known:hover  { background: #16a34a; color: #fff; }
+.test-mark-btn--review {
+  background: var(--warn-bg);
+  border-color: var(--warn);
+  color: var(--warn);
+}
+.test-mark-btn--review:hover { background: var(--warn); color: #fff; }
+
 /* ── Learn button (accent outline to stand out from solid browse btns) ── */
 .browse-btn--learn {
   background: var(--surface);

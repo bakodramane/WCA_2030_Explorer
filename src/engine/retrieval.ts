@@ -354,6 +354,11 @@ export class RetrievalEngine {
     return this.qaItems.map(r => r.question);
   }
 
+  /** Returns all Q&A rows, in load order. Used by the self-test mode. */
+  getAllQa(): QaRow[] {
+    return this.qaItems.slice();
+  }
+
   /** Return all items, optionally filtered by category, in load order. */
   getItems(category?: 'essential' | 'additional'): ItemRow[] {
     return category ? this.items.filter(i => i.category === category) : this.items;
