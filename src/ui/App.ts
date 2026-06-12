@@ -3,7 +3,7 @@ import { evaluate }         from '../engine/guardrail';
 import { logQuery, getLog, clearLog, toCSV } from '../engine/logger';
 import { SearchBar }        from './SearchBar';
 import { ResultCard }       from './ResultCard';
-import type { ItemRow }     from '../engine/types';
+import type { ItemRow, GlossaryEntry } from '../engine/types';
 
 
 export class App {
@@ -67,6 +67,7 @@ export class App {
     searchRow.appendChild(this.buildBrowseButton());
     searchRow.appendChild(this.buildItemsBrowseButton('essential'));
     searchRow.appendChild(this.buildItemsBrowseButton('additional'));
+    searchRow.appendChild(this.buildGlossaryButton());
     header.appendChild(searchRow);
 
     // Suggestion chips — populated after engine loads; hidden after first search
@@ -282,6 +283,139 @@ export class App {
     });
   }
 
+  // ── Glossary modal ───────────────────────────────────────────────────────
+
+  private buildGlossaryButton(): HTMLButtonElement {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'browse-btn';
+    btn.textContent = 'Glossary';
+    btn.setAttribute('aria-label', 'Browse the WCA 2030 glossary');
+    btn.addEventListener('click', () => this.openGlossaryModal());
+    return btn;
+  }
+
+  private openGlossaryModal(): void {
+    const allEntries = this.engine.getGlossary();
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop';
+    backdrop.setAttribute('role', 'dialog');
+    backdrop.setAttribute('aria-modal', 'true');
+    backdrop.setAttribute('aria-label', 'WCA 2030 Glossary');
+
+    const panel = document.createElement('div');
+    panel.className = 'modal-panel';
+
+    // Header
+    const modalHeader = document.createElement('div');
+    modalHeader.className = 'modal-header';
+    modalHeader.innerHTML = `<h2 class="modal-title">WCA 2030 Glossary</h2>`;
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'modal-close';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.textContent = '×';
+    modalHeader.appendChild(closeBtn);
+
+    // Filter input
+    const filterWrap = document.createElement('div');
+    filterWrap.className = 'modal-filter-wrap';
+    const filterInput = document.createElement('input');
+    filterInput.type = 'search';
+    filterInput.className = 'modal-filter-input';
+    filterInput.placeholder = 'Filter terms…';
+    filterInput.setAttribute('aria-label', 'Filter glossary terms');
+    filterWrap.appendChild(filterInput);
+
+    // List
+    const listEl = document.createElement('div');
+    listEl.className = 'modal-list glossary-modal-list';
+
+    // Track which entry is expanded
+    let expandedTerm: string | null = null;
+
+    const renderList = (filter: string) => {
+      const needle = filter.trim().toLowerCase();
+      const visible = needle
+        ? allEntries.filter(e => e.term.toLowerCase().includes(needle))
+        : allEntries;
+
+      listEl.innerHTML = '';
+      for (const entry of visible) {
+        const row = document.createElement('div');
+        row.className = 'glossary-row';
+
+        const termBtn = document.createElement('button');
+        termBtn.type = 'button';
+        termBtn.className = 'glossary-term-btn';
+        termBtn.textContent = entry.term;
+
+        const detail = document.createElement('div');
+        detail.className = 'glossary-detail';
+        detail.hidden = expandedTerm !== entry.term;
+        detail.innerHTML =
+          `<p class="glossary-definition">${escHtml(entry.definition)}</p>` +
+          (entry.reference
+            ? `<p class="glossary-reference">${escHtml(entry.reference)}</p>`
+            : '');
+
+        termBtn.addEventListener('click', () => {
+          const isOpen = !detail.hidden;
+          // Collapse all others
+          listEl.querySelectorAll<HTMLElement>('.glossary-detail').forEach(d => {
+            d.hidden = true;
+          });
+          listEl.querySelectorAll('.glossary-term-btn').forEach(b => {
+            b.classList.remove('glossary-term-btn--open');
+          });
+          if (!isOpen) {
+            detail.hidden = false;
+            termBtn.classList.add('glossary-term-btn--open');
+            expandedTerm = entry.term;
+          } else {
+            expandedTerm = null;
+          }
+        });
+
+        row.appendChild(termBtn);
+        row.appendChild(detail);
+        listEl.appendChild(row);
+      }
+
+      if (visible.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'glossary-empty';
+        empty.textContent = 'No terms match your filter.';
+        listEl.appendChild(empty);
+      }
+    };
+
+    renderList('');
+    filterInput.addEventListener('input', () => {
+      expandedTerm = null;
+      renderList(filterInput.value);
+    });
+
+    panel.appendChild(modalHeader);
+    panel.appendChild(filterWrap);
+    panel.appendChild(listEl);
+    backdrop.appendChild(panel);
+    document.body.appendChild(backdrop);
+
+    // Focus filter on open
+    setTimeout(() => filterInput.focus(), 50);
+
+    const closeModal = () => backdrop.remove();
+    closeBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) closeModal();
+    });
+    document.addEventListener('keydown', function onKey(e) {
+      if (e.key === 'Escape') { closeModal(); document.removeEventListener('keydown', onKey); }
+    });
+  }
+
   private showItemCard(item: ItemRow): void {
     if (!this.firstSearchDone) {
       this.firstSearchDone = true;
@@ -322,6 +456,21 @@ export class App {
           this.refreshLogControls();
           return;
         }
+      }
+
+      // ── Tier 0b: glossary exact-match ─────────────────────────────────────
+      const glossaryEntry = this.engine.lookupTerm(query.trim());
+      if (glossaryEntry) {
+        logQuery({
+          timestamp: new Date().toISOString(),
+          query,
+          tier:    'glossary',
+          score:   1,
+          matched: glossaryEntry.term,
+        });
+        this.resultsArea.appendChild(ResultCard.renderGlossary(glossaryEntry));
+        this.refreshLogControls();
+        return;
       }
 
       // ── Tier 1: curated Q&A match ──────────────────────────────────────────

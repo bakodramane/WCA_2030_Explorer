@@ -1,0 +1,592 @@
+[
+  {
+    "term": "Additional items",
+    "definition": "One of the two categories of census items provided for countries wishing to collect – preferably on a sample basis – more in-depth (supplementary) data on specific themes. These may be collected using either the classical or modular approach (paragraph 1.26). Some of these items can be used to provide sampling frames for census supplementary modules and relevant sample surveys.",
+    "reference": ""
+  },
+  {
+    "term": "Agricultural holder",
+    "definition": "A civil person, group of civil persons or juridical person who makes the major decisions regarding resource use and exercises management control over the agricultural holding (paragraph 4.21).",
+    "reference": "paragraph 4.21"
+  },
+  {
+    "term": "Agricultural holding",
+    "definition": "An economic unit of agricultural production under single management, comprising all livestock kept and all land used wholly or partly for agricultural production purposes, regardless of title, legal form or size (paragraphs 4.3–4.5).",
+    "reference": "paragraphs 4.3–4.5"
+  },
+  {
+    "term": "Agricultural land",
+    "definition": "Total cropland and permanent meadows and pastures (paragraph 7.2.37).",
+    "reference": "paragraph 7.2.37"
+  },
+  {
+    "term": "Agriculture structure survey",
+    "definition": "A sample survey aimed at collecting structural data for the entire country or substantial regions of it (paragraph 5.5).",
+    "reference": "paragraph 5.5"
+  },
+  {
+    "term": "Agroforestry",
+    "definition": "A sustainable land management system in which forest species of trees and other woody plants are purposefully grown on the same land as agricultural crops or livestock, either concurrently or in rotation (Annex 4, Theme 11, paragraph 13).",
+    "reference": "Annex 4, Theme 11, paragraph 13"
+  },
+  {
+    "term": "Aquacultural census",
+    "definition": "A collection of structural data from all aquacultural production units (paragraphs 3.30–3.32).",
+    "reference": "paragraphs 3.30–3.32"
+  },
+  {
+    "term": "Aquacultural holding",
+    "definition": "An economic unit of aquacultural production under single management, comprising all aquaculture facilities regardless of title, legal form or size (paragraphs 3.33–3.35).",
+    "reference": "paragraphs 3.33–3.35"
+  },
+  {
+    "term": "Aquaculture",
+    "definition": "The farming of aquatic organisms such as fish, crustaceans, molluscs and aquatic plants, as opposed to capture fishing (paragraphs 7.10.3–7.10.4).",
+    "reference": "paragraphs 7.10.3–7.10.4"
+  },
+  {
+    "term": "Arable land",
+    "definition": "Land used for the cultivation of crops in rotation with fallow, meadows and pastures within cycles of up to five years. Includes areas under “temporary crops”, “temporary meadows and pastures” and “temporary fallow” (paragraph 7.2.37).",
+    "reference": "paragraph 7.2.37"
+  },
+  {
+    "term": "Archiving",
+    "definition": "A means of ensuring the long-term preservation of data, including its understandability by users (paragraph 10.29).",
+    "reference": "paragraph 10.29"
+  },
+  {
+    "term": "Area frame",
+    "definition": "A set of land elements, which may be either points or segments of land. The sampling process may involve single or multiple stages. In most agricultural area frame surveys, the sampling unit is associated with a holding.",
+    "reference": ""
+  },
+  {
+    "term": "Associated crop",
+    "definition": "A temporary crop grown in a compact plantation of permanent crops (paragraph 7.4.13).",
+    "reference": "paragraph 7.4.13"
+  },
+  {
+    "term": "Biofertilizers",
+    "definition": "Products containing living or dormant micro-organisms, such as bacteria and fungi, which provide nutrients to enhance plant growth (paragraph 7.4.27).",
+    "reference": "paragraph 7.4.27"
+  },
+  {
+    "term": "Biofuel",
+    "definition": "Fuel, such as biogas or biodiesel, produced over a short time span from biomass, rather than by the slow natural processes involved in the formation of fossil fuels. Biofuel can be derived from plants or from agricultural, domestic or industrial biowaste.",
+    "reference": ""
+  },
+  {
+    "term": "Census",
+    "definition": "A statistical collection involving the enumeration of all units of a pre-defined population.",
+    "reference": ""
+  },
+  {
+    "term": "Census classical approach",
+    "definition": "A census conducted as a single one-off operation in which all census information is recorded (paragraphs 5.6–5.7).",
+    "reference": "paragraphs 5.6–5.7"
+  },
+  {
+    "term": "Census core module",
+    "definition": "The primary agricultural census collection in the modular approach, conducted as a complete enumeration to provide key structural data and frames for supplementary modules (paragraphs 5.8–5.9).",
+    "reference": "paragraphs 5.8–5.9"
+  },
+  {
+    "term": "Census coverage",
+    "definition": "The set of agricultural producers in a country covered by census activities. Some countries may omit certain areas, such as urban or remote regions, or specific types of holdings (e.g. small subsistence holdings), for operational reasons (paragraph 4.29).",
+    "reference": "paragraph 4.29"
+  },
+  {
+    "term": "Census modular approach",
+    "definition": "A census approach consisting of a clearly defined core module and supplementary sample-based modules, with the core module providing the frame for the supplementary ones (paragraphs 5.8–5.11).",
+    "reference": "paragraphs 5.8–5.11"
+  },
+  {
+    "term": "Census of agriculture",
+    "definition": "A statistical operation for collecting, processing and disseminating data on the structure of agriculture, covering the whole or a significant part of a country (paragraph 1.1).",
+    "reference": "paragraph 1.1"
+  },
+  {
+    "term": "Census of agriculture and aquaculture",
+    "definition": "A combined enumeration system that includes both an agricultural census and an aquacultural census (paragraph 3.30).",
+    "reference": "paragraph 3.30"
+  },
+  {
+    "term": "Census reference day",
+    "definition": "A point in time used for data collection on livestock numbers and other inventory items (paragraph 4.37).",
+    "reference": "paragraph 4.37"
+  },
+  {
+    "term": "Census reference year",
+    "definition": "A period of twelve months – either a calendar year or an agricultural year – generally encompassing the various reference dates or periods of data collection for non-inventory items (paragraph 4.37).",
+    "reference": "paragraph 4.37"
+  },
+  {
+    "term": "Census scope",
+    "definition": "The types of agricultural production activities included in the agricultural census. The WCA 2030 defines the census scope as the units engaged in the production of crop and livestock products. Units engaged in forestry, fishing and aquaculture are not covered unless they also had some crop or livestock production activities (paragraph 4.25).",
+    "reference": "paragraph 4.25"
+  },
+  {
+    "term": "Census supplementary module",
+    "definition": "A sample-based module used in the modular approach in conjunction with the core census module, designed to target specific populations and collect more in-depth data (paragraph 5.11).",
+    "reference": "paragraph 5.11"
+  },
+  {
+    "term": "Classification variables",
+    "definition": "Characteristics used for the classification of data in cross-tabulations (paragraph 9.6).",
+    "reference": "paragraph 9.6"
+  },
+  {
+    "term": "Common pasture",
+    "definition": "Land not owned by the agricultural holding, but over which common rights apply. Typically owned by a public authority and subject to shared usage rights (Annex 4, Theme 6, paragraph 40).",
+    "reference": "Annex 4, Theme 6, paragraph 40"
+  },
+  {
+    "term": "Communal land",
+    "definition": "Land collectively owned and managed by a community or state, rather than by individuals or private entities.",
+    "reference": ""
+  },
+  {
+    "term": "Community-level data",
+    "definition": "Data collected at the community-level, such as community infrastructure and services, communal grazing areas, forest areas, or irrigation-equipped zones (paragraph 8.2).",
+    "reference": "paragraph 8.2"
+  },
+  {
+    "term": "Compact plantation",
+    "definition": "Plants, trees or shrubs planted in a regular or dense manner – typically forming an orchard – to which a specific area can be attributed (Annex 4, Theme 4, paragraph 13).",
+    "reference": "Annex 4, Theme 4, paragraph 13"
+  },
+  {
+    "term": "Complete enumeration",
+    "definition": "Collection of data from all units of the population, as opposed to sample-based enumeration.",
+    "reference": ""
+  },
+  {
+    "term": "Compost",
+    "definition": "Organic material of animal, plant or human origin, partially decomposed through fermentation, used to improve soil structure and provide nutrients (paragraph 7.4.29).",
+    "reference": "paragraph 7.4.29"
+  },
+  {
+    "term": "Computer-assisted personal interviewing (CAPI)",
+    "definition": "A mode of interviewing where enumerators record responses using an electronic questionnaire on mobile devices, such as tablets, smartphones or laptops (paragraph 5.46).",
+    "reference": "paragraph 5.46"
+  },
+  {
+    "term": "Computer-assisted telephone interviewing (CATI)",
+    "definition": "A data collection mode conducted by telephone, with operators reading questions and recording answers directly into a computer (paragraph 5.46).",
+    "reference": "paragraph 5.46"
+  },
+  {
+    "term": "Computer-assisted web interviewing (CAWI)",
+    "definition": "A data collection mode whereby respondents complete secure online questionnaires (paragraph 5.47).",
+    "reference": "paragraph 5.47"
+  },
+  {
+    "term": "Conservation agriculture",
+    "definition": "A sustainable farming system combining crop rotation, minimal soil disturbance (e.g. zero or no tillage), and permanent soil cover (Annex 4, Theme 6, paragraph 27).",
+    "reference": "Annex 4, Theme 6, paragraph 27"
+  },
+  {
+    "term": "Crop rotation",
+    "definition": "The practice of growing different species or families of crops in a planned sequence over time on the same field (Annex 4, Theme 6, paragraph 30).",
+    "reference": "Annex 4, Theme 6, paragraph 30"
+  },
+  {
+    "term": "Cropland",
+    "definition": "The total of arable land and land under permanent crops (paragraph 7.2.37).",
+    "reference": "paragraph 7.2.37"
+  },
+  {
+    "term": "Cross-tabulations",
+    "definition": "Statistical tables showing data classified by two variables simultaneously (paragraph 9.7).",
+    "reference": "paragraph 9.7"
+  },
+  {
+    "term": "Current agricultural statistics",
+    "definition": "Ongoing statistics on aspects such as agricultural production and prices, as distinct from structural data collected through the agricultural census.",
+    "reference": ""
+  },
+  {
+    "term": "Cut-off threshold",
+    "definition": "The minimum size limit for including agricultural units in the census (paragraph 4.33).",
+    "reference": "paragraph 4.33"
+  },
+  {
+    "term": "Digester (biogas reactor)",
+    "definition": "A containment structure in which animal excreta – with or without straw or other organic material – are anaerobically decomposed to produce biogas (Annex 4, Theme 6, paragraph 48).",
+    "reference": "Annex 4, Theme 6, paragraph 48"
+  },
+  {
+    "term": "Drainage",
+    "definition": "The artificial removal of excess surface or groundwater, including dissolved substances, to enhance agricultural production (Annex 4, Theme 3, paragraphs 23–24).",
+    "reference": "Annex 4, Theme 3, paragraphs 23–24"
+  },
+  {
+    "term": "Educational attainment",
+    "definition": "The highest grade of formal education completed or attended by a person (paragraphs 7.1.18–7.1.19).",
+    "reference": "paragraphs 7.1.18–7.1.19"
+  },
+  {
+    "term": "Employee",
+    "definition": "A person who holds a paid employment job (Annex 10).",
+    "reference": "Annex 10"
+  },
+  {
+    "term": "Employer",
+    "definition": "A self-employed person who, alone or with partners, has engaged one or more persons on a continuous basis to work as employees (Annex 10).",
+    "reference": "Annex 10"
+  },
+  {
+    "term": "Enterprise",
+    "definition": "An economic unit of production, under single management, that independently directs and manages all functions necessary for production (Annex 1).",
+    "reference": "Annex 1"
+  },
+  {
+    "term": "Enumeration area",
+    "definition": "A small geographic unit defined for the purposes of census enumeration (paragraph 5.31).",
+    "reference": "paragraph 5.31"
+  },
+  {
+    "term": "Essential items",
+    "definition": "The minimum set of structural census items that all countries should collect, regardless of the approach taken (paragraph 1.24). Some may be used to create sampling frames for supplementary modules or surveys.",
+    "reference": ""
+  },
+  {
+    "term": "Establishment",
+    "definition": "An enterprise – or part thereof – located at a single site and engaged primarily in one type of production activity (Annex 1).",
+    "reference": "Annex 1"
+  },
+  {
+    "term": "Fertilizers",
+    "definition": "Substances – either mineral or organic, natural or manufactured – applied to soil, irrigation water or hydroponic media to provide plant nutrients or enhance growth (paragraph 7.4.23).",
+    "reference": "paragraph 7.4.23"
+  },
+  {
+    "term": "Field",
+    "definition": "A portion of a parcel that is physically demarcated from the rest by visible boundaries such as fences, paths or waterways (paragraph 4.20).",
+    "reference": "paragraph 4.20"
+  },
+  {
+    "term": "Forest land",
+    "definition": "Land spanning more than 0.5 ha with trees taller than 5 m and a canopy cover of over 10 percent, or with trees capable of reaching these thresholds in situ (paragraph 7.2.30).",
+    "reference": "paragraph 7.2.30"
+  },
+  {
+    "term": "Frame",
+    "definition": "The basis used for identifying all statistical units to be enumerated in a statistical collection.",
+    "reference": ""
+  },
+  {
+    "term": "Georeferencing",
+    "definition": "The process of aligning maps or images with geographic coordinates to determine the exact location of points on the Earth’s surface.",
+    "reference": ""
+  },
+  {
+    "term": "Global Positioning System (GPS)",
+    "definition": "A satellite-based system used to georeference locations on the Earth’s surface by latitude and longitude. Also used to measure areas (paragraph 5.56).",
+    "reference": "paragraph 5.56"
+  },
+  {
+    "term": "Gross area",
+    "definition": "The total area including uncultivated patches, bunds, footpaths, ditches, and other land features; used in land use measurement (paragraph 7.2.20).",
+    "reference": "paragraph 7.2.20"
+  },
+  {
+    "term": "Holder",
+    "definition": "See agricultural holder.",
+    "reference": ""
+  },
+  {
+    "term": "Holding",
+    "definition": "See agricultural holding.",
+    "reference": ""
+  },
+  {
+    "term": "Holdings in the household sector",
+    "definition": "Agricultural holdings operated by household members (paragraph 4.5).",
+    "reference": "paragraph 4.5"
+  },
+  {
+    "term": "Holdings in the non-household sector",
+    "definition": "Agricultural holdings operated by entities outside the household sector, such as corporations or cooperatives (paragraph 4.5).",
+    "reference": "paragraph 4.5"
+  },
+  {
+    "term": "Household",
+    "definition": "A group of persons who make common arrangements for food and other essentials for living, either individually or collectively (paragraphs 4.6–4.7).",
+    "reference": "paragraphs 4.6–4.7"
+  },
+  {
+    "term": "Inter-planted crops",
+    "definition": "Crops planted between the rows of another crop (paragraph 7.4.10).",
+    "reference": "paragraph 7.4.10"
+  },
+  {
+    "term": "Irrigation",
+    "definition": "The purposeful application of water to land – other than by rainfall – to support crop or pasture production (paragraphs 7.3.1–7.3.3).",
+    "reference": "paragraphs 7.3.1–7.3.3"
+  },
+  {
+    "term": "Joint holder",
+    "definition": "A person who shares responsibility for decision-making and management control of the agricultural holding, along with one or more others (paragraph 4.22).",
+    "reference": "paragraph 4.22"
+  },
+  {
+    "term": "Land tenure",
+    "definition": "The legal or customary arrangements under which land on the holding is operated (paragraphs 7.2.38–7.2.44).",
+    "reference": "paragraphs 7.2.38–7.2.44"
+  },
+  {
+    "term": "Land under farm buildings and farmyards",
+    "definition": "Agricultural land occupied by residential or operating buildings on farms – including greenhouses, silos, animal housing and kitchen gardens – but excluding purely residential or agrifood manufacturing facilities (paragraph 7.2.29).",
+    "reference": "paragraph 7.2.29"
+  },
+  {
+    "term": "Land use classification",
+    "definition": "Classification of land based on its primary activity or use (paragraphs 7.2.8–7.2.37).",
+    "reference": "paragraphs 7.2.8–7.2.37"
+  },
+  {
+    "term": "Land used for agriculture",
+    "definition": "The total of agricultural land and land under farm buildings and farmyards (paragraph 7.2.37).",
+    "reference": "paragraph 7.2.37"
+  },
+  {
+    "term": "Legal status of the holder",
+    "definition": "The legal form or entity type under which the agricultural holding is operated (paragraph 7.1.6).",
+    "reference": "paragraph 7.1.6"
+  },
+  {
+    "term": "Liquid manure",
+    "definition": "Animal urine, possibly mixed with small quantities of faeces and/or water (paragraph 7.4.28).",
+    "reference": "paragraph 7.4.28"
+  },
+  {
+    "term": "List frame",
+    "definition": "A listing of agricultural holdings and/or households derived from censuses, registers or administrative sources, used as a sampling frame. Enumeration areas may be used as a proxy if such lists are unavailable.",
+    "reference": ""
+  },
+  {
+    "term": "Livestock",
+    "definition": "All animals, birds and insects reared or kept in captivity primarily for agricultural purposes (paragraphs 7.5.1–7.5.2).",
+    "reference": "paragraphs 7.5.1–7.5.2"
+  },
+  {
+    "term": "Machinery and equipment",
+    "definition": "Tools and machines – ranging from hand tools to complex equipment such as tractors and harvesters – used as inputs in agricultural production (see Item 0604 and Annex 9).",
+    "reference": ""
+  },
+  {
+    "term": "Manager",
+    "definition": "A person appointed to manage an agricultural holding on behalf of the holder and who is responsible for the daily operations and financial decisions. In the household sector, the manager and the holder are usually the same person. However, when they are not, the manager may be an employee of the holding (a hired manager), who is paid in cash, in kind or both, or they may be a non-paid person, such as a family member or other unpaid individual (paragraph 4.23).",
+    "reference": "paragraph 4.23"
+  },
+  {
+    "term": "Manure",
+    "definition": "Fertilizer made from organic material, including animal or plant matter (paragraphs 7.4.28–7.4.29).",
+    "reference": "paragraphs 7.4.28–7.4.29"
+  },
+  {
+    "term": "Metadata",
+    "definition": "Descriptive information that explains what the data measure and how they were created, supporting appropriate interpretation and use (paragraph 10.3).",
+    "reference": "paragraph 10.3"
+  },
+  {
+    "term": "Microdata",
+    "definition": "Data recorded at the unit level – typically the holding or household – during an agricultural census. Each set of information about a unit constitutes a microdata record (paragraph 10.14).",
+    "reference": "paragraph 10.14"
+  },
+  {
+    "term": "Mineral fertilizers",
+    "definition": "Fertilizers manufactured from inorganic materials through industrial processes (paragraph 7.4.24).",
+    "reference": "paragraph 7.4.24"
+  },
+  {
+    "term": "Mixed crops",
+    "definition": "Two or more crops grown together in a field without a systematic planting pattern (paragraph 7.4.11).",
+    "reference": "paragraph 7.4.11"
+  },
+  {
+    "term": "Net area",
+    "definition": "The cultivated area excluding uncultivated patches, bunds, paths, ditches and other non-productive features; used for estimating crop area, yield and production (paragraph 7.2.20).",
+    "reference": "paragraph 7.2.20"
+  },
+  {
+    "term": "Nursery",
+    "definition": "An area used for propagating young plants, trees or vines for later transplanting (Annex 4, Theme 4, paragraph 22).",
+    "reference": "Annex 4, Theme 4, paragraph 22"
+  },
+  {
+    "term": "Organic agriculture",
+    "definition": "A holistic production management system that promotes agro-ecosystem health, biodiversity and soil biological activity (Annex 4, Theme 6, paragraph 7).",
+    "reference": "Annex 4, Theme 6, paragraph 7"
+  },
+  {
+    "term": "Organic fertilizers",
+    "definition": "Fertilizers made from processed plant or animal material and/or unprocessed natural mineral material, containing at least five percent combined plant nutrients (paragraph 7.4.26).",
+    "reference": "paragraph 7.4.26"
+  },
+  {
+    "term": "Organo-mineral fertilizers",
+    "definition": "Fertilizers produced by blending or processing organic materials with mineral fertilizers to improve nutrient content and effectiveness (paragraph 7.4.25).",
+    "reference": "paragraph 7.4.25"
+  },
+  {
+    "term": "Other wooded land",
+    "definition": "Land spanning more than 0.5 ha with any of the following: (i) trees taller than 5 m with canopy cover of 5–10 percent, or trees able to reach these thresholds in situ, (ii) trees unable to reach 5 m but with canopy cover above 10 percent; or (iii) combined cover of shrubs, bushes and trees exceeding 10 percent (paragraph 7.2.30).",
+    "reference": "paragraph 7.2.30"
+  },
+  {
+    "term": "Own-use production work",
+    "definition": "Production of goods and services for own final use, carried out without monetary compensation (Annex 10).",
+    "reference": "Annex 10"
+  },
+  {
+    "term": "Parcel",
+    "definition": "A contiguous piece of land of uniform land tenure type, surrounded by land, water, roads or other features not belonging to the holding, or belonging to the holding under a different tenure arrangement (paragraph 4.19).",
+    "reference": "paragraph 4.19"
+  },
+  {
+    "term": "Pen and paper interviewing (PAPI)",
+    "definition": "A traditional data collection mode in which enumerators record responses on paper questionnaires (paragraph 5.45).",
+    "reference": "paragraph 5.45"
+  },
+  {
+    "term": "Permanent crops",
+    "definition": "Crops with a life cycle exceeding one year (paragraph 7.4.16).",
+    "reference": "paragraph 7.4.16"
+  },
+  {
+    "term": "Persons in employment",
+    "definition": "Persons of working age who, during a short reference period, were engaged in any activity to produce goods or provide services for pay or profit (Annex 10).",
+    "reference": "Annex 10"
+  },
+  {
+    "term": "Persons in own-use production work of goods",
+    "definition": "Persons of working age who, during a short reference period, engaged in producing goods for own final use for at least one cumulative hour (Annex 10).",
+    "reference": "Annex 10"
+  },
+  {
+    "term": "Pesticides",
+    "definition": "Substances – chemical, biological or synthetic – intended for repelling, destroying or controlling pests, or regulating plant growth (paragraph 7.6.2).",
+    "reference": "paragraph 7.6.2"
+  },
+  {
+    "term": "Plot",
+    "definition": "A part or the entirety of a field on which a specific crop or crop mixture is cultivated (paragraph 4.20).",
+    "reference": "paragraph 4.20"
+  },
+  {
+    "term": "Population census",
+    "definition": "The total process of planning, collecting, processing, disseminating and evaluating demographic, economic and social data at the smallest geographical level pertaining, at a specified time, to all persons in a country or in a well-delimited part of a country (UN, 2025, paragraph 1.4).",
+    "reference": ""
+  },
+  {
+    "term": "Production",
+    "definition": "The actual quantity of produce, after drying and processing, ready for sale or consumption (Annex 4, Theme 4, paragraph 9).",
+    "reference": "Annex 4, Theme 4, paragraph 9"
+  },
+  {
+    "term": "Protective cover",
+    "definition": "A permanent structure, with a roof made of glass, plastic or other materials, used to protect crops from weather, pests or diseases (Annex 4, Theme 4, paragraph 25).",
+    "reference": "Annex 4, Theme 4, paragraph 25"
+  },
+  {
+    "term": "Reference group",
+    "definition": "The group of holdings to be tabulated for a specific item. For example, “area irrigated” is only meaningful for holdings with land (paragraph 9.9).",
+    "reference": "paragraph 9.9"
+  },
+  {
+    "term": "Sample enumeration",
+    "definition": "In the agricultural census, the process of selecting part or all of the target population for supplementary modules in the modular approach (paragraph 5.11).",
+    "reference": "paragraph 5.11"
+  },
+  {
+    "term": "Sample survey",
+    "definition": "A statistical operation in which data are collected from a representative sample of units, rather than from all units as in a census.",
+    "reference": ""
+  },
+  {
+    "term": "Sampling errors",
+    "definition": "Errors arising in survey statistics because data are collected from only a sample of the population rather than from the whole population.",
+    "reference": ""
+  },
+  {
+    "term": "Sampling frame",
+    "definition": "A list or other source of information that defines the population from which a sample is drawn (paragraph 2.37).",
+    "reference": "paragraph 2.37"
+  },
+  {
+    "term": "Scattered plants",
+    "definition": "Plants or trees distributed in such a way that the area they occupy cannot be estimated (often found around the holding) (paragraph 7.4.22).",
+    "reference": "paragraph 7.4.22"
+  },
+  {
+    "term": "Seeds produced by modern biotechnologies",
+    "definition": "Seeds containing a novel combination of genetic material obtained through modern biotechnology, including genetically modified and gene-edited seeds (Annex 4, Theme 6, paragraph 1).",
+    "reference": "Annex 4, Theme 6, paragraph 1"
+  },
+  {
+    "term": "Shifting cultivation",
+    "definition": "A farming practice in which a plot of land is cultivated for some years and then left fallow for a sufficient period to restore fertility before being re-cultivated (Annex 4, Theme 2, paragraph 14).",
+    "reference": "Annex 4, Theme 2, paragraph 14"
+  },
+  {
+    "term": "Slurry",
+    "definition": "Manure in liquid form – a mixture of excreta and urine of domestic animals, possibly with water and/or small amounts of litter (paragraph 7.4.28).",
+    "reference": "paragraph 7.4.28"
+  },
+  {
+    "term": "Soil conservation practices",
+    "definition": "Sustainable land use and management practices aimed at preventing or reversing soil degradation (Annex 4, Theme 6, paragraph 28).",
+    "reference": "Annex 4, Theme 6, paragraph 28"
+  },
+  {
+    "term": "Solid/farmyard manure",
+    "definition": "The excrement of domestic animals, with or without litter, possibly including a small amount of urine (paragraph 7.4.28).",
+    "reference": "paragraph 7.4.28"
+  },
+  {
+    "term": "Statistical unit",
+    "definition": "The basic unit for which data are collected. In the agricultural census, the statistical unit is the agricultural holding (paragraph 4.2).",
+    "reference": "paragraph 4.2"
+  },
+  {
+    "term": "Structural data",
+    "definition": "Data on the fundamental organizational features of agricultural holdings that change little over time, such as holding size, land tenure, land use, crop area, irrigation, livestock numbers, labour and use of inputs.",
+    "reference": ""
+  },
+  {
+    "term": "Successive crops",
+    "definition": "Temporary crops cultivated more than once on the same land within a single agricultural year (paragraphs 7.4.8–7.4.9).",
+    "reference": "paragraphs 7.4.8–7.4.9"
+  },
+  {
+    "term": "Table",
+    "definition": "A structured presentation of statistical data, typically used to summarize results (paragraph 9.2).",
+    "reference": "paragraph 9.2"
+  },
+  {
+    "term": "Tabulation programme",
+    "definition": "The set of statistical tables prepared to present the main results of an agricultural census (paragraph 9.2).",
+    "reference": "paragraph 9.2"
+  },
+  {
+    "term": "Temporary crops",
+    "definition": "Crops with a growing cycle of less than one year (paragraph 7.2.18).",
+    "reference": "paragraph 7.2.18"
+  },
+  {
+    "term": "Theme",
+    "definition": "A broad subject category containing a group of related census items.",
+    "reference": ""
+  },
+  {
+    "term": "Tillage",
+    "definition": "The physical loosening of soil carried out through various cultivation operations, either manually or mechanically (Annex 4, Theme 6, paragraph 20).",
+    "reference": "Annex 4, Theme 6, paragraph 20"
+  },
+  {
+    "term": "Woodland",
+    "definition": "Land that meets all the criteria for forest land or other wooded land except for the minimum area requirement of 0.5 ha (Annex 4, Theme 11, paragraph 4).",
+    "reference": "Annex 4, Theme 11, paragraph 4"
+  }
+]

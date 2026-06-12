@@ -1,4 +1,4 @@
-import type { RankedResult, QaResult, ItemRow, DescriptionBlock } from '../engine/types';
+import type { RankedResult, QaResult, ItemRow, DescriptionBlock, GlossaryEntry } from '../engine/types';
 import type { GuardrailResponse } from '../engine/guardrail';
 import { STOP_WORDS } from '../engine/stopwords';
 
@@ -239,6 +239,43 @@ export class ResultCard {
       </div>
       <footer class="card-footer">
         <span class="match-badge match-badge--item">item</span>
+        <button class="copy-btn" type="button"
+                data-citation="${esc(citationText)}">
+          Copy citation
+        </button>
+      </footer>
+    `;
+
+    card.querySelector<HTMLButtonElement>('.copy-btn')!
+      .addEventListener('click', ResultCard.handleCopy);
+
+    return card;
+  }
+
+  /** Render a glossary entry as a card in the results area. */
+  static renderGlossary(entry: GlossaryEntry): HTMLElement {
+    const card = document.createElement('article');
+    card.className = 'result-card result-card--glossary';
+
+    const refHtml = entry.reference
+      ? `<p class="glossary-reference">${esc(entry.reference)}</p>`
+      : '';
+
+    const citationText = entry.reference
+      ? `WCA 2030 Glossary — ${entry.term}: ${entry.definition.slice(0, 80)}… (${entry.reference})`
+      : `WCA 2030 Glossary — ${entry.term}: ${entry.definition.slice(0, 80)}…`;
+
+    card.innerHTML = `
+      <header class="card-header">
+        <span class="glossary-badge">Glossary</span>
+        <span class="card-section">${esc(entry.term)}</span>
+      </header>
+      <div class="card-body">
+        <p class="glossary-definition">${esc(entry.definition)}</p>
+        ${refHtml}
+      </div>
+      <footer class="card-footer">
+        <span class="match-badge match-badge--glossary">glossary</span>
         <button class="copy-btn" type="button"
                 data-citation="${esc(citationText)}">
           Copy citation

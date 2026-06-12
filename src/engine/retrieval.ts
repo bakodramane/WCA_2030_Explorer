@@ -1,6 +1,6 @@
 import MiniSearch from 'minisearch';
 import { pipeline, env } from '@xenova/transformers';
-import type { Chunk, RankedResult, SectionResult, SectionDebugEntry, QaRow, QaResult, ItemRow } from './types';
+import type { Chunk, RankedResult, SectionResult, SectionDebugEntry, QaRow, QaResult, ItemRow, GlossaryEntry } from './types';
 import { STOP_WORDS } from './stopwords';
 import { expandQuery } from './query';
 
@@ -79,6 +79,9 @@ export class RetrievalEngine {
   // ── Item catalogue ─────────────────────────────────────────────────────────
   private items: ItemRow[] = [];
 
+  // ── Glossary ───────────────────────────────────────────────────────────────
+  private glossary: GlossaryEntry[] = [];
+
   /**
    * Load chunks.json, initialise the offline embedding model, and build the
    * BM25 lexical index.  Must be called once before any search method.
@@ -110,6 +113,14 @@ export class RetrievalEngine {
       this.items = await itemsRes.json();
     } catch {
       this.items = [];
+    }
+
+    // 1d. Load the glossary
+    try {
+      const glossaryRes = await fetch(import.meta.env.BASE_URL + 'data/glossary.json');
+      this.glossary = await glossaryRes.json();
+    } catch {
+      this.glossary = [];
     }
 
     // 2. Load the embedding model from the offline /models/ cache
@@ -351,6 +362,19 @@ export class RetrievalEngine {
   /** Return the item with the given 4-digit zero-padded code, or null. */
   lookupItem(code: string): ItemRow | null {
     return this.items.find(i => i.code === code) ?? null;
+  }
+
+  /** Returns all glossary entries sorted alphabetically by term. */
+  getGlossary(): GlossaryEntry[] {
+    return this.glossary.slice().sort((a, b) =>
+      a.term.toLowerCase().localeCompare(b.term.toLowerCase()),
+    );
+  }
+
+  /** Case-insensitive exact match against all glossary terms; returns null if not found. */
+  lookupTerm(term: string): GlossaryEntry | null {
+    const needle = term.trim().toLowerCase();
+    return this.glossary.find(e => e.term.toLowerCase() === needle) ?? null;
   }
 
   /**

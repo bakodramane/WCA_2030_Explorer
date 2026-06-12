@@ -46,12 +46,20 @@ export interface ItemRow {
   category:          'essential' | 'additional';
 }
 
+// ── Glossary ──────────────────────────────────────────────────────────────────
+
+export interface GlossaryEntry {
+  term:       string;
+  definition: string;
+  reference:  string;   // paragraph / annex citation; may be empty
+}
+
 // ── Query log ─────────────────────────────────────────────────────────────────
 
 export interface QueryLogEntry {
   timestamp: string;  // ISO 8601, e.g. "2026-06-03T14:22:11Z"
   query:     string;
-  tier:      'verified' | 'document' | 'not-found' | 'item';
+  tier:      'verified' | 'document' | 'not-found' | 'item' | 'glossary';
   score:     number;  // best score from whichever tier answered (0 if not-found)
   matched:   string;  // Tier-1: matched question text; Tier-2: section title; Tier-3: ""
 }
