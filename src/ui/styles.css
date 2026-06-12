@@ -947,6 +947,74 @@ body {
   text-align: center;
 }
 
+/* ── Theme explorer modal ────────────────────────────────────────────── */
+.theme-modal-list {
+  padding: 0;
+}
+
+.theme-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 0.8rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--ink);
+  cursor: pointer;
+  min-height: 44px;
+  transition: background 0.12s;
+  gap: 0.5rem;
+}
+.theme-row:last-of-type { border-bottom: none; }
+.theme-row:hover { background: #f0f5f1; color: var(--accent); }
+
+.theme-row-label {
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.theme-row-count {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.theme-back-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--bg);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 0.6rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent);
+  cursor: pointer;
+  transition: opacity 0.12s;
+}
+.theme-back-btn:hover { opacity: 0.7; }
+
+.theme-group-heading {
+  padding: 0.5rem 1.25rem 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  margin: 0;
+}
+
 /* ── Item browse modal rows ──────────────────────────────────────────── */
 .modal-item-row {
   display: flex;

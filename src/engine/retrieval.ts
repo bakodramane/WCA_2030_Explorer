@@ -364,6 +364,25 @@ export class RetrievalEngine {
     return this.items.find(i => i.code === code) ?? null;
   }
 
+  /**
+   * Returns the distinct theme strings from items.json in natural numeric order
+   * (Theme 1 → Theme 12), not lexicographic order which would misplace Theme 10–12.
+   */
+  getThemes(): string[] {
+    const seen = new Set<string>();
+    for (const item of this.items) if (item.theme) seen.add(item.theme);
+    return [...seen].sort((a, b) => {
+      const na = parseInt(a.match(/\d+/)?.[0] ?? '0', 10);
+      const nb = parseInt(b.match(/\d+/)?.[0] ?? '0', 10);
+      return na - nb;
+    });
+  }
+
+  /** Returns all items belonging to the given theme string (exact match). */
+  getItemsByTheme(theme: string): ItemRow[] {
+    return this.items.filter(i => i.theme === theme);
+  }
+
   /** Returns all glossary entries sorted alphabetically by term. */
   getGlossary(): GlossaryEntry[] {
     return this.glossary.slice().sort((a, b) =>
