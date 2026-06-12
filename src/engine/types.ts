@@ -64,6 +64,15 @@ export interface QueryLogEntry {
   matched:   string;  // Tier-1: matched question text; Tier-2: section title; Tier-3: ""
 }
 
+// ── Learning modules ──────────────────────────────────────────────────────────
+
+export interface LearningModule {
+  id:          string;
+  title:       string;
+  description: string;
+  questions:   QaRow[];
+}
+
 // ── Q&A curated layer ─────────────────────────────────────────────────────────
 
 export interface QaRow {

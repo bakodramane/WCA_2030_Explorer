@@ -1,6 +1,6 @@
 import MiniSearch from 'minisearch';
 import { pipeline, env } from '@xenova/transformers';
-import type { Chunk, RankedResult, SectionResult, SectionDebugEntry, QaRow, QaResult, ItemRow, GlossaryEntry } from './types';
+import type { Chunk, RankedResult, SectionResult, SectionDebugEntry, QaRow, QaResult, ItemRow, GlossaryEntry, LearningModule } from './types';
 import { STOP_WORDS } from './stopwords';
 import { expandQuery } from './query';
 
@@ -381,6 +381,88 @@ export class RetrievalEngine {
   /** Returns all items belonging to the given theme string (exact match). */
   getItemsByTheme(theme: string): ItemRow[] {
     return this.items.filter(i => i.theme === theme);
+  }
+
+  /**
+   * Groups all qa.json rows into five ordered learning modules using keyword
+   * matching on the pipe-separated tags + section_title fields.
+   * Rows matching none of the first four modules fall into Cross-cutting topics.
+   * Empty modules are omitted from the result.
+   */
+  getLearningModules(): LearningModule[] {
+    if (this.qaItems.length === 0) return [];
+
+    const DEFS: Array<{ id: string; title: string; description: string; keywords: string[] }> = [
+      {
+        id:          'foundations',
+        title:       'Foundations',
+        description: 'What a census is, agricultural holdings and holders, scope, coverage, and key definitions.',
+        keywords:    ['census', 'definition', 'overview', 'objectives', 'holding', 'holder',
+                      'scope', 'coverage', 'history', 'frequency', 'statistical-unit',
+                      'household', 'parcel', 'field', 'plot', 'types', 'exclusions'],
+      },
+      {
+        id:          'methodology',
+        title:       'Methodology',
+        description: 'Census modalities, frames, enumeration strategies, quality assurance, and planning.',
+        keywords:    ['modalities', 'classical', 'modular', 'frame', 'sampling', 'enumeration',
+                      'quality', 'planning', 'content', 'cut-off', 'threshold', 'screening',
+                      'technology', 'strategies', 'flexible-enumeration', 'short-long-questionnaire',
+                      'farm-register', 'administrative-records', 'rare-events', 'complete-enumeration',
+                      'core-module', 'joint-operation', 'coordination', 'phases', 'timing',
+                      'inter-censal', 'reference-period', 'integration', 'economic-census',
+                      'population-census', 'registers'],
+      },
+      {
+        id:          'items-themes',
+        title:       'Items and themes',
+        description: 'Essential and additional items, the twelve data themes, and classification of census variables.',
+        keywords:    ['essential-items', 'additional-items', 'decision-tree', 'classification-variables',
+                      'screening-items', 'theme-1', 'theme-2', 'theme-3', 'theme-4', 'theme-5',
+                      'theme-6', 'theme-7', 'theme-8', 'theme-9', 'theme-10', 'theme-11', 'theme-12'],
+      },
+      {
+        id:          'tabulation',
+        title:       'Tabulation and dissemination',
+        description: 'Tabulation plans, output products, microdata access, data quality, and archiving.',
+        keywords:    ['tabulation', 'dissemination', 'disclosure', 'confidentiality', 'microdata',
+                      'archiving', 'data-conflicts', 'reconciliation', 'benchmarking', 'uses',
+                      'community-level', 'community', 'holding-level', 'reporting-system', 'policy',
+                      'access', 'preservation', 'products'],
+      },
+    ];
+
+    const classify = (row: QaRow): string => {
+      const text = (row.tags + ' ' + row.section_title).toLowerCase().replace(/[|,]/g, ' ');
+      for (const def of DEFS) {
+        if (def.keywords.some(kw => text.includes(kw))) return def.id;
+      }
+      return 'crosscutting';
+    };
+
+    const buckets = new Map<string, QaRow[]>();
+    for (const def of DEFS) buckets.set(def.id, []);
+    buckets.set('crosscutting', []);
+
+    for (const row of this.qaItems) {
+      buckets.get(classify(row))!.push(row);
+    }
+
+    const modules: LearningModule[] = DEFS.map(d => ({
+      id:          d.id,
+      title:       d.title,
+      description: d.description,
+      questions:   buckets.get(d.id)!,
+    }));
+
+    modules.push({
+      id:          'crosscutting',
+      title:       'Cross-cutting topics',
+      description: 'SDG indicators, gender statistics, geospatial methods, international frameworks, and annexes.',
+      questions:   buckets.get('crosscutting')!,
+    });
+
+    return modules.filter(m => m.questions.length > 0);
   }
 
   /** Returns all glossary entries sorted alphabetically by term. */
