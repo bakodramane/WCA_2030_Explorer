@@ -17,6 +17,7 @@ export class App {
   private introCollapsed  = false;
   private firstSearchDone = false;
   private logCtrlEl!: HTMLSpanElement;
+  private liveRegion!: HTMLElement;
 
   async mount(selector: string): Promise<void> {
     const root = document.querySelector<HTMLElement>(selector);
@@ -50,7 +51,7 @@ export class App {
       <main class="app-main" id="wca-results" aria-live="polite" aria-label="Search results"></main>
       <footer class="app-footer">
         <span class="footer-note">
-          Answers are drawn exclusively from WCA 2030 official guidelines.
+          Answers are drawn exclusively from WCA 2030 official guidelines. No data leaves this device.
           <a class="footer-link"
              href="https://openknowledge.fao.org/items/96f7d26a-f0ed-499c-a658-d2ecb68cdfbd"
              target="_blank"
@@ -81,6 +82,13 @@ export class App {
     header.appendChild(this.chipsEl);
 
     this.resultsArea = layout.querySelector<HTMLElement>('#wca-results')!;
+
+    // Visually-hidden live region — screen readers announce result count
+    this.liveRegion = document.createElement('p');
+    this.liveRegion.className = 'sr-only';
+    this.liveRegion.setAttribute('aria-live', 'polite');
+    this.liveRegion.setAttribute('aria-atomic', 'true');
+    root.appendChild(this.liveRegion);
 
     // Delegated handler for cross-reference item links inserted by linkifyItems()
     this.resultsArea.addEventListener('click', (e: Event) => {
@@ -169,11 +177,11 @@ export class App {
 
   private openQaModal(): void {
     const triggerEl = document.activeElement;
-    const questions = this.engine.getQaQuestions();
+    const allQuestions = this.engine.getQaQuestions();
     const PAGE_SIZE = 25;
     let shown = PAGE_SIZE;
+    let activeFilter = '';
 
-    // Backdrop
     const backdrop = document.createElement('div');
     backdrop.className = 'modal-backdrop';
     backdrop.setAttribute('role', 'dialog');
@@ -183,7 +191,6 @@ export class App {
     const panel = document.createElement('div');
     panel.className = 'modal-panel';
 
-    // Header
     const modalHeader = document.createElement('div');
     modalHeader.className = 'modal-header';
     modalHeader.innerHTML = `<h2 class="modal-title">Questions Bank</h2>`;
@@ -194,19 +201,33 @@ export class App {
     closeBtn.textContent = '×';
     modalHeader.appendChild(closeBtn);
 
-    // List container (scrollable body)
+    // Filter input — same pattern as glossary
+    const filterWrap = document.createElement('div');
+    filterWrap.className = 'modal-filter-wrap';
+    const filterInput = document.createElement('input');
+    filterInput.type = 'search';
+    filterInput.className = 'modal-filter-input';
+    filterInput.placeholder = 'Filter questions…';
+    filterInput.setAttribute('aria-label', 'Filter questions');
+    filterWrap.appendChild(filterInput);
+
     const listEl = document.createElement('div');
     listEl.className = 'modal-list';
 
     const renderItems = () => {
+      const needle = activeFilter.trim().toLowerCase();
+      const visible = needle
+        ? allQuestions.filter(q => q.toLowerCase().includes(needle))
+        : allQuestions;
+
       listEl.innerHTML = '';
-      for (let i = 0; i < Math.min(shown, questions.length); i++) {
+      const page = visible.slice(0, shown);
+      for (const q of page) {
         const row = document.createElement('button');
         row.type = 'button';
         row.className = 'modal-question-row';
-        row.textContent = questions[i];
+        row.textContent = q;
         row.addEventListener('click', () => {
-          const q = questions[i];
           this.searchBar.setValue(q);
           void this.runSearch(q);
           closeModal();
@@ -214,33 +235,48 @@ export class App {
         listEl.appendChild(row);
       }
 
-      if (shown < questions.length) {
+      if (shown < visible.length) {
         const moreBtn = document.createElement('button');
         moreBtn.type = 'button';
         moreBtn.className = 'modal-show-more';
-        moreBtn.textContent = `Show more (${questions.length - shown} remaining)`;
+        moreBtn.textContent = `Show more (${visible.length - shown} remaining)`;
         moreBtn.addEventListener('click', () => {
-          shown = Math.min(shown + PAGE_SIZE, questions.length);
+          shown = Math.min(shown + PAGE_SIZE, visible.length);
           renderItems();
         });
         listEl.appendChild(moreBtn);
       }
+
+      if (visible.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'glossary-empty';
+        empty.textContent = 'No questions match your filter.';
+        listEl.appendChild(empty);
+      }
     };
+
+    filterInput.addEventListener('input', () => {
+      activeFilter = filterInput.value;
+      shown = PAGE_SIZE;
+      renderItems();
+    });
 
     renderItems();
 
     panel.appendChild(modalHeader);
+    panel.appendChild(filterWrap);
     panel.appendChild(listEl);
     backdrop.appendChild(panel);
     document.body.appendChild(backdrop);
 
     const closeModal = setupModalA11y(backdrop, panel, triggerEl);
     closeBtn.addEventListener('click', closeModal);
+    setTimeout(() => filterInput.focus(), 50);
   }
 
   private openItemsModal(category: 'essential' | 'additional'): void {
     const triggerEl = document.activeElement;
-    const items = this.engine.getItems(category).slice().sort((a, b) => a.code.localeCompare(b.code));
+    const allItems = this.engine.getItems(category).slice().sort((a, b) => a.code.localeCompare(b.code));
     const title = category === 'essential' ? 'Essential Items' : 'Additional Items';
 
     const backdrop = document.createElement('div');
@@ -262,31 +298,63 @@ export class App {
     closeBtn.textContent = '×';
     modalHeader.appendChild(closeBtn);
 
+    // Filter input — same pattern as glossary
+    const filterWrap = document.createElement('div');
+    filterWrap.className = 'modal-filter-wrap';
+    const filterInput = document.createElement('input');
+    filterInput.type = 'search';
+    filterInput.className = 'modal-filter-input';
+    filterInput.placeholder = 'Filter by code or name…';
+    filterInput.setAttribute('aria-label', `Filter ${title.toLowerCase()}`);
+    filterWrap.appendChild(filterInput);
+
     const listEl = document.createElement('div');
     listEl.className = 'modal-list';
 
-    for (const item of items) {
-      const row = document.createElement('button');
-      row.type = 'button';
-      row.className = 'modal-item-row';
-      row.innerHTML =
-        `<span class="modal-item-code">${escHtml(item.code)}</span>` +
-        `<span class="modal-item-sep"> — </span>` +
-        `<span class="modal-item-name">${escHtml(item.name)}</span>`;
-      row.addEventListener('click', () => {
-        this.showItemCard(item);
-        closeModal();
-      });
-      listEl.appendChild(row);
-    }
+    const renderItems = (filter: string) => {
+      const needle = filter.trim().toLowerCase();
+      const visible = needle
+        ? allItems.filter(i =>
+            i.code.toLowerCase().includes(needle) ||
+            i.name.toLowerCase().includes(needle))
+        : allItems;
+
+      listEl.innerHTML = '';
+      for (const item of visible) {
+        const row = document.createElement('button');
+        row.type = 'button';
+        row.className = 'modal-item-row';
+        row.innerHTML =
+          `<span class="modal-item-code">${escHtml(item.code)}</span>` +
+          `<span class="modal-item-sep"> — </span>` +
+          `<span class="modal-item-name">${escHtml(item.name)}</span>`;
+        row.addEventListener('click', () => {
+          this.showItemCard(item);
+          closeModal();
+        });
+        listEl.appendChild(row);
+      }
+
+      if (visible.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'glossary-empty';
+        empty.textContent = 'No items match your filter.';
+        listEl.appendChild(empty);
+      }
+    };
+
+    filterInput.addEventListener('input', () => renderItems(filterInput.value));
+    renderItems('');
 
     panel.appendChild(modalHeader);
+    panel.appendChild(filterWrap);
     panel.appendChild(listEl);
     backdrop.appendChild(panel);
     document.body.appendChild(backdrop);
 
     const closeModal = setupModalA11y(backdrop, panel, triggerEl);
     closeBtn.addEventListener('click', closeModal);
+    setTimeout(() => filterInput.focus(), 50);
   }
 
   // ── Self-test modal ──────────────────────────────────────────────────────
@@ -510,8 +578,28 @@ export class App {
       resetBtn.className = 'learn-reset-btn';
       resetBtn.textContent = 'Reset all progress';
       resetBtn.addEventListener('click', () => {
-        try { localStorage.removeItem('wca_learn_progress'); } catch { /* ignore */ }
-        showModuleList();
+        // Replace button with inline confirm/cancel to avoid native dialog
+        resetRow.innerHTML = '';
+        const msg = document.createElement('span');
+        msg.className = 'learn-reset-confirm-msg';
+        msg.textContent = 'This will erase all module progress. Continue?';
+        const confirmBtn = document.createElement('button');
+        confirmBtn.type = 'button';
+        confirmBtn.className = 'learn-reset-confirm-btn';
+        confirmBtn.textContent = 'Yes, reset';
+        confirmBtn.addEventListener('click', () => {
+          try { localStorage.removeItem('wca_learn_progress'); } catch { /* ignore */ }
+          showModuleList();
+        });
+        const cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.className = 'learn-reset-cancel-btn';
+        cancelBtn.textContent = 'Cancel';
+        cancelBtn.addEventListener('click', showModuleList);
+        resetRow.appendChild(msg);
+        resetRow.appendChild(confirmBtn);
+        resetRow.appendChild(cancelBtn);
+        confirmBtn.focus();
       });
       resetRow.appendChild(resetBtn);
       body.appendChild(resetRow);
@@ -923,7 +1011,7 @@ export class App {
         description: 'Browse and search WCA 2030 terms with verbatim definitions.',
         action:      (close) => { close(); this.openGlossaryModal(); },
       },
-    ]);
+    ], 'All content is drawn verbatim from the WCA 2030 guidelines. Progress is stored locally on this device only.');
   }
 
   private openBrowseHubModal(): void {
@@ -1058,6 +1146,7 @@ export class App {
     title: string,
     ariaLabel: string,
     choices: Array<{ label: string; description: string; action: (close: () => void) => void }>,
+    preamble?: string,
   ): void {
     const triggerEl = document.activeElement;
     const backdrop = document.createElement('div');
@@ -1084,6 +1173,13 @@ export class App {
 
     const listEl = document.createElement('div');
     listEl.className = 'modal-list hub-modal-list';
+
+    if (preamble) {
+      const note = document.createElement('p');
+      note.className = 'hub-preamble';
+      note.textContent = preamble;
+      listEl.appendChild(note);
+    }
 
     // Declared with let so closures in the for-loop capture the variable
     // reference; by the time any click fires, setupModalA11y has assigned it.
@@ -1260,6 +1356,22 @@ export class App {
       this.resultsArea.appendChild(p);
     } finally {
       this.searchBar.setLoading(false);
+      this.announceResults();
+    }
+  }
+
+  private announceResults(): void {
+    const cards = this.resultsArea.querySelectorAll('.result-card');
+    const notFound = this.resultsArea.querySelector('.not-found-card');
+    if (notFound) {
+      this.liveRegion.textContent =
+        'No results found in WCA 2030 guidelines.';
+    } else if (cards.length === 1) {
+      this.liveRegion.textContent = '1 result found.';
+    } else if (cards.length > 1) {
+      this.liveRegion.textContent = `${cards.length} results found.`;
+    } else {
+      this.liveRegion.textContent = '';
     }
   }
 

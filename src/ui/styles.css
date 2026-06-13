@@ -1426,6 +1426,17 @@ body {
   border-bottom: 1px solid var(--border);
 }
 
+/* sr-only — visually hidden but readable by screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .learn-reset-btn {
   background: none;
   border: none;
@@ -1438,6 +1449,33 @@ body {
   padding: 0;
 }
 .learn-reset-btn:hover { color: var(--warn); }
+
+/* Inline reset confirmation row */
+.learn-reset-confirm-msg {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--warn);
+  margin-right: 0.75rem;
+}
+.learn-reset-confirm-btn,
+.learn-reset-cancel-btn {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.2rem 0.65rem;
+  cursor: pointer;
+  margin-right: 0.4rem;
+  min-height: 32px;
+}
+.learn-reset-confirm-btn {
+  background: var(--warn-bg);
+  color: var(--warn);
+  border-color: var(--warn);
+}
+.learn-reset-confirm-btn:hover { background: #fef3c7; }
+.learn-reset-cancel-btn { background: var(--surface); color: var(--ink); }
+.learn-reset-cancel-btn:hover { background: var(--bg); }
 
 /* Module cards (clickable rows in the module list) */
 .learn-module-card {
@@ -1725,6 +1763,17 @@ body {
 /* ── Hub modal choice rows ───────────────────────────────────────────── */
 .hub-modal-list {
   padding: 0.25rem 0;
+}
+
+/* Optional preamble note shown above hub choices (e.g. learn-hub privacy note) */
+.hub-preamble {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--muted);
+  padding: 0.65rem 1.25rem 0.35rem;
+  border-bottom: 1px solid var(--border);
+  margin: 0;
+  font-style: italic;
 }
 
 .hub-choice-row {
