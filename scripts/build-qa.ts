@@ -75,7 +75,7 @@ function parseCSVLine(line: string): string[] {
 }
 
 function parseCSV(content: string): QaRowRaw[] {
-  const rawLines = content.split(/\r?\n/);
+  const rawLines = content.replace(/^﻿/, '').split(/\r?\n/);
   const lines    = rawLines.filter(l => l.trim().length > 0);
   if (lines.length < 2) throw new Error('CSV has no data rows');
 
