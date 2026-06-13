@@ -4,7 +4,7 @@ import { logQuery, getLog, clearLog, toCSV } from '../engine/logger';
 import { SearchBar }        from './SearchBar';
 import { ResultCard }       from './ResultCard';
 import { setKnownItemCodes } from './linkify';
-import type { ItemRow, GlossaryEntry, LearningModule, FigureTableEntry } from '../engine/types';
+import type { ItemRow, GlossaryEntry, LearningModule, FigureTableEntry, RankedResult } from '../engine/types';
 
 
 export class App {
@@ -1234,8 +1234,14 @@ export class App {
           score:   best.score,
           matched: best.chunk.sectionTitle,
         });
+        const groups = deriveResultGroups(response.results);
+        if (groups.length > 1) {
+          this.resultsArea.appendChild(this.buildFilterBar(groups));
+        }
         for (const r of response.results) {
-          this.resultsArea.appendChild(ResultCard.render(r, query));
+          const card = ResultCard.render(r, query);
+          card.dataset.group = deriveGroup(r.chunk.sectionTitle, r.chunk.pageRef);
+          this.resultsArea.appendChild(card);
         }
         this.resultsArea.appendChild(this.buildEncouragementNote());
       } else {
@@ -1267,6 +1273,38 @@ export class App {
   }
 
   // ── Encouragement note ───────────────────────────────────────────────────
+
+  private buildFilterBar(groups: string[]): HTMLElement {
+    const bar = document.createElement('div');
+    bar.className = 'filter-bar';
+    bar.setAttribute('role', 'group');
+    bar.setAttribute('aria-label', 'Filter results by chapter or section');
+
+    const applyFilter = (selected: string) => {
+      bar.querySelectorAll<HTMLButtonElement>('.filter-pill').forEach(pill => {
+        const active = pill.dataset.group === selected;
+        pill.classList.toggle('filter-pill--active', active);
+        pill.setAttribute('aria-pressed', String(active));
+      });
+      this.resultsArea.querySelectorAll<HTMLElement>('[data-group]').forEach(card => {
+        card.style.display =
+          (selected === 'All' || card.dataset.group === selected) ? '' : 'none';
+      });
+    };
+
+    for (const group of ['All', ...groups]) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'filter-pill' + (group === 'All' ? ' filter-pill--active' : '');
+      btn.dataset.group = group;
+      btn.setAttribute('aria-pressed', String(group === 'All'));
+      btn.textContent = group;
+      btn.addEventListener('click', () => applyFilter(group));
+      bar.appendChild(btn);
+    }
+
+    return bar;
+  }
 
   private buildEncouragementNote(): HTMLElement {
     const p = document.createElement('p');
@@ -1467,6 +1505,42 @@ function extractFigureTableRef(query: string): { kind: string; ref: string } | n
   const m = query.trim().match(/^(figure|table)\s+([A-Za-z]?\d+\.\d+)/i);
   if (!m) return null;
   return { kind: m[1].toLowerCase(), ref: m[2] };
+}
+
+/**
+ * Map a document chunk to a coarse chapter/section group label for filter pills.
+ * Priority: explicit "CHAPTER N" in section title → "ANNEX" → "GLOSSARY" →
+ * page-range fallback using WCA 2030 TOC boundaries.
+ */
+function deriveGroup(sectionTitle: string, pageRef: number): string {
+  const cm = sectionTitle.match(/\bCHAPTER\s+(\d+)/i);
+  if (cm) return `Chapter ${cm[1]}`;
+  if (/\bANNEX\b/i.test(sectionTitle)) return 'Annexes';
+  if (/\bGLOSSARY\b/i.test(sectionTitle)) return 'Glossary';
+
+  // Page-range fallback — boundaries from the document's own Table of Contents
+  if (pageRef <= 11)  return 'Chapter 1';
+  if (pageRef <= 23)  return 'Chapter 2';
+  if (pageRef <= 36)  return 'Chapter 3';
+  if (pageRef <= 46)  return 'Chapter 4';
+  if (pageRef <= 62)  return 'Chapter 5';
+  if (pageRef <= 73)  return 'Chapter 6';
+  if (pageRef <= 99)  return 'Chapter 7';
+  if (pageRef <= 104) return 'Chapter 8';
+  if (pageRef <= 118) return 'Chapter 9';
+  if (pageRef <= 140) return 'Chapter 10';
+  return 'Annexes';
+}
+
+/** Return unique group labels in order of first appearance across results. */
+function deriveResultGroups(results: RankedResult[]): string[] {
+  const seen = new Set<string>();
+  const ordered: string[] = [];
+  for (const r of results) {
+    const g = deriveGroup(r.chunk.sectionTitle, r.chunk.pageRef);
+    if (!seen.has(g)) { seen.add(g); ordered.push(g); }
+  }
+  return ordered;
 }
 
 function randomSample<T>(arr: T[], n: number): T[] {

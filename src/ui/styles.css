@@ -547,6 +547,37 @@ body {
 }
 .chip:hover { background: var(--accent); color: #fff; }
 
+/* ── Filter pills (Phase 3 — result filtering by chapter) ───────────── */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.5rem 0 0.6rem;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.filter-pill {
+  background: var(--bg);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 3px 11px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+  min-height: 28px;
+}
+.filter-pill:hover { background: var(--accent); color: #fff; }
+.filter-pill--active {
+  background: var(--accent);
+  color: #fff;
+}
+.filter-pill--active:hover { opacity: 0.85; }
+
 /* ── Footer link ─────────────────────────────────────────────────────── */
 .footer-link {
   display: inline-block;
