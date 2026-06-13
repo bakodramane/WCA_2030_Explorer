@@ -1265,7 +1265,11 @@ export class App {
           score:   0,
           matched: '',
         });
-        this.resultsArea.appendChild(ResultCard.renderNotFound(response));
+        this.resultsArea.appendChild(ResultCard.renderNotFound(response, {
+          onGlossary: () => this.openGlossaryModal(),
+          onQaBank:   () => this.openQaModal(),
+          onClear:    () => { this.searchBar.setValue(''); this.clearResults(); },
+        }));
         this.resultsArea.appendChild(this.buildEncouragementNote());
       }
       this.refreshLogControls();

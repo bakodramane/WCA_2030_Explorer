@@ -177,7 +177,10 @@ export class ResultCard {
   }
 
   /** Render the guardrail "not found" card. */
-  static renderNotFound(response: GuardrailResponse): HTMLElement {
+  static renderNotFound(
+    response: GuardrailResponse,
+    recovery: { onGlossary: () => void; onQaBank: () => void; onClear: () => void },
+  ): HTMLElement {
     const card = document.createElement('div');
     card.className = 'not-found-card';
     card.setAttribute('role', 'alert');
@@ -198,7 +201,30 @@ export class ResultCard {
         <span aria-hidden="true">⚠&nbsp;</span>${esc(msg)}
       </p>
       ${listHtml}
+      <p class="not-found-hint">
+        Try rephrasing with WCA terms such as
+        <em>holding</em>, <em>holder</em>, <em>parcel</em>,
+        <em>livestock</em>, or <em>essential item</em>.
+      </p>
     `;
+
+    // Recovery buttons — wired after innerHTML so we can use addEventListener
+    const actions = document.createElement('div');
+    actions.className = 'not-found-actions';
+
+    const makeBtn = (label: string, handler: () => void): HTMLButtonElement => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'not-found-action-btn';
+      btn.textContent = label;
+      btn.addEventListener('click', handler);
+      return btn;
+    };
+
+    actions.appendChild(makeBtn('Browse glossary',   recovery.onGlossary));
+    actions.appendChild(makeBtn('See question bank', recovery.onQaBank));
+    actions.appendChild(makeBtn('Clear search',      recovery.onClear));
+    card.appendChild(actions);
 
     return card;
   }

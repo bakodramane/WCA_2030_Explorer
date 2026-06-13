@@ -532,6 +532,37 @@ body {
   margin-bottom: 0.2rem;
 }
 
+.not-found-hint {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-top: 0.9rem;
+  line-height: 1.55;
+}
+
+.not-found-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.not-found-action-btn {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--accent);
+  background: var(--surface);
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 0.35rem 0.85rem;
+  cursor: pointer;
+  min-height: 36px;
+  transition: background 0.15s, color 0.15s;
+}
+.not-found-action-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
 /* ── Intro panel ─────────────────────────────────────────────────────── */
 .intro-panel {
   margin-bottom: 1.25rem;
