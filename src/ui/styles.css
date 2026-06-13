@@ -887,6 +887,122 @@ body {
   margin: 0;
 }
 
+/* ── Figure/table result card ────────────────────────────────────────── */
+.result-card--figure-table {
+  border-left: 4px solid #3d6b99;
+}
+
+.ft-badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.ft-badge--figure { background: #3d6b99; }
+.ft-badge--table  { background: #5c4a22; }
+
+.ft-ref {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0 0 0.25rem;
+}
+
+.ft-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.5;
+  margin: 0 0 0.5rem;
+}
+
+.ft-note {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+  margin: 0;
+}
+
+.match-badge--figure-table { background: #dce9f5; color: #2a4f72; }
+
+/* ── Figures and tables modal ────────────────────────────────────────── */
+.ft-modal-note {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--warn-bg);
+  border-left: 3px solid var(--border);
+  border-radius: 3px;
+}
+
+.ft-modal-group-heading {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 1rem 0 0.4rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--border);
+}
+.ft-modal-group-heading:first-of-type { margin-top: 0; }
+
+.ft-modal-row {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr auto auto;
+  align-items: baseline;
+  gap: 0.4rem 0.75rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+}
+.ft-modal-row:last-child { border-bottom: none; }
+
+.ft-modal-ref {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.ft-modal-title {
+  font-size: 0.85rem;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.ft-modal-page {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.ft-modal-copy {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+@media (max-width: 520px) {
+  .ft-modal-row {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+  }
+  .ft-modal-ref  { grid-column: 1; grid-row: 1; }
+  .ft-modal-page { grid-column: 2; grid-row: 1; }
+  .ft-modal-title { grid-column: 1 / -1; grid-row: 2; }
+  .ft-modal-copy  { grid-column: 1 / -1; grid-row: 3; justify-self: start; }
+}
+
 /* ── Glossary modal ───────────────────────────────────────────────────── */
 .modal-filter-wrap {
   padding: 0.6rem 1.25rem;

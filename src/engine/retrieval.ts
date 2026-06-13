@@ -1,6 +1,6 @@
 import MiniSearch from 'minisearch';
 import { pipeline, env } from '@xenova/transformers';
-import type { Chunk, RankedResult, SectionResult, SectionDebugEntry, QaRow, QaResult, ItemRow, GlossaryEntry, LearningModule } from './types';
+import type { Chunk, RankedResult, SectionResult, SectionDebugEntry, QaRow, QaResult, ItemRow, GlossaryEntry, LearningModule, FigureTableEntry } from './types';
 import { STOP_WORDS } from './stopwords';
 import { expandQuery } from './query';
 
@@ -82,6 +82,9 @@ export class RetrievalEngine {
   // ── Glossary ───────────────────────────────────────────────────────────────
   private glossary: GlossaryEntry[] = [];
 
+  // ── Figures and tables ─────────────────────────────────────────────────────
+  private figuresTables: FigureTableEntry[] = [];
+
   /**
    * Load chunks.json, initialise the offline embedding model, and build the
    * BM25 lexical index.  Must be called once before any search method.
@@ -121,6 +124,14 @@ export class RetrievalEngine {
       this.glossary = await glossaryRes.json();
     } catch {
       this.glossary = [];
+    }
+
+    // 1e. Load the figures and tables index
+    try {
+      const ftRes = await fetch(import.meta.env.BASE_URL + 'data/figures-tables.json');
+      this.figuresTables = await ftRes.json();
+    } catch {
+      this.figuresTables = [];
     }
 
     // 2. Load the embedding model from the offline /models/ cache
@@ -481,6 +492,17 @@ export class RetrievalEngine {
   lookupTerm(term: string): GlossaryEntry | null {
     const needle = term.trim().toLowerCase();
     return this.glossary.find(e => e.term.toLowerCase() === needle) ?? null;
+  }
+
+  /** Returns all figure/table entries in file order. */
+  getFiguresTables(): FigureTableEntry[] {
+    return this.figuresTables;
+  }
+
+  /** Looks up by kind ('figure'|'table', case-insensitive) and ref string (exact). */
+  lookupFigureTable(kind: string, ref: string): FigureTableEntry | null {
+    const k = kind.toLowerCase() as 'figure' | 'table';
+    return this.figuresTables.find(e => e.kind === k && e.ref === ref.trim()) ?? null;
   }
 
   /**

@@ -4,7 +4,7 @@ import { logQuery, getLog, clearLog, toCSV } from '../engine/logger';
 import { SearchBar }        from './SearchBar';
 import { ResultCard }       from './ResultCard';
 import { setKnownItemCodes } from './linkify';
-import type { ItemRow, GlossaryEntry, LearningModule } from '../engine/types';
+import type { ItemRow, GlossaryEntry, LearningModule, FigureTableEntry } from '../engine/types';
 
 
 export class App {
@@ -948,6 +948,11 @@ export class App {
         description: 'Items grouped by the twelve WCA 2030 data themes.',
         action:      (close) => { close(); this.openThemeModal(); },
       },
+      {
+        label:       'Figures and tables',
+        description: 'All figures and tables from the WCA 2030 guidelines, with page references.',
+        action:      (close) => { close(); this.openFiguresTablesModal(); },
+      },
     ]);
   }
 
@@ -964,6 +969,98 @@ export class App {
         action:      (close) => { close(); this.openItemsModal('additional'); },
       },
     ]);
+  }
+
+  private openFiguresTablesModal(): void {
+    const entries = this.engine.getFiguresTables();
+    const figures = entries.filter(e => e.kind === 'figure');
+    const tables  = entries.filter(e => e.kind === 'table');
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop';
+    backdrop.setAttribute('role', 'dialog');
+    backdrop.setAttribute('aria-modal', 'true');
+    backdrop.setAttribute('aria-label', 'Figures and tables');
+
+    const panel = document.createElement('div');
+    panel.className = 'modal-panel';
+
+    const modalHeader = document.createElement('div');
+    modalHeader.className = 'modal-header';
+    const titleEl = document.createElement('h2');
+    titleEl.className = 'modal-title';
+    titleEl.textContent = 'Figures and tables';
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'modal-close';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.textContent = '×';
+    modalHeader.appendChild(titleEl);
+    modalHeader.appendChild(closeBtn);
+
+    const listEl = document.createElement('div');
+    listEl.className = 'modal-list';
+
+    // Note at top
+    const note = document.createElement('p');
+    note.className = 'ft-modal-note';
+    note.textContent =
+      'Figures and tables are on the cited pages of the official WCA 2030 guidelines.';
+    listEl.appendChild(note);
+
+    const buildGroup = (label: string, items: FigureTableEntry[]) => {
+      if (items.length === 0) return;
+      const heading = document.createElement('h3');
+      heading.className = 'ft-modal-group-heading';
+      heading.textContent = label;
+      listEl.appendChild(heading);
+
+      for (const entry of items) {
+        const kindLabel = entry.kind === 'figure' ? 'Figure' : 'Table';
+        const citationText = `WCA 2030, ${kindLabel} ${entry.ref} (p.${entry.page})`;
+
+        const row = document.createElement('div');
+        row.className = 'ft-modal-row';
+        row.innerHTML =
+          `<span class="ft-modal-ref">${kindLabel} ${escHtml(entry.ref)}</span>` +
+          `<span class="ft-modal-title">${escHtml(entry.title)}</span>` +
+          `<span class="ft-modal-page">Page ${entry.page} (printed)</span>`;
+
+        const copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.className = 'copy-btn ft-modal-copy';
+        copyBtn.dataset.citation = citationText;
+        copyBtn.textContent = 'Copy citation';
+        copyBtn.addEventListener('click', async function(this: HTMLButtonElement) {
+          try {
+            await navigator.clipboard.writeText(this.dataset.citation ?? '');
+            this.textContent = 'Copied!';
+          } catch {
+            this.textContent = 'Copy failed';
+          }
+          setTimeout(() => { this.textContent = 'Copy citation'; }, 2000);
+        });
+
+        row.appendChild(copyBtn);
+        listEl.appendChild(row);
+      }
+    };
+
+    buildGroup('Figures', figures);
+    buildGroup('Tables', tables);
+
+    const closeModal = () => backdrop.remove();
+
+    panel.appendChild(modalHeader);
+    panel.appendChild(listEl);
+    backdrop.appendChild(panel);
+    document.body.appendChild(backdrop);
+
+    closeBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', (e) => { if (e.target === backdrop) closeModal(); });
+    document.addEventListener('keydown', function onKey(e) {
+      if (e.key === 'Escape') { closeModal(); document.removeEventListener('keydown', onKey); }
+    });
   }
 
   private openHubModal(
@@ -1076,6 +1173,24 @@ export class App {
         this.resultsArea.appendChild(ResultCard.renderGlossary(glossaryEntry));
         this.refreshLogControls();
         return;
+      }
+
+      // ── Tier 0c: figure/table lookup ───────────────────────────────────────
+      const ftRef = extractFigureTableRef(query);
+      if (ftRef) {
+        const ftEntry = this.engine.lookupFigureTable(ftRef.kind, ftRef.ref);
+        if (ftEntry) {
+          logQuery({
+            timestamp: new Date().toISOString(),
+            query,
+            tier:    'figure-table',
+            score:   1,
+            matched: `${ftEntry.kind} ${ftEntry.ref}`,
+          });
+          this.resultsArea.appendChild(ResultCard.renderFigureTable(ftEntry));
+          this.refreshLogControls();
+          return;
+        }
       }
 
       // ── Tier 1: curated Q&A match ──────────────────────────────────────────
@@ -1341,6 +1456,17 @@ function extractItemCode(query: string): string | null {
   const n = parseInt(m[1], 10);
   if (!n || n > 9999) return null;
   return String(n).padStart(4, '0');
+}
+
+/**
+ * Extract a figure/table kind and ref from a query like "Table 9.1", "Figure A10.1".
+ * Accepts optional trailing text so "Figure 6.1 decision tree" still matches.
+ * Returns null if the query doesn't start with figure|table followed by a valid ref.
+ */
+function extractFigureTableRef(query: string): { kind: string; ref: string } | null {
+  const m = query.trim().match(/^(figure|table)\s+([A-Za-z]?\d+\.\d+)/i);
+  if (!m) return null;
+  return { kind: m[1].toLowerCase(), ref: m[2] };
 }
 
 function randomSample<T>(arr: T[], n: number): T[] {

@@ -1,4 +1,4 @@
-import type { RankedResult, QaResult, ItemRow, DescriptionBlock, GlossaryEntry } from '../engine/types';
+import type { RankedResult, QaResult, ItemRow, DescriptionBlock, GlossaryEntry, FigureTableEntry } from '../engine/types';
 import type { GuardrailResponse } from '../engine/guardrail';
 import { STOP_WORDS } from '../engine/stopwords';
 import { linkifyItems } from './linkify';
@@ -277,6 +277,39 @@ export class ResultCard {
       </div>
       <footer class="card-footer">
         <span class="match-badge match-badge--glossary">glossary</span>
+        <button class="copy-btn" type="button"
+                data-citation="${esc(citationText)}">
+          Copy citation
+        </button>
+      </footer>
+    `;
+
+    card.querySelector<HTMLButtonElement>('.copy-btn')!
+      .addEventListener('click', ResultCard.handleCopy);
+
+    return card;
+  }
+
+  /** Render a figure/table entry as a result card. */
+  static renderFigureTable(entry: FigureTableEntry): HTMLElement {
+    const kindLabel = entry.kind === 'figure' ? 'Figure' : 'Table';
+    const citationText = `WCA 2030, ${kindLabel} ${entry.ref} (p.${entry.page})`;
+
+    const card = document.createElement('article');
+    card.className = 'result-card result-card--figure-table';
+
+    card.innerHTML = `
+      <header class="card-header">
+        <span class="ft-badge ft-badge--${entry.kind}">${kindLabel}</span>
+        <span class="card-page">Page ${entry.page} (printed)</span>
+      </header>
+      <div class="card-body">
+        <p class="ft-ref">${kindLabel} ${esc(entry.ref)}</p>
+        <p class="ft-title">${esc(entry.title)}</p>
+        <p class="ft-note">This ${entry.kind} is on the cited page of the official WCA 2030 guidelines.</p>
+      </div>
+      <footer class="card-footer">
+        <span class="match-badge match-badge--figure-table">${entry.kind}</span>
         <button class="copy-btn" type="button"
                 data-citation="${esc(citationText)}">
           Copy citation
