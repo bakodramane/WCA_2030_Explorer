@@ -837,6 +837,23 @@ body {
 
 .match-badge--item { background: var(--mark-bg); color: var(--accent); }
 
+/* ── Cross-reference item links (Phase 1 — linkifyItems) ────────────── */
+.item-ref-link {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  text-underline-offset: 2px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.item-ref-link:hover,
+.item-ref-link:focus-visible {
+  text-decoration-color: var(--accent);
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-radius: 2px;
+}
+
 /* ── Glossary result card ────────────────────────────────────────────── */
 .result-card--glossary {
   border-left: 4px solid #2d6a4f;

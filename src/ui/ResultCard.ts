@@ -1,6 +1,7 @@
 import type { RankedResult, QaResult, ItemRow, DescriptionBlock, GlossaryEntry } from '../engine/types';
 import type { GuardrailResponse } from '../engine/guardrail';
 import { STOP_WORDS } from '../engine/stopwords';
+import { linkifyItems } from './linkify';
 
 // ── Safety helpers ────────────────────────────────────────────────────────────
 
@@ -138,10 +139,10 @@ export class ResultCard {
         <span class="card-page">Page ${esc(row.page_number)}</span>
       </header>
       <div class="card-body">
-        <p class="qa-answer">${highlight(esc(row.answer), query)}</p>
+        <p class="qa-answer">${linkifyItems(highlight(esc(row.answer), query))}</p>
         <p class="qa-excerpt-label">WCA 2030 excerpt (Page ${esc(String(row.page_number))})</p>
         <blockquote class="qa-excerpt">
-          <p>${highlight(esc(row.excerpt), query)}</p>
+          <p>${linkifyItems(highlight(esc(row.excerpt), query))}</p>
         </blockquote>
         <p class="qa-citation">
           <span class="card-section">§ ${esc(row.section_title)}</span>
@@ -306,9 +307,9 @@ export class ResultCard {
 function renderDescBlocks(blocks: DescriptionBlock[]): string {
   return blocks.map(block => {
     if (block.type === 'paragraph') {
-      return `<p class="item-desc-para">${esc(block.text)}</p>`;
+      return `<p class="item-desc-para">${linkifyItems(esc(block.text))}</p>`;
     }
-    const lis = block.items.map(it => `<li class="item-desc-li">${esc(it)}</li>`).join('');
+    const lis = block.items.map(it => `<li class="item-desc-li">${linkifyItems(esc(it))}</li>`).join('');
     return `<ul class="item-desc-bullets">${lis}</ul>`;
   }).join('');
 }

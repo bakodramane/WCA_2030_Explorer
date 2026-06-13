@@ -3,6 +3,7 @@ import { evaluate }         from '../engine/guardrail';
 import { logQuery, getLog, clearLog, toCSV } from '../engine/logger';
 import { SearchBar }        from './SearchBar';
 import { ResultCard }       from './ResultCard';
+import { setKnownItemCodes } from './linkify';
 import type { ItemRow, GlossaryEntry, LearningModule } from '../engine/types';
 
 
@@ -75,6 +76,16 @@ export class App {
 
     this.resultsArea = layout.querySelector<HTMLElement>('#wca-results')!;
 
+    // Delegated handler for cross-reference item links inserted by linkifyItems()
+    this.resultsArea.addEventListener('click', (e: Event) => {
+      const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[data-item-ref]');
+      if (!a) return;
+      e.preventDefault();
+      const code = a.dataset.itemRef!;
+      const item = this.engine.lookupItem(code);
+      if (item) this.showItemCard(item);
+    });
+
     // Offline status indicator
     this.initOfflineDot(layout.querySelector<HTMLElement>('#sw-dot')!);
 
@@ -93,6 +104,7 @@ export class App {
     // ── Engine initialisation ────────────────────────────────────────────
     try {
       await this.engine.init();
+      setKnownItemCodes(new Set(this.engine.getItems().map(i => i.code)));
     } catch (err) {
       const box = overlay.querySelector('.loading-box')!;
       box.className = 'loading-box loading-error';
