@@ -62,8 +62,9 @@ export class ResultCard {
   /** Render one RankedResult as an <article> element. */
   static render(result: RankedResult, query: string): HTMLElement {
     const { chunk, score, matchType } = result;
-    const pct     = scoreBar(score, matchType);
-    const label   = scoreLabel(score, matchType);
+    const pct        = scoreBar(score, matchType);
+    const label      = scoreLabel(score, matchType);
+    const badgeLabel = matchType === 'semantic' ? 'Best meaning match' : 'Keyword match';
 
     // Citation string: WCA 2030, §Section (p.N): first 80 chars…
     const citationText =
@@ -81,12 +82,14 @@ export class ResultCard {
         <span class="card-page">Page ${chunk.pageRef}</span>
       </header>
       <div class="card-body">
+        <p class="card-source">Source: §&nbsp;${esc(chunk.sectionTitle)}&nbsp;·&nbsp;p.${chunk.pageRef}</p>
         <p class="card-text">${highlight(chunk.text, query)}</p>
       </div>
       <footer class="card-footer">
-        <div class="card-score">
+        <div class="card-score" title="Match confidence based on local search.">
           <div class="score-bar-track"
                role="progressbar"
+               aria-label="Match confidence"
                aria-valuenow="${pct.toFixed(0)}"
                aria-valuemin="0"
                aria-valuemax="100">
@@ -94,7 +97,7 @@ export class ResultCard {
           </div>
           <span class="score-label">${label}</span>
         </div>
-        <span class="match-badge match-badge--${matchType}">${matchType}</span>
+        <span class="match-badge match-badge--${matchType}">${badgeLabel}</span>
         <button class="copy-btn" type="button"
                 data-citation="${esc(citationText)}">
           Copy citation
@@ -144,14 +147,13 @@ export class ResultCard {
         <blockquote class="qa-excerpt">
           <p>${linkifyItems(highlight(esc(row.excerpt), query))}</p>
         </blockquote>
-        <p class="qa-citation">
-          <span class="card-section">§ ${esc(row.section_title)}</span>
-        </p>
+        <p class="card-source">Source: §&nbsp;${esc(row.section_title)}&nbsp;·&nbsp;p.${esc(String(row.page_number))}</p>
       </div>
       <footer class="card-footer">
-        <div class="card-score">
+        <div class="card-score" title="Match confidence based on local search.">
           <div class="score-bar-track"
                role="progressbar"
+               aria-label="Match confidence"
                aria-valuenow="${pct}"
                aria-valuemin="0"
                aria-valuemax="100">
@@ -327,7 +329,7 @@ export class ResultCard {
     const citation = this.dataset.citation ?? '';
     try {
       await navigator.clipboard.writeText(citation);
-      this.textContent = 'Copied!';
+      this.textContent = 'Copied ✓';
     } catch {
       this.textContent = 'Copy failed';
     }

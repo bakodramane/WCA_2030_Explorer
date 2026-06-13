@@ -337,6 +337,17 @@ body {
 
 .card-body { padding: 1rem; }
 
+/* Prominent source citation — primary trust signal */
+.card-source {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 0.65rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border);
+}
+
 .card-text {
   font-size: 0.9rem;
   line-height: 1.72;
@@ -346,8 +357,8 @@ body {
 .card-text mark,
 .qa-answer mark,
 .qa-excerpt p mark {
-  background: #39ff14;
-  color: #0a0a0a;
+  background: var(--mark-bg);
+  color: var(--ink);
   border-radius: 2px;
   padding: 0 1px;
   font-style: normal;
@@ -363,34 +374,35 @@ body {
   flex-wrap: wrap;
 }
 
-/* Score bar */
+/* Score bar — visually de-emphasised; content is the primary trust signal */
 .card-score {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.35rem;
   flex-shrink: 0;
+  opacity: 0.65;
 }
 
 .score-bar-track {
-  width: 72px;
-  height: 5px;
+  width: 52px;
+  height: 3px;
   background: var(--border);
-  border-radius: 3px;
+  border-radius: 2px;
   overflow: hidden;
 }
 
 .score-bar-fill {
   height: 100%;
   background: var(--accent);
-  border-radius: 3px;
+  border-radius: 2px;
   transition: width 0.4s ease;
 }
 
 .score-label {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: var(--muted);
-  min-width: 2.8rem;
+  min-width: 2.4rem;
 }
 
 /* Match-type badge */
@@ -400,13 +412,14 @@ body {
   font-weight: 600;
   padding: 2px 6px;
   border-radius: 3px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
   flex-shrink: 0;
 }
 .match-badge--semantic  { background: var(--mark-bg); color: var(--accent); }
 .match-badge--lexical   { background: #e8e2d4; color: #5c4a22; }
-.match-badge--verified  { background: #1a3a2a; color: #fff; }
+.match-badge--verified  {
+  background: #1a3a2a; color: #fff;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
 
 /* ── Verified-answer card (Tier-1 curated Q&A) ───────────────────────────── */
 .result-card--verified {
