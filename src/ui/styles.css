@@ -52,8 +52,14 @@ body {
   font-size: 1.05rem;
   font-style: italic;
   color: var(--accent);
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.5rem;
   letter-spacing: 0.01em;
+}
+
+.loading-subtext {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 1.25rem;
 }
 
 .loading-error { color: var(--warn); }
@@ -148,7 +154,14 @@ body {
   font-style: italic;
 }
 
-/* ── Offline status dot ──────────────────────────────────────────────── */
+/* ── Offline status indicator ────────────────────────────────────────── */
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
 .status-dot {
   width: 8px;
   height: 8px;
@@ -159,6 +172,18 @@ body {
 }
 .status-dot--online  { background: #22c55e; }
 .status-dot--loading { background: #f59e0b; }
+.status-dot--idle    { background: var(--muted); }
+
+.status-label {
+  font-size: 0.72rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-fill  { animation: none; width: 85%; }
+  .search-spinner { animation: none; opacity: 0.6; }
+}
 
 /* ── SW update banner ────────────────────────────────────────────────── */
 .sw-banner {

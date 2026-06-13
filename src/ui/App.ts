@@ -30,7 +30,8 @@ export class App {
     overlay.setAttribute('aria-live', 'polite');
     overlay.innerHTML = `
       <div class="loading-box">
-        <p class="loading-text">Loading WCA 2030 index…</p>
+        <p class="loading-text">Preparing offline WCA 2030 index. First visit may take longer; future visits work offline.</p>
+        <p class="loading-subtext">Downloading the search index and model for offline use.</p>
         <div class="progress-track">
           <div class="progress-fill"></div>
         </div>
@@ -55,7 +56,10 @@ export class App {
              target="_blank"
              rel="noopener noreferrer">Official guidelines ↗</a>
         </span>
-        <span class="status-dot" id="sw-dot" title="Offline status"></span>
+        <span class="status-indicator" id="sw-status" aria-live="polite" aria-atomic="true">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="status-label"></span>
+        </span>
       </footer>`;
     root.appendChild(layout);
 
@@ -88,8 +92,8 @@ export class App {
       if (item) this.showItemCard(item);
     });
 
-    // Offline status indicator
-    this.initOfflineDot(layout.querySelector<HTMLElement>('#sw-dot')!);
+    // Offline status indicator (returns fn to call after engine init)
+    const refreshStatus = this.initOfflineStatus(layout.querySelector<HTMLElement>('#sw-status')!);
 
     // Query-log export controls (appended to footer, hidden when log empty)
     this.initLogControls(layout.querySelector<HTMLElement>('.app-footer')!);
@@ -107,6 +111,7 @@ export class App {
     try {
       await this.engine.init();
       setKnownItemCodes(new Set(this.engine.getItems().map(i => i.code)));
+      refreshStatus(); // update dot from 'Preparing' to ready/pending
     } catch (err) {
       const box = overlay.querySelector('.loading-box')!;
       box.className = 'loading-box loading-error';
@@ -1443,16 +1448,24 @@ export class App {
     }, 3500);
   }
 
-  // ── Offline status dot ───────────────────────────────────────────────────
+  // ── Offline status indicator ─────────────────────────────────────────────
 
-  private initOfflineDot(dot: HTMLElement): void {
+  private initOfflineStatus(statusEl: HTMLElement): () => void {
+    const dot   = statusEl.querySelector<HTMLElement>('.status-dot')!;
+    const label = statusEl.querySelector<HTMLElement>('.status-label')!;
+
+    // Initial state: engine not yet loaded
+    dot.className     = 'status-dot status-dot--loading';
+    label.textContent = 'Preparing offline index';
+
     const refresh = () => {
       const active = !!(navigator.serviceWorker?.controller);
-      dot.className = `status-dot status-dot--${active ? 'online' : 'loading'}`;
-      dot.title     = active ? 'Offline ready' : 'Service worker not yet active';
+      dot.className     = `status-dot status-dot--${active ? 'online' : 'idle'}`;
+      label.textContent = active ? 'Offline ready' : 'Online — first setup pending';
     };
-    refresh();
+
     navigator.serviceWorker?.addEventListener('controllerchange', refresh);
+    return refresh;
   }
 
   // ── Service-worker update banner ─────────────────────────────────────────
