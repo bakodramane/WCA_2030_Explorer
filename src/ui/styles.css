@@ -185,6 +185,19 @@ body {
   .search-spinner { animation: none; opacity: 0.6; }
 }
 
+/* ── Focus-visible — consistent keyboard focus ring ─────────────────── */
+/* Shown only for keyboard navigation; suppressed for mouse/touch clicks. */
+:focus-visible {
+  outline: 2.5px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+:focus:not(:focus-visible) { outline: none; }
+
+/* Inputs already show focus via border + shadow — suppress extra outline */
+.search-input:focus-visible,
+.modal-filter-input:focus-visible { outline: none; }
+
 /* ── SW update banner ────────────────────────────────────────────────── */
 .sw-banner {
   position: fixed;
