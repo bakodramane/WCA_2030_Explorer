@@ -647,6 +647,9 @@ body {
 }
 .chip:hover { background: var(--accent); color: #fff; }
 
+/* "More examples" toggle — hidden on desktop, shown on mobile via media query */
+.chip--more-toggle { display: none; }
+
 /* ── Filter pills (Phase 3 — result filtering by chapter) ───────────── */
 .filter-bar {
   display: flex;
@@ -695,12 +698,79 @@ body {
   padding: 1rem;
 }
 
+/* ── Excerpt truncation + toggle (added by JS on mobile for long text) ── */
+.card-text--truncated,
+.qa-excerpt--truncated {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.excerpt-toggle {
+  display: block;
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  cursor: pointer;
+  padding: 0.3rem 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  margin-top: 0.35rem;
+  min-height: 44px;
+  text-align: left;
+}
+.excerpt-toggle:hover { opacity: 0.75; }
+
 /* ── Responsive ──────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
+  /* Compact, sticky header so the search bar stays reachable after results */
+  .app-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    padding-top: 0.75rem;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
   .app-title        { font-size: 1.1rem; }
   .card-footer      { gap: 0.4rem; }
   .score-bar-track  { width: 52px; }
   .search-btn       { padding: 0 0.75rem; font-size: 0.82rem; }
+
+  /* 44 px touch targets */
+  .chip {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .filter-pill        { min-height: 44px; }
+  .not-found-action-btn { min-height: 44px; }
+  .copy-btn {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Overflow chips — shown only after "More examples" is tapped */
+  .chip--overflow { display: none; }
+  .suggestion-chips.chips--expanded .chip--overflow {
+    display: inline-flex;
+    align-items: center;
+  }
+  /* "More examples" toggle — visible until expanded */
+  .chip--more-toggle {
+    display: inline-flex;
+    align-items: center;
+    border-style: dashed;
+    opacity: 0.85;
+  }
+  .suggestion-chips.chips--expanded .chip--more-toggle { display: none; }
+
 }
 
 /* ── Search row (input + browse button) ─────────────────────────────── */
@@ -755,6 +825,32 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+/* Bottom-sheet modals on mobile — placed after base rules so source order wins */
+@media (max-width: 600px) {
+  .modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .modal-panel {
+    max-width: 100%;
+    max-height: 85vh;
+    border-radius: 12px 12px 0 0;
+  }
+  .learn-modal-panel { max-height: 85vh; }
+
+  /* Drag handle at top of each bottom sheet */
+  .modal-panel::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0.65rem auto 0;
+    flex-shrink: 0;
+  }
 }
 
 .modal-header {

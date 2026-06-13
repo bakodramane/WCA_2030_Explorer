@@ -105,6 +105,21 @@ export class ResultCard {
       </footer>
     `;
 
+    // Excerpt toggle for long chunks on mobile
+    if (window.matchMedia('(max-width: 600px)').matches && chunk.text.length > 350) {
+      const textEl = card.querySelector<HTMLElement>('.card-text')!;
+      textEl.classList.add('card-text--truncated');
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'excerpt-toggle';
+      toggle.textContent = 'Show full excerpt';
+      toggle.addEventListener('click', () => {
+        const nowTruncated = textEl.classList.toggle('card-text--truncated');
+        toggle.textContent = nowTruncated ? 'Show full excerpt' : 'Show less';
+      });
+      card.querySelector('.card-body')!.appendChild(toggle);
+    }
+
     // Wire the copy button after innerHTML is set
     card
       .querySelector<HTMLButtonElement>('.copy-btn')!
@@ -168,6 +183,21 @@ export class ResultCard {
         </button>
       </footer>
     `;
+
+    // Excerpt toggle for long QA excerpts on mobile
+    if (window.matchMedia('(max-width: 600px)').matches && row.excerpt.length > 350) {
+      const excerptP = card.querySelector<HTMLElement>('.qa-excerpt p')!;
+      excerptP.classList.add('qa-excerpt--truncated');
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'excerpt-toggle';
+      toggle.textContent = 'Show full excerpt';
+      toggle.addEventListener('click', () => {
+        const nowTruncated = excerptP.classList.toggle('qa-excerpt--truncated');
+        toggle.textContent = nowTruncated ? 'Show full excerpt' : 'Show less';
+      });
+      card.querySelector('.card-body')!.appendChild(toggle);
+    }
 
     card
       .querySelector<HTMLButtonElement>('.copy-btn')!

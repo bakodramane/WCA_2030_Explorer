@@ -139,10 +139,13 @@ export class App {
     const pool  = questions.filter(q => !CURATED.includes(q));
     const picks = randomSample(pool, 6);
     this.chipsEl.innerHTML = '';
-    for (const label of [...CURATED, ...picks]) {
+    const all = [...CURATED, ...picks];
+    for (let i = 0; i < all.length; i++) {
+      const label = all[i];
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'chip';
+      // On mobile, chips beyond the first 3 are hidden until "More examples" is tapped
+      btn.className = i >= 3 ? 'chip chip--overflow' : 'chip';
       btn.textContent = label;
       btn.addEventListener('click', () => {
         this.searchBar.setValue(label);
@@ -150,6 +153,16 @@ export class App {
       });
       this.chipsEl.appendChild(btn);
     }
+
+    // "More examples" control — CSS hides it on desktop; shown on mobile until expanded
+    const moreBtn = document.createElement('button');
+    moreBtn.type = 'button';
+    moreBtn.className = 'chip chip--more-toggle';
+    moreBtn.textContent = 'More examples…';
+    moreBtn.addEventListener('click', () => {
+      this.chipsEl.classList.add('chips--expanded');
+    });
+    this.chipsEl.appendChild(moreBtn);
   }
 
   // ── Questions Bank modal ─────────────────────────────────────────────────
@@ -1365,6 +1378,14 @@ export class App {
     this.introToggle.textContent = '▾ About this Explorer';
     this.introToggle.setAttribute('aria-expanded', 'true');
     this.introToggle.addEventListener('click', () => this.toggleIntro());
+
+    // Collapse by default on mobile so the search bar is immediately visible
+    if (window.matchMedia('(max-width: 600px)').matches) {
+      this.introCollapsed = true;
+      this.introBody.classList.add('intro-body--collapsed');
+      this.introToggle.textContent = '▸ About this Explorer';
+      this.introToggle.setAttribute('aria-expanded', 'false');
+    }
 
     panel.appendChild(this.introBody);
     panel.appendChild(this.introToggle);
