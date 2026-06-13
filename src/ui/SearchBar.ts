@@ -1,11 +1,16 @@
 export class SearchBar {
+  private container: HTMLElement;
   private wrapper: HTMLElement;
   private input: HTMLTextAreaElement;
   private spinner: HTMLElement;
   private btn: HTMLButtonElement;
 
   constructor() {
-    // Outer flex row
+    // Outer container (holds bar + helper text)
+    this.container = document.createElement('div');
+    this.container.className = 'search-bar-container';
+
+    // Flex row (input + button)
     this.wrapper = document.createElement('div');
     this.wrapper.className = 'search-bar';
 
@@ -15,7 +20,7 @@ export class SearchBar {
 
     this.input = document.createElement('textarea');
     this.input.className = 'search-input';
-    this.input.placeholder = 'Search a word or a phrase';
+    this.input.placeholder = 'Ask a question from the WCA 2030 guidelines…';
     this.input.rows = 1;
     this.input.setAttribute('autocomplete', 'off');
     this.input.setAttribute('spellcheck', 'false');
@@ -36,6 +41,13 @@ export class SearchBar {
     this.btn.setAttribute('aria-label', 'Submit search');
 
     this.wrapper.append(inputWrap, this.btn);
+
+    // Helper text beneath the search bar
+    const helper = document.createElement('p');
+    helper.className = 'search-helper';
+    helper.textContent = 'Answers use only WCA 2030 text and include page references.';
+
+    this.container.append(this.wrapper, helper);
 
     // Enter submits (no newline); Shift+Enter is blocked too for a search field
     this.input.addEventListener('keydown', (e) => {
@@ -71,7 +83,7 @@ export class SearchBar {
     );
   }
 
-  get element(): HTMLElement { return this.wrapper; }
+  get element(): HTMLElement { return this.container; }
 
   /** Show or hide the spinner and disable controls while loading. */
   setLoading(on: boolean): void {

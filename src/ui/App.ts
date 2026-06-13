@@ -43,6 +43,8 @@ export class App {
     layout.innerHTML = `
       <header class="app-header">
         <h1 class="app-title">WCA 2030 Explorer</h1>
+        <p class="app-subtitle">Find official WCA 2030 guidance with page-cited excerpts.</p>
+        <p class="trust-strip">Official WCA 2030 source · Verbatim excerpts only · Page citations · Works offline · No tracking</p>
       </header>
       <main class="app-main" id="wca-results" aria-live="polite" aria-label="Search results"></main>
       <footer class="app-footer">
@@ -123,10 +125,16 @@ export class App {
   // ── Random suggestion chips ──────────────────────────────────────────────
 
   private populateChips(): void {
+    const CURATED = [
+      'What is an agricultural holding?',
+      'What are the essential items?',
+      'How should livestock be counted?',
+    ];
     const questions = this.engine.getQaQuestions();
-    const picks = randomSample(questions, 6);
+    const pool  = questions.filter(q => !CURATED.includes(q));
+    const picks = randomSample(pool, 6);
     this.chipsEl.innerHTML = '';
-    for (const label of picks) {
+    for (const label of [...CURATED, ...picks]) {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'chip';

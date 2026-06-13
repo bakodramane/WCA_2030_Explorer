@@ -10,7 +10,7 @@
   --warn:      #92400e;
   --warn-bg:   #fffbeb;
   --border:    #d1c9b8;
-  --mark-bg:   #d4e8d4;
+  --mark-bg:   #ecfccb;
   --font-body: 'Lora', Georgia, serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
   --radius:    4px;
@@ -102,7 +102,24 @@ body {
   font-weight: 600;
   color: var(--accent);
   letter-spacing: -0.01em;
+  margin-bottom: 0.25rem;
+}
+
+.app-subtitle {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+.trust-strip {
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.01em;
   margin-bottom: 1.1rem;
+  padding: 0.35rem 0.6rem;
+  background: rgba(26, 58, 42, 0.04);
+  border-left: 2px solid var(--border);
+  border-radius: 0 var(--radius) var(--radius) 0;
 }
 
 /* ── Main results area ───────────────────────────────────────────────── */
@@ -172,6 +189,20 @@ body {
 .sw-banner button:hover { background: rgba(255,255,255,0.35); }
 
 /* ── Search bar ──────────────────────────────────────────────────────── */
+.search-bar-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.search-helper {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-style: italic;
+  padding-left: 0.1rem;
+}
+
 .search-bar {
   display: flex;
   gap: 0.5rem;
