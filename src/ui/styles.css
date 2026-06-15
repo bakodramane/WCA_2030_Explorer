@@ -815,6 +815,62 @@ body {
 }
 .browse-btn:hover { opacity: 0.88; }
 
+/* The two compact hub buttons (Learn / Browse) sit together on their own row.
+   Hidden on wide screens; shown on mobile (see the max-width: 600px block)
+   in place of the flat action groups. */
+.hub-buttons {
+  display: none;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* ── Flat action groups (wide screens) ──────────────────────────────────
+   Secondary to the search box: small muted headings above rows of ghost
+   buttons in the forest-green / cream palette. Hidden on mobile. */
+.action-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.75rem;
+  margin-top: 0.85rem;
+}
+
+.action-group {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.action-group-heading {
+  margin: 0 0 0.45rem;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+}
+
+.action-group-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.action-btn {
+  flex: 0 0 auto;
+  padding: 0 0.9rem;
+  min-height: 44px;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  color: var(--accent);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.action-btn:hover { background: var(--accent); color: #fff; }
+
 /* ── Modal overlay ───────────────────────────────────────────────────── */
 .modal-backdrop {
   position: fixed;
@@ -842,6 +898,10 @@ body {
 
 /* Bottom-sheet modals on mobile — placed after base rules so source order wins */
 @media (max-width: 600px) {
+  /* On narrow screens, hide the flat groups and show the compact hub buttons. */
+  .action-groups { display: none; }
+  .hub-buttons   { display: flex; flex: 1 1 100%; }
+
   .modal-backdrop {
     align-items: flex-end;
     padding: 0;

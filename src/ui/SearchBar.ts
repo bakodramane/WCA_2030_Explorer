@@ -20,7 +20,7 @@ export class SearchBar {
 
     this.input = document.createElement('textarea');
     this.input.className = 'search-input';
-    this.input.placeholder = 'Ask a question from the WCA 2030 guidelines…';
+    this.input.placeholder = 'Search a word or a phrase about WCA 2030…';
     this.input.rows = 1;
     this.input.setAttribute('autocomplete', 'off');
     this.input.setAttribute('spellcheck', 'false');

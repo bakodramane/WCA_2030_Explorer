@@ -68,13 +68,23 @@ export class App {
     const header = layout.querySelector('.app-header')!;
     header.appendChild(this.buildIntroPanel());
 
-    // Search bar row: input + browse buttons
+    // Search bar row: input + (on mobile) compact hub buttons
     const searchRow = document.createElement('div');
     searchRow.className = 'search-row';
     searchRow.appendChild(this.searchBar.element);
-    searchRow.appendChild(this.buildLearnHubButton());
-    searchRow.appendChild(this.buildBrowseHubButton());
+
+    // Mobile (≤600px): two hub buttons that open the Learn/Browse hub modals.
+    // Hidden on wide screens via CSS in favour of the flat action groups below.
+    const hubButtons = document.createElement('div');
+    hubButtons.className = 'hub-buttons';
+    hubButtons.appendChild(this.buildLearnHubButton());
+    hubButtons.appendChild(this.buildBrowseHubButton());
+    searchRow.appendChild(hubButtons);
     header.appendChild(searchRow);
+
+    // Wide screens (>600px): flat Learn/Browse groups shown directly on the
+    // home page. Hidden on mobile via CSS to save vertical space.
+    header.appendChild(this.buildActionGroups());
 
     // Suggestion chips — populated after engine loads; hidden after first search
     this.chipsEl = document.createElement('div');
@@ -970,6 +980,60 @@ export class App {
     closeBtn.addEventListener('click', closeModal);
     // Override title focus with filter input after screen-reader announcement
     setTimeout(() => filterInput.focus(), 50);
+  }
+
+  // ── Flat action groups (wide screens) ────────────────────────────────────
+
+  /**
+   * Builds the Learn and Browse groups shown directly on the home page on wide
+   * screens. Each button reuses the same modal-opening method the hub modals
+   * trigger, so nothing diverges between the mobile and desktop entry points.
+   */
+  private buildActionGroups(): HTMLElement {
+    const wrap = document.createElement('div');
+    wrap.className = 'action-groups';
+    wrap.setAttribute('aria-label', 'Learn and browse WCA 2030 content');
+
+    wrap.appendChild(this.buildActionGroup('Learn', [
+      ['Guided learning path', () => this.openLearnModal()],
+      ['Test yourself',        () => this.openTestModal()],
+      ['Glossary',             () => this.openGlossaryModal()],
+    ]));
+
+    wrap.appendChild(this.buildActionGroup('Browse', [
+      ['Questions bank',   () => this.openQaModal()],
+      ['Essential items',  () => this.openItemsModal('essential')],
+      ['Additional items', () => this.openItemsModal('additional')],
+      ['Explore by theme', () => this.openThemeModal()],
+    ]));
+
+    return wrap;
+  }
+
+  private buildActionGroup(heading: string, actions: Array<[string, () => void]>): HTMLElement {
+    const group = document.createElement('div');
+    group.className = 'action-group';
+
+    const headingEl = document.createElement('p');
+    headingEl.className = 'action-group-heading';
+    headingEl.id = `action-group-${heading.toLowerCase()}`;
+    headingEl.textContent = heading;
+    group.appendChild(headingEl);
+
+    const row = document.createElement('div');
+    row.className = 'action-group-buttons';
+    row.setAttribute('role', 'group');
+    row.setAttribute('aria-labelledby', headingEl.id);
+    for (const [label, action] of actions) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'action-btn';
+      btn.textContent = label;
+      btn.addEventListener('click', action);
+      row.appendChild(btn);
+    }
+    group.appendChild(row);
+    return group;
   }
 
   // ── Hub buttons & modals ─────────────────────────────────────────────────
