@@ -7,6 +7,7 @@ function unit(sectionId: string, paragraph: string, count: number, page = 40): A
   return {
     paragraphNumber: paragraph,
     glossaryTerm: null,
+    headingSectionId: null,
     lines: [{ text, pdfPage: page + 14, printedPage: page, lineIndexFromTop: 3, lineIndexFromBottom: 3 }],
     text,
     pdfPage: page + 14,

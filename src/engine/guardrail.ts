@@ -33,8 +33,14 @@ export const QA_THRESHOLD = 0.60;
  * off-topic question reaches is 0.442 ("most popular social media platform");
  * 0.45 is therefore the lowest clean threshold at which ALL off-topic
  * questions are refused. Phase C re-tunes this against the gold set.
+ *
+ * B2.1: splitting the text by heading isolated the genuine paragraph on
+ * promoting statistics through social media (¶10.20ff.), which now scores 0.455
+ * against "most popular social media platform". 0.46 is the smallest value that
+ * refuses it again; on the 51-question probe the same 47 are answered at 0.45,
+ * 0.46, and 0.47. C3 re-tunes with held-out sets.
  */
-export const ENUM_CONFIDENCE_THRESHOLD = 0.45;
+export const ENUM_CONFIDENCE_THRESHOLD = 0.46;
 
 /**
  * A3: a lexical (BM25) fallback answer is only accepted when the query is

@@ -5,6 +5,7 @@ import {
   assignUnitsToSections,
   type ChunkOutlineEntry,
 } from './lib/assign-section';
+import { buildHeadingMatcher } from './lib/headings';
 import { packUnits } from './lib/pack';
 import { extractPdfLines } from './lib/pdf-lines';
 import { stripPageFurniture } from './lib/strip-furniture';
@@ -26,8 +27,10 @@ async function main(): Promise<void> {
   const cleaned = stripPageFurniture(extracted);
   const units = splitIntoUnits(cleaned, {
     isGlossaryPage: page => page >= glossary.printedStart && page <= glossary.printedEnd,
+    matchHeading: buildHeadingMatcher(outline),
   });
-  const assigned = assignUnitsToSections(units, outline);
+  // B2.1: the References list (authors, places, titles) would match off-topic queries; keep it out of the index.
+  const assigned = assignUnitsToSections(units, outline).filter(unit => unit.chapterLabel !== 'References');
   const chunks = packUnits(assigned);
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });

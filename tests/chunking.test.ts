@@ -58,12 +58,14 @@ describe('chunking', () => {
     }
   });
 
-  it('at least 90% of chunks contain 150–350 words', () => {
+  // B2 required 90 %. B2.1 splits the text into ~127 titled sections and a chunk never
+  // crosses a section boundary, so small sections (< 150 words) give a few more short chunks.
+  it('at least 85% of chunks contain 150–350 words', () => {
     const inRange = chunks.filter(chunk => {
       const count = wordCount(chunk.text);
       return count >= 150 && count <= 350;
     });
-    expect(inRange.length / chunks.length).toBeGreaterThanOrEqual(0.9);
+    expect(inRange.length / chunks.length).toBeGreaterThanOrEqual(0.85);
   });
 
   it('every chunk has a non-empty sectionTitle, a positive printedPage, and printedPage = pdfPage − 14', () => {
@@ -112,5 +114,33 @@ describe('chunking', () => {
     expect(chunks.some(chunk =>
       chunk.text.includes('WORLD PROGRAMME FOR THE CENSUS OF AGRICULTURE 2030'),
     )).toBe(false);
+  });
+
+  // ── B2.1: section granularity ────────────────────────────────────────────────
+  const kindOf = new Map(OUTLINE_JSON.map(entry => [entry.id, entry.kind]));
+
+  it('at least 75% of chunks carry a section- or theme-level title', () => {
+    const fine = chunks.filter(c => ['section', 'theme'].includes(kindOf.get(c.sectionId) ?? ''));
+    expect(fine.length / chunks.length).toBeGreaterThanOrEqual(0.75);
+  });
+
+  it('splits Annex 4 into its 12 themes, each titled "Annex 4 · Theme n: …"', () => {
+    const annex4 = chunks.filter(c => c.chapterLabel === 'Annex 4');
+    expect(annex4.length).toBeGreaterThan(50);
+    const themes = new Set(annex4.map(c => c.sectionId));
+    for (let n = 1; n <= 12; n++) expect(themes.has(`annex4-theme${n}`), `theme ${n}`).toBe(true);
+    for (const c of annex4) expect(c.sectionTitle).toMatch(/^Annex 4 · Theme \d+: /);
+  });
+
+  it('keeps the References list out of the index', () => {
+    expect(chunks.filter(c => c.chapterLabel === 'References' || c.sectionId === 'references')).toEqual([]);
+  });
+
+  it('uses most outline sections and never labels annex classification codes as paragraphs', () => {
+    const used = new Set(chunks.filter(c => kindOf.get(c.sectionId) === 'section').map(c => c.sectionId));
+    expect(used.size).toBeGreaterThanOrEqual(80);
+    for (const c of chunks.filter(x => x.chapterLabel.startsWith('Annex'))) {
+      for (const paragraph of c.paragraphs) expect(paragraph, c.id).toMatch(/^A\d/);
+    }
   });
 });

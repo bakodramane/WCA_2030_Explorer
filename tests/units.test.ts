@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { PdfLine } from '../scripts/lib/pdf-lines';
+import type { HeadingMatcher } from '../scripts/lib/headings';
 import { splitIntoUnits } from '../scripts/lib/units';
 
 function line(text: string, printedPage: number): PdfLine {
@@ -54,5 +55,27 @@ describe('B2 paragraph units', () => {
     expect(units.map(unit => unit.paragraphNumber)).toEqual(['10.31', null, null]);
     expect(units[0].printedPageEnd).toBe(126);
     expect(units[1].text).toContain('Unnumbered annex introduction');
+  });
+
+  it('B2.1: does not read a wrapped cross-reference as a paragraph start', () => {
+    const units = splitIntoUnits([
+      line('4.15 A real paragraph that ends with a see', 143),
+      line('4.16 for more information on how to report crops', 143),
+      line('4.17 Another real paragraph', 143),
+    ]);
+    expect(units.map(unit => unit.paragraphNumber)).toEqual(['4.15', '4.17']);
+    expect(units[0].text).toContain('4.16 for more information');
+  });
+
+  it('B2.1: a heading from the outline starts its own unit and tags the section', () => {
+    const matchHeading: HeadingMatcher = (lines, index) =>
+      lines[index].text === 'FOOD SECURITY' ? { entryId: 'ch2-food-security', span: 1 } : null;
+    const units = splitIntoUnits([
+      line('2.7 Last paragraph of the previous section', 14),
+      line('FOOD SECURITY', 14),
+      line('2.8 First paragraph', 14),
+    ], { matchHeading });
+    expect(units.map(unit => unit.headingSectionId)).toEqual([null, 'ch2-food-security', null]);
+    expect(units[1].text).toBe('FOOD SECURITY');
   });
 });
