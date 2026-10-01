@@ -3,6 +3,7 @@ import type { GuardrailResponse } from '../engine/guardrail';
 import { STOP_WORDS } from '../engine/stopwords';
 import { linkifyItems } from './linkify';
 import { excerptCitation, pagesLabel, parseExcerpts } from '../engine/excerpts';
+import { citationLine, displayTitle, matchBand, pagesText, qaBand } from './citation';
 import { passagesHtml } from './qa-block';
 
 // ── Safety helpers ────────────────────────────────────────────────────────────
@@ -55,89 +56,38 @@ export function highlight(text: string, query: string): string {
 // Cosine similarity (semantic):  0 – 1  → multiply by 100 for %
 // BM25 (lexical):                0 – ∞  → normalise against 20 as a soft max
 
-function scoreBar(score: number, matchType: 'semantic' | 'lexical'): number {
-  const pct = matchType === 'semantic'
-    ? Math.abs(score) * 100
-    : (score / 20) * 100;
-  return Math.min(Math.max(pct, 0), 100);
-}
-
-function scoreLabel(score: number, matchType: 'semantic' | 'lexical'): string {
-  const displayScore = Math.min(score, 1.0);
-  return matchType === 'semantic'
-    ? `${(displayScore * 100).toFixed(0)}%`
-    : score.toFixed(1);
-}
-
-/**
- * Printed-page labels for citations (A2). A non-positive printed page is front
- * matter — never display a bogus page number. A chunk that spans a page break
- * shows a range: `p. 81` / `pp. 81–82`.
- */
-function printedPageLabel(printedPage: number, printedPageEnd: number): string {
-  if (printedPage < 1) return 'front matter';
-  return printedPage === printedPageEnd
-    ? `p. ${printedPage}`
-    : `pp. ${printedPage}–${printedPageEnd}`;
-}
-
-function pageHeaderLabel(printedPage: number, printedPageEnd: number): string {
-  if (printedPage < 1) return 'Front matter';
-  return printedPage === printedPageEnd
-    ? `Page ${printedPage}`
-    : `Pages ${printedPage}–${printedPageEnd}`;
-}
-
 // ── Public API ────────────────────────────────────────────────────────────────
 
 export class ResultCard {
   /** Render one RankedResult as an <article> element. */
   static render(result: RankedResult, query: string): HTMLElement {
-    const { chunk, score, matchType } = result;
-    const pct        = scoreBar(score, matchType);
-    const label      = scoreLabel(score, matchType);
-    const badgeLabel = matchType === 'semantic' ? 'Best meaning match' : 'Keyword match';
+    const { chunk, matchType } = result;
+    const band = matchBand(result);
 
     const paragraph = chunk.paragraphs[0] ?? null;
     const citationLead = paragraph
-      ? `§${paragraph}, ${chunk.sectionTitle}`
-      : chunk.sectionTitle;
-    const visibleCitation = paragraph
-      ? `§${paragraph} · ${chunk.sectionTitle} · ${printedPageLabel(chunk.printedPage, chunk.printedPageEnd)}`
-      : `${chunk.sectionTitle} · ${printedPageLabel(chunk.printedPage, chunk.printedPageEnd)}`;
+      ? `§${paragraph}, ${displayTitle(chunk.sectionTitle)}`
+      : displayTitle(chunk.sectionTitle);
 
     // B2: paragraph-aware citation, quoting only the verbatim chunk text.
     const citationText =
-      `WCA 2030, ${citationLead} (${printedPageLabel(chunk.printedPage, chunk.printedPageEnd)}): ` +
+      `WCA 2030, ${citationLead} (${pagesText(chunk.printedPage, chunk.printedPageEnd)}): ` +
       `"${chunk.text.slice(0, 80)}…"`;
 
     const card = document.createElement('article');
     card.className = 'result-card';
 
+    // D2: one citation line (§ · section · page); the full outline title is in the tooltip.
     card.innerHTML = `
       <header class="card-header">
-        <span class="card-section" title="${esc(chunk.sectionTitle)}">
-          ${paragraph ? `§${esc(paragraph)} · ` : ''}${esc(chunk.sectionTitle)}
-        </span>
-        <span class="card-page">${pageHeaderLabel(chunk.printedPage, chunk.printedPageEnd)}</span>
+        <span class="card-citation" title="${esc(chunk.sectionTitle)}">${esc(citationLine(chunk))}</span>
       </header>
       <div class="card-body">
-        <p class="card-source">${esc(visibleCitation)}</p>
         <p class="card-text">${highlight(chunk.text, query)}</p>
       </div>
       <footer class="card-footer">
-        <div class="card-score" title="Match confidence based on local search.">
-          <div class="score-bar-track"
-               role="progressbar"
-               aria-label="Match confidence"
-               aria-valuenow="${pct.toFixed(0)}"
-               aria-valuemin="0"
-               aria-valuemax="100">
-            <div class="score-bar-fill" style="width:${pct.toFixed(1)}%"></div>
-          </div>
-          <span class="score-label">${label}</span>
-        </div>
-        <span class="match-badge match-badge--${matchType}">${badgeLabel}</span>
+        <span class="match-band match-band--${band.className}" title="${esc(band.tooltip)}">${band.label}</span>
+        <span class="match-badge match-badge--${matchType}">${matchType === 'semantic' ? 'meaning' : 'keyword'}</span>
         <button class="copy-btn" type="button"
                 data-citation="${esc(citationText)}">
           Copy citation
@@ -183,7 +133,7 @@ export class ResultCard {
    */
   static renderQA(result: QaResult, query: string): HTMLElement {
     const { row, score } = result;
-    const pct = Math.min(score * 100, 100).toFixed(0);
+    const band = qaBand(score);
 
     // A4: the citation must quote the VERBATIM excerpt, never the paraphrase.
     const passages = parseExcerpts(row.excerpt, row.page_number);
@@ -205,17 +155,7 @@ export class ResultCard {
         <p class="card-source">Source: §&nbsp;${esc(row.section_title)}&nbsp;·&nbsp;${esc(pagesLabel(passages).replace('Pages', 'pp.').replace('Page', 'p.'))}</p>
       </div>
       <footer class="card-footer">
-        <div class="card-score" title="Match confidence based on local search.">
-          <div class="score-bar-track"
-               role="progressbar"
-               aria-label="Match confidence"
-               aria-valuenow="${pct}"
-               aria-valuemin="0"
-               aria-valuemax="100">
-            <div class="score-bar-fill" style="width:${pct}%"></div>
-          </div>
-          <span class="score-label">${pct}%</span>
-        </div>
+        <span class="match-band match-band--${band.className}" title="${esc(band.tooltip)}">${band.label}</span>
         <span class="match-badge match-badge--verified">curated</span>
         <button class="copy-btn" type="button"
                 data-citation="${esc(citationText)}">

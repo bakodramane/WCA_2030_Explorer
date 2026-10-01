@@ -29,7 +29,7 @@ beforeAll(() => {
 describe('B2 paragraph citations', () => {
   it('renders and copies the paragraph, canonical section, and printed page', () => {
     const card = ResultCard.render(result, 'land use');
-    expect(card.querySelector('.card-source')!.textContent)
+    expect(card.querySelector('.card-citation')!.textContent)
       .toBe('§7.2.13 · Theme 2: Land · p. 81');
 
     const citation = card.querySelector<HTMLButtonElement>('.copy-btn')!.dataset.citation!;

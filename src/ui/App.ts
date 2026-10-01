@@ -1,6 +1,6 @@
 import { RetrievalEngine } from '../engine/retrieval';
 import { answerQuery } from '../engine/answer';
-import { deriveGroup, deriveResultGroups } from '../engine/outline';
+import { deriveResultGroups } from '../engine/outline';
 import { logQuery, getLog, clearLog, toCSV } from '../engine/logger';
 import { SearchBar }        from './SearchBar';
 import { ResultCard }       from './ResultCard';
@@ -1329,7 +1329,7 @@ export class App {
           }
           for (const r of outcome.results) {
             const card = ResultCard.render(r, query);
-            card.dataset.group = r.chunk.chapterLabel || deriveGroup(r.chunk.sectionTitle, r.chunk.printedPage);
+            card.dataset.group = r.chunk.chapterLabel;
             this.resultsArea.appendChild(card);
           }
           this.resultsArea.appendChild(this.buildEncouragementNote());

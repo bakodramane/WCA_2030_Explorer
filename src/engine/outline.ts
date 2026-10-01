@@ -61,7 +61,7 @@ export function deriveResultGroups(results: RankedResult[]): string[] {
   const seen = new Set<string>();
   const ordered: string[] = [];
   for (const r of results) {
-    const g = r.chunk.chapterLabel || deriveGroup(r.chunk.sectionTitle, r.chunk.printedPage);
+    const g = r.chunk.chapterLabel;
     if (!seen.has(g)) { seen.add(g); ordered.push(g); }
   }
   return ordered;
