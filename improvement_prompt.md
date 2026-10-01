@@ -6,7 +6,7 @@
 
 ---
 
-## Progress status (updated 1 October 2026, after the B4-R / B2.1 / B5 / C0–C3 session)
+## Progress status (updated 1 October 2026, after the OD / D / E session)
 
 | Task | Status | Commit | Notes |
 |---|---|---|---|
@@ -22,8 +22,27 @@
 | C1 Gold set | ✅ Done | `a12004a` | 140 in-domain items; two held-out sets (36 each). |
 | C2 Evaluation script | ✅ Done | `1173381` | `npm run eval` → `reports/eval-latest.md`; cascade shared in `src/engine/answer.ts`. |
 | C3 Tune | ✅ Done, **one target missed** | `1173381` | Recall@5 94.3 %, top citation 83.6 %, tuning false answers 0/60. Held-out false answers 2/36 (5.6 %) on both sets, one question over the 5 % target; see the changelog and the open question. |
-| **OD Owner decisions** | **New — do first** | — | Threshold kept at 0.52; flagged excerpts withheld; multi-passage excerpts; review page; stricter item-code trigger. See OD. |
-| D, E | Not started | — | E2 is partly done (thresholds in `config.ts`, `DEFAULT_QA_THRESHOLD` removed). |
+| OD.1 Threshold | ✅ Done | `1696328` | Semantic threshold kept at 0.52 (owner decision); 2/36 held-out false answers accepted. |
+| OD.2 Withhold flagged excerpts | ✅ Done | `86c9e0e` | 55 flagged rows get `servable: false`; 349 of 404 rows are served. Recall@5 94.3 % → 92.1 %. |
+| OD.3 Multi-passage excerpts | ✅ Done | `e2f1b6f` | ` [...] ` separator, per-passage verbatim and page checks, `repair-multipassage.ts`. |
+| OD.4 Review page | ✅ Done | `0a3559c` | `scripts/dev/review-excerpts.html` and `apply-excerpt-decisions.ts`. **No real decisions made; the 55 reviews are the owner's.** |
+| OD.5 Lookup triggers | ✅ Done | `4ce9620` | Item and figure lookups fire only for a code plus ≤2 other words. Recall@5 92.1 % → 92.9 %. |
+| D1 Compact header | ✅ Done | `812ffac` | |
+| D2 Citation line and bands | ✅ Done | `82c1569` | |
+| D3 PDF links and deep links | ✅ Done | `69bc8c5` | PDF bundled in the precache; `?q=` deep link. |
+| D4 Accessibility and mobile | ✅ Done | `55eb575` | `npm run a11y`: 27 views, no serious axe violations, tap targets ≥ 44 px. |
+| E1 Binary embeddings, single WASM | ✅ Done | `2a7d501` | Pre-cache 70.9 MB → ~39 MB (target ≤ 35 MB missed; floor is model 21.9 MB + SIMD WASM 9.55 MB). |
+| E2 Shared query embedding | ✅ Done | `3dae22b` | |
+| E3 Split `App.ts` | ✅ Done | `48b3e45` | 1,737 → ~153 lines; screenshots byte-identical; a11y and browser-check pass. |
+| E4 Cleanup | ✅ Done, **deploy workflow awaits approval** | `82f1964` | `.github/workflows/deploy.yml.proposed` is inactive (§0.6). |
+| E5 Documentation | ✅ Done | see the latest commit | README counts, pre-cache, citation format, §3a numbering; `CLAUDE.md` already carried the corrected landmarks. |
+
+**Latest metrics (`npm run eval`):** 278 tests pass; recall@5 **92.9 %** (was 94.3 %), recall@1 80.7 %, tuning
+false answers 0/60, held-out 2/36 (5.6 %) on each set. Recall@5 remains above the 90 % floor.
+
+**Open questions for the owner:** (1) review the 55 withheld excerpts with the review page; each approval restores recall;
+(2) approve switching GitHub Pages to the proposed deploy workflow, or keep committing `docs/`;
+(3) the pre-cache is ~39 MB against the 35 MB target: accept it, or approve a smaller model.
 
 **State at `1173381`:** `npx tsc --noEmit` passes; `npx vitest run` passes **249 tests in 29 files**; `docs/`
 matches `public/`. The gitignored `src/data/chunks-raw.json` in a working copy is current; if it is ever
@@ -36,8 +55,7 @@ and they are live in the Q&A tier: "What are the 12 themes of the WCA 2030?" now
 "What is data archiving…?" keeps one sentence with a stray heading prefix ("DATA ARCHIVING 10.29 …"). The
 root cause is the one-contiguous-passage excerpt format (see OD.3).
 
-**Next steps, in order:** OD → D → E (E2's remaining items, E3, E4, E5). The three open questions from the
-C phase are now answered by the owner in OD.
+**Next steps:** the owner's open questions above.
 
 ---
 

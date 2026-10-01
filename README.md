@@ -14,7 +14,7 @@ The WCA 2030 Explorer is a retrieval tool — not a generative AI. It enforces t
 - **Answers are extracted text only.** The retrieved chunk is the answer; no paraphrasing or generation occurs.
 - **No external API calls at runtime.** After the first load, the app works with zero internet access. All model inference runs in-browser via WebAssembly.
 - **Guardrail is mandatory.** When no chunk exceeds the confidence threshold *and* keyword fallback also fails, the app returns: *"This question could not be answered from the WCA 2030 guidelines. Sections searched: [list]."*
-- **Every answer cites** the source chunk's section title and page number.
+- **Every answer cites** the source chunk's section title and **printed** page number (printed page = PDF page − 14). The result card shows `WCA 2030 · <section> · p.<printed>` with a link to the matching PDF page, and multi-passage curated excerpts list every page (`pp. 34; 36`).
 - **No generative model at runtime.** The embedding model (`all-MiniLM-L6-v2`) is used only to encode queries; it never generates text.
 
 The app is intended for FAO staff and national census bureaux who need authoritative, citable answers from the WCA 2030 methodology document without network access in the field.
@@ -35,15 +35,17 @@ The app is intended for FAO staff and national census bureaux who need authorita
 ### Step 1 — Generate the content index *(run once; takes 5–20 min)*
 
 ```bash
-# Extract text from the PDF, chunk it, and embed every chunk
+# Extract text from the PDF, chunk it, embed it, and build every data file
 npm run build-index
 ```
 
 This runs `scripts/chunk.ts` (PDF extraction + chunking) and then `scripts/embed.ts`
-(downloads `Xenova/all-MiniLM-L6-v2` on first run and embeds ~876 chunks).
+(downloads `Xenova/all-MiniLM-L6-v2` on first run and embeds ~414 chunks as sentence-aligned 200-token windows).
 Outputs — all written to the canonical source locations under `public/`:
 - `src/data/chunks-raw.json` — intermediate raw chunks (no embeddings; gitignored)
-- `public/data/chunks.json` — chunks with 384-dimensional embeddings (~10 MB)
+- `public/data/chunks.json` — chunk text and window offsets (no vectors)
+- `public/data/embeddings.f32` and `qa-embeddings.f32` — 384-dimensional vectors as binary `Float32Array` files
+- `public/data/qa.json`, `items.json`, `glossary.json`, `figures-tables.json`, `model-meta.json` — curated and lookup data, plus the index version hash
 - `public/models/` — ONNX model weights + WASM runtime files
 
 > The model download (~23 MB) requires internet access on the first run only.
@@ -60,7 +62,7 @@ npm run build
 
 Compiles TypeScript, bundles the app, and generates:
 - `docs/` — the production bundle
-- `docs/sw.js` — the Workbox service worker with a 16-entry pre-cache manifest (~71 MB total)
+- `docs/sw.js` — the Workbox service worker with a 25-entry pre-cache manifest (~39 MB total)
 
 ### Step 3 — Preview locally
 
@@ -83,8 +85,10 @@ npm run dev
 ### Running tests
 
 ```bash
-npm test          # unit, data, and regression tests (loads the real offline model)
-npm run eval      # full-cascade evaluation → reports/eval-latest.md (see §3)
+npm test          # 278 unit, data, and regression tests (loads the real offline model)
+npm run eval      # full-cascade evaluation → reports/eval-latest.md (the C3 method, see §3)
+npm run a11y      # axe audit, tap targets, overflow (needs a build)
+npm run browser-check  # deep link, PDF link, offline, WASM, external-host checks
 ```
 
 ---
@@ -158,7 +162,7 @@ deliberately, with a changelog line.
 
 ---
 
-## Reviewing curated excerpts
+## 3a. Reviewing curated excerpts
 
 A curated Q&A row whose excerpt was repaired with low confidence is flagged `needs_owner_review = yes` in
 `data/wca-qa.csv` and is **withheld**: the Q&A tier never serves it, and Learn mode shows a document-search
@@ -217,14 +221,15 @@ When a new edition of the WCA guidelines is released:
 
 ### First-load download size
 
-On the very first visit the service worker pre-caches **~71 MB** of assets:
+On the very first visit the service worker pre-caches **~39 MB** of assets (25 files):
 
 | Asset | Size |
 |---|---|
-| `chunks.json` (content index) | ~10 MB |
 | `model_quantized.onnx` (ONNX weights) | ~22 MB |
-| WASM runtime (4 files) | ~36 MB |
-| JS bundle, CSS, HTML, icons | ~3 MB |
+| `ort-wasm-simd.wasm` (the only WASM build precached) | ~9.5 MB |
+| Data: `chunks.json`, two `.f32` embedding files, `qa.json`, items, glossary, figures | ~3.9 MB |
+| Source PDF (page links work offline) | ~2.4 MB |
+| JS bundle, CSS, HTML, fonts, icons | ~1.0 MB |
 
 Subsequent loads use the cache entirely — no network traffic.
 
