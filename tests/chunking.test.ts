@@ -11,6 +11,7 @@ interface Chunk {
   sectionTitle: string;
   pdfPage: number;
   printedPage: number;
+  printedPageEnd: number;
   /** @deprecated Alias of printedPage. */
   pageRef: number;
   text: string;

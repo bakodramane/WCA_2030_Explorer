@@ -13,6 +13,7 @@ interface Chunk {
   sectionTitle: string;
   pdfPage: number;
   printedPage: number;
+  printedPageEnd: number;
   pageRef: number;
   text: string;
   priority: 'high' | 'normal';

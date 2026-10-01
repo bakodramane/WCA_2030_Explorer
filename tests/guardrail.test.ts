@@ -21,6 +21,7 @@ function mkResult(
       sectionTitle: opts.section ?? `Section ${opts.id ?? 'x'}`,
       pdfPage:      15,
       printedPage:  1,
+      printedPageEnd: 1,
       pageRef:      1, // deprecated alias of printedPage
       text:         'placeholder text',
       priority:     opts.priority ?? 'normal',

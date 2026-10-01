@@ -57,11 +57,22 @@ function scoreLabel(score: number, matchType: 'semantic' | 'lexical'): string {
 }
 
 /**
- * Printed-page label for citations. A non-positive printed page is front
- * matter — never display a bogus page number (A1 of the improvement brief).
+ * Printed-page labels for citations (A2). A non-positive printed page is front
+ * matter — never display a bogus page number. A chunk that spans a page break
+ * shows a range: `p. 81` / `pp. 81–82`.
  */
-function pageLabel(printedPage: number): string {
-  return printedPage >= 1 ? String(printedPage) : 'front matter';
+function pageRefLabel(printedPage: number, printedPageEnd: number): string {
+  if (printedPage < 1) return 'front matter';
+  return printedPage === printedPageEnd
+    ? `p.${printedPage}`
+    : `pp.${printedPage}–${printedPageEnd}`;
+}
+
+function pageHeaderLabel(printedPage: number, printedPageEnd: number): string {
+  if (printedPage < 1) return 'Front matter';
+  return printedPage === printedPageEnd
+    ? `Page ${printedPage}`
+    : `Pages ${printedPage}–${printedPageEnd}`;
 }
 
 // ── Public API ────────────────────────────────────────────────────────────────
@@ -74,9 +85,9 @@ export class ResultCard {
     const label      = scoreLabel(score, matchType);
     const badgeLabel = matchType === 'semantic' ? 'Best meaning match' : 'Keyword match';
 
-    // Citation string: WCA 2030, §Section (p.N): first 80 chars…
+    // Citation string: WCA 2030, §Section (p.N / pp.N–M): first 80 chars…
     const citationText =
-      `WCA 2030, ${chunk.sectionTitle} (p.${pageLabel(chunk.printedPage)}): ` +
+      `WCA 2030, ${chunk.sectionTitle} (${pageRefLabel(chunk.printedPage, chunk.printedPageEnd)}): ` +
       `${chunk.text.slice(0, 80)}…`;
 
     const card = document.createElement('article');
@@ -87,10 +98,10 @@ export class ResultCard {
         <span class="card-section" title="${esc(chunk.sectionTitle)}">
           § ${esc(chunk.sectionTitle)}
         </span>
-        <span class="card-page">Page ${pageLabel(chunk.printedPage)}</span>
+        <span class="card-page">${pageHeaderLabel(chunk.printedPage, chunk.printedPageEnd)}</span>
       </header>
       <div class="card-body">
-        <p class="card-source">Source: §&nbsp;${esc(chunk.sectionTitle)}&nbsp;·&nbsp;p.${pageLabel(chunk.printedPage)}</p>
+        <p class="card-source">Source: §&nbsp;${esc(chunk.sectionTitle)}&nbsp;·&nbsp;${pageRefLabel(chunk.printedPage, chunk.printedPageEnd)}</p>
         <p class="card-text">${highlight(chunk.text, query)}</p>
       </div>
       <footer class="card-footer">

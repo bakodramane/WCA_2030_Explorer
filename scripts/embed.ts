@@ -33,6 +33,7 @@ interface Chunk {
   sectionTitle: string;
   pdfPage: number;
   printedPage: number;
+  printedPageEnd: number;
   /** @deprecated Alias of `printedPage`. Kept until Phase B retires it. */
   pageRef: number;
   text: string;

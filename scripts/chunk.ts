@@ -9,8 +9,10 @@ interface Chunk {
   sectionTitle: string;
   /** Page in the source PDF file (1-based). */
   pdfPage: number;
-  /** Printed page as shown in the document's own running footer (pdfPage − 14). */
+  /** Printed page of the chunk's FIRST word (= pdfPage − 14). */
   printedPage: number;
+  /** Printed page of the chunk's LAST word (A2: per-chunk page tracking). */
+  printedPageEnd: number;
   /** @deprecated Alias of `printedPage`. Kept until Phase B retires it. */
   pageRef: number;
   text: string;
@@ -101,16 +103,21 @@ function wordCount(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
-// Sliding-window chunker: 200–350 words, 50-word overlap
+// Sliding-window chunker: 200–350 words, 50-word overlap.
+// Each word carries the PDF page it was extracted from, so every chunk
+// cites the page of its FIRST word and records the page of its LAST word
+// (A2 of the improvement brief) — not the page where its section started (C2).
+interface Word {
+  w: string;
+  pdfPage: number;
+}
+
 function makeChunks(
-  bodyText: string,
-  pdfPage: number,
+  words: Word[],
   sectionTitle: string,
   priority: 'high' | 'normal',
   sectionIdx: number,
 ): Chunk[] {
-  const printedPage = pdfPage - PAGE_OFFSET;
-  const words = bodyText.trim().split(/\s+/).filter(Boolean);
   if (words.length < 8) return [];
 
   const MAX = 300;
@@ -123,13 +130,18 @@ function makeChunks(
 
   while (pos < words.length) {
     const slice = words.slice(pos, pos + MAX);
+    const pdfPage       = slice[0].pdfPage;                  // page of first word
+    const pdfPageEnd    = slice[slice.length - 1].pdfPage;   // page of last word
+    const printedPage    = pdfPage - PAGE_OFFSET;
+    const printedPageEnd = pdfPageEnd - PAGE_OFFSET;
     chunks.push({
       id: `s${sectionIdx}-p${part}`,
       sectionTitle,
       pdfPage,
       printedPage,
+      printedPageEnd,
       pageRef: printedPage, // deprecated alias of printedPage
-      text: slice.join(' '),
+      text: slice.map(x => x.w).join(' '),
       priority,
     });
     part++;
@@ -161,7 +173,7 @@ async function main(): Promise<void> {
   // Walk every line of every page; heading lines start a new section.
   // Body lines accumulate under the current section.
 
-  type Section = { title: string; pdfPage: number; body: string[] };
+  type Section = { title: string; pdfPage: number; body: Array<{ text: string; pdfPage: number }> };
 
   const sections: Section[] = [{ title: 'Front Matter', pdfPage: 1, body: [] }];
 
@@ -205,9 +217,9 @@ async function main(): Promise<void> {
         sections.push({ title: line, pdfPage: page.num, body: [] });
       } else if (isParaBoundary(line)) {
         // Start a new sub-section under the current ALL-CAPS heading
-        sections.push({ title: currentTitle, pdfPage: page.num, body: [line] });
+        sections.push({ title: currentTitle, pdfPage: page.num, body: [{ text: line, pdfPage: page.num }] });
       } else {
-        sections[sections.length - 1].body.push(line);
+        sections[sections.length - 1].body.push({ text: line, pdfPage: page.num });
       }
     }
   }
@@ -219,14 +231,22 @@ async function main(): Promise<void> {
 
   for (let i = 0; i < sections.length; i++) {
     const sec = sections[i];
-    const bodyText = sec.body.join(' ').replace(/\s{2,}/g, ' ').trim();
+    // Flatten per-line bodies into per-WORD entries so each chunk can cite
+    // the page of its first word (A2) instead of the section's start page (C2).
+    const words: Word[] = [];
+    for (const ln of sec.body) {
+      for (const w of ln.text.split(/\s+/).filter(Boolean)) {
+        words.push({ w, pdfPage: ln.pdfPage });
+      }
+    }
+    const bodyText = words.map(x => x.w).join(' ');
     if (bodyText.length < 30) continue; // skip near-empty sections
 
     const priority: 'high' | 'normal' = isHighPriority(sec.pdfPage, totalPages)
       ? 'high'
       : 'normal';
 
-    allChunks.push(...makeChunks(bodyText, sec.pdfPage, sec.title, priority, i));
+    allChunks.push(...makeChunks(words, sec.title, priority, i));
   }
 
   // ── Stats ─────────────────────────────────────────────────────────────────
@@ -235,13 +255,16 @@ async function main(): Promise<void> {
   const avgWC = wcs.reduce((a, b) => a + b, 0) / (wcs.length || 1);
   const maxWC = Math.max(...wcs);
   const pageNums = allChunks.map(c => c.printedPage);
+  const pageEnds = allChunks.map(c => c.printedPageEnd);
+  const multiPageChunks = allChunks.filter(c => c.printedPageEnd !== c.printedPage).length;
 
   console.log('\n─── Chunk Summary ───────────────────────────────────────');
   console.log(`Total chunks    : ${allChunks.length}`);
   console.log(`High-priority   : ${highCount} (${((highCount / allChunks.length) * 100).toFixed(1)}%)`);
   console.log(`Avg word count  : ${Math.round(avgWC)} words`);
   console.log(`Max word count  : ${maxWC} words`);
-  console.log(`Printed pages   : ${Math.min(...pageNums)}–${Math.max(...pageNums)} of ${totalPages - PAGE_OFFSET}`);
+  console.log(`Printed pages   : ${Math.min(...pageNums)}–${Math.max(...pageEnds)} of ${totalPages - PAGE_OFFSET}`);
+  console.log(`Multi-page      : ${multiPageChunks} chunks span a page break`);
   console.log(`Front matter    : PDF pp. 1–${PAGE_OFFSET} excluded (printed page ≤ 0)`);
   console.log('─────────────────────────────────────────────────────────\n');
 

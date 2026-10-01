@@ -3,8 +3,10 @@ export interface Chunk {
   sectionTitle: string;
   /** Page in the source PDF file (1-based). */
   pdfPage: number;
-  /** Printed page as shown in the document's own running footer (= pdfPage − 14). */
+  /** Printed page of the chunk's first word (= pdfPage − 14). */
   printedPage: number;
+  /** Printed page of the chunk's last word (A2: per-chunk page tracking). */
+  printedPageEnd: number;
   /** @deprecated Alias of `printedPage`. Kept until Phase B retires it. */
   pageRef: number;
   text: string;
