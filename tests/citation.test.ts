@@ -43,14 +43,18 @@ describe('A1 — printed-page citations', () => {
 
   it('outline covers the body with ordered, non-overlapping ranges', () => {
     expect(OUTLINE.length).toBeGreaterThan(0);
-    // Printed page 1 is the "PART ONE" divider page (no body text), so the
-    // first real entry (Chapter 1) starts on printed page 2.
-    expect(OUTLINE[0].printedStart).toBeLessThanOrEqual(2);
-    expect(OUTLINE[OUTLINE.length - 1].printedEnd).toBeGreaterThanOrEqual(200);
-    for (let i = 1; i < OUTLINE.length; i++) {
+    // Top-level entries only (sections/themes are nested inside chapters and
+    // are covered by tests/outline.test.ts). Printed page 1 is the "PART ONE"
+    // divider page, assigned to Chapter 1.
+    const top = [...OUTLINE]
+      .filter(e => ['chapter', 'annex', 'glossary', 'references'].includes(e.kind))
+      .sort((a, b) => a.printedStart - b.printedStart);
+    expect(top[0].printedStart).toBeLessThanOrEqual(1);
+    expect(top[top.length - 1].printedEnd).toBeGreaterThanOrEqual(200);
+    for (let i = 1; i < top.length; i++) {
       // A later entry may start on the same page the previous one ends on
       // (annexes can share a page), but must never start before it.
-      expect(OUTLINE[i].printedStart).toBeGreaterThanOrEqual(OUTLINE[i - 1].printedEnd);
+      expect(top[i].printedStart).toBeGreaterThanOrEqual(top[i - 1].printedStart);
     }
   });
 

@@ -6,13 +6,18 @@
 
 ## PART ONE — The Census of Agriculture in Context
 
+**Note:** verified against the PDF's own table of contents (PDF pp. 4–6).
+
 | Chapter | Title | Printed pp |
 |---------|-------|------------|
-| Chapter 1 | Introduction | 2–11 |
+| Chapter 1 | Introduction | 1–11 |
 | Chapter 2 | Importance of the Census of Agriculture and its International Context | 12–23 |
 | Chapter 3 | Relationship to Other Censuses | 24–36 |
 
-### Chapter 1: Introduction (pp. 2–11)
+### Chapter 1: Introduction (pp. 1–11)
+
+*Printed page 1 is the "PART ONE" divider page; the chapter text starts on p. 2. Page 1 is assigned to Chapter 1 so every printed page maps to exactly one outline entry.*
+
 - What is a census of agriculture? (p. 2)
 - Background to the World Programme for the Census of Agriculture (p. 2)
 - Objectives of the census of agriculture (p. 4)
@@ -22,22 +27,43 @@
 - Themes and items omitted (p. 9)
 
 ### Chapter 2: Importance of the Census of Agriculture and its International Context (pp. 12–23)
+- Introduction (p. 12)
 - Stakeholders' needs (p. 13)
 - Agricultural planning, policymaking and policy monitoring (p. 13)
+- Research, investment and business decisions (p. 13)
 - Food security (p. 14)
 - Work in agriculture (p. 14)
 - Agriculture and the environment (p. 15)
 - The role of gender in agriculture (p. 16)
 - Baseline data for monitoring and evaluation (p. 16)
-- Statistical needs: holding-level data, benchmarking, frames for surveys, statistical farm register, small administrative units, rare events, geospatial integration, Small Area Estimation (pp. 17–21)
-- Relevant international initiatives: Global Strategy, 50×2030, Cape Town Global Action Plan, 2030 Agenda and SDGs (pp. 21–23)
+- Statistical needs (p. 17)
+- Source of structural data, including data for economic agricultural accounts and national accounts (p. 17)
+- Holding-level data (p. 17)
+- Advantage over the reporting system (p. 17)
+- Benchmarking data for agricultural statistics (p. 18)
+- Frames for agricultural statistics surveys (p. 18)
+- The statistical farm register (p. 19)
+- Data on structure of agriculture in the small administrative units (p. 20)
+- Data on rare events (p. 20)
+- Integrating census data with geospatial data (p. 20)
+- Using census data for Small Area Estimation (p. 21)
+- Relevant international initiatives (p. 21)
+- Global Strategy to Improve Agricultural and Rural Statistics (p. 21)
+- The 50x2030 Initiative to close the agricultural data gap (p. 22)
+- The Cape Town Global Action Plan for Sustainable Development Data (p. 22)
+- The 2030 Agenda and the Sustainable Development Goals (p. 23)
 
 ### Chapter 3: Relationship to Other Censuses (pp. 24–36)
+- Introduction (p. 24)
 - Relationship with the population and housing census (p. 24)
+- Agriculture in the household sector (p. 25)
 - Statistical units in the agricultural and population censuses (p. 25)
 - Options for coordinating the agricultural and the population and housing censuses (p. 25)
 - The two censuses as a joint operation (p. 29)
 - Combining the census of agriculture with the census of aquaculture (p. 30)
+- Scope of the aquacultural census (p. 30)
+- Statistical unit for the aquacultural census (p. 30)
+- Methodology for a census of agriculture and aquaculture (p. 31)
 - Relationship with economic census (p. 32)
 - Forestry module (p. 33)
 - Fishing module (p. 34)
@@ -75,7 +101,7 @@
 | 5.22–5.35 | Frames for the Agricultural Census | 52–54 |
 | 5.35–5.39 | Flexible Enumeration Strategies for Agricultural Censuses | 54–55 |
 | 5.40–5.42 | Quality Assurance | 55 |
-| 5.43–5.53 | Methods of Enumeration | 56–58 |
+| 5.43–5.53 | Methods of Enumeration (incl. interviewing methods) | 56–57 |
 | 5.54–5.71 | Complementary Tools to Data Collection (georeferencing, GIS, EO) | 57–62 |
 
 ### Chapter 6: List of Items for the Census of Agriculture (pp. 63–73)

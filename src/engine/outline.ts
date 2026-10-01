@@ -7,7 +7,7 @@ import OUTLINE_JSON from '../data/outline.json';
 
 export interface OutlineEntry {
   id: string;
-  kind: 'chapter' | 'annex' | 'glossary' | 'references';
+  kind: 'chapter' | 'section' | 'annex' | 'glossary' | 'theme' | 'references';
   number: number;
   title: string;
   printedStart: number;
@@ -21,6 +21,9 @@ export const OUTLINE = OUTLINE_JSON as unknown as OutlineEntry[];
 export function groupForPrintedPage(printedPage: number): string | null {
   if (printedPage < 1) return null;
   for (const e of OUTLINE) {
+    // Only top-level structures label filter groups; sections and themes are
+    // finer-grained metadata used by the Phase B chunker.
+    if (e.kind === 'section' || e.kind === 'theme') continue;
     if (printedPage >= e.printedStart && printedPage <= e.printedEnd) {
       if (e.kind === 'chapter')    return `Chapter ${e.number}`;
       if (e.kind === 'annex')      return `Annex ${e.number}`;
