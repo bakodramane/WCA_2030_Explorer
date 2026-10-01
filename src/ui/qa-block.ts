@@ -5,14 +5,7 @@
 // always labelled "Curated summary (not verbatim)".
 import type { Chunk, QaRow } from '../engine/types';
 import { pagesLabel, parseExcerpts } from '../engine/excerpts';
-
-function esc(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
+import { esc } from './text';
 
 /** The label that must accompany any display of the paraphrased `answer`. */
 export const CURATED_SUMMARY_LABEL = 'Curated summary (not verbatim)';

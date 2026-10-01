@@ -1,62 +1,20 @@
 import type { RankedResult, QaResult, ItemRow, DescriptionBlock, GlossaryEntry, FigureTableEntry } from '../engine/types';
 import type { GuardrailResponse } from '../engine/guardrail';
-import { STOP_WORDS } from '../engine/stopwords';
 import { linkifyItems } from './linkify';
 import { excerptCitation, pagesLabel, parseExcerpts } from '../engine/excerpts';
+import { esc, highlight } from './text';
 import { citationLine, displayTitle, matchBand, pagesText, pdfLinkHtml, PDF_PAGE_OFFSET, qaBand } from './citation';
 import { passagesHtml } from './qa-block';
 
 // ── Safety helpers ────────────────────────────────────────────────────────────
-
-function esc(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
-function escRe(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-// ── Term highlighting ─────────────────────────────────────────────────────────
-// A6: whole-word matching with simple suffix tolerance, applied to the RAW
-// text BEFORE escaping:
-//   1. Split matches out of the raw text, escape each segment, and wrap the
-//      matched words in <mark> — so a term is never highlighted inside an
-//      HTML entity (&quot; etc.) and nothing is double-escaped.
-//   2. Keep only content words: length ≥ 4 AND not in STOP_WORDS.
-//   3. Match whole words with suffix tolerance — \b(term)(s|es|ed|ing)?\b —
-//      so "land" does not light up inside "inland", while the query "holder"
-//      still highlights "holders".
-
-export function highlight(text: string, query: string): string {
-  const tokens = query
-    .toLowerCase()
-    .split(/\W+/)
-    .filter(t => t.length >= 4 && !STOP_WORDS.has(t));
-  if (tokens.length === 0) return esc(text);
-
-  // Longest first so longer query words win over their shorter prefixes.
-  const terms = [...new Set(tokens)].sort((a, b) => b.length - a.length);
-  const re = new RegExp(`\\b(${terms.map(escRe).join('|')})(s|es|ed|ing)?\\b`, 'gi');
-
-  let out  = '';
-  let last = 0;
-  for (const m of text.matchAll(re)) {
-    out += esc(text.slice(last, m.index!));
-    out += `<mark>${esc(m[0])}</mark>`;
-    last = m.index! + m[0].length;
-  }
-  return out + esc(text.slice(last));
-}
 
 // ── Score normalisation ───────────────────────────────────────────────────────
 // Cosine similarity (semantic):  0 – 1  → multiply by 100 for %
 // BM25 (lexical):                0 – ∞  → normalise against 20 as a soft max
 
 // ── Public API ────────────────────────────────────────────────────────────────
+
+export { highlight };
 
 export class ResultCard {
   /** Render one RankedResult as an <article> element. */
