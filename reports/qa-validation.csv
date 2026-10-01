@@ -1,0 +1,143 @@
+dataset,id,check,page,suggestedPage,detail
+qa,"row 15: A ministry wants to put crop production, prices and consumption into the decennial census.",excerpt-not-verbatim,6,,7 CHAPTER 1: INTRODUCTION 1.17 The census should therefore be conducted at least once ever
+qa,row 24: What happened to the WCA 2020 standalone theme on intrahousehold managerial decisions and ,excerpt-not-verbatim,8,,9 CHAPTER 1: INTRODUCTION managerial decisions and ownership on the holding” (Theme 10 in 
+qa,row 59: Is adding a full agriculture module to the population census generally recommended?,excerpt-not-verbatim,28,,"However, this practice may overburden the population and housing census questionnaire and "
+qa,row 64: Why can the agricultural census be related to the economic census?,excerpt-not-verbatim,34,,34 WORLD PROGRAMME FOR THE CENSUS OF AGRICULTURE 2030 RELATIONSHIP WITH ECONOMIC CENSUS 3.
+qa,row 69: What is the household concept based on?,excerpt-not-verbatim,38,,40 WORLD PROGRAMME FOR THE CENSUS OF AGRICULTURE 2030 THE HOUSEHOLD 4.6 “The concept of ‘h
+qa,row 75: Why is asking only who the main decision-maker is sometimes inadequate?,excerpt-not-verbatim,41,,A single question such as “Who is the main decision-maker for the holding?” may be insuffi
+qa,row 88: How long should the enumeration period ideally be?,excerpt-not-verbatim,46,,"Ideally, it should not exceed one month, to minimize errors in certain census items that m"
+qa,row 117: What is the main objective of a census quality assurance framework?,excerpt-not-verbatim,55,,The main objective of a quality assurance framework for the census of agriculture is to pr
+qa,row 122: For what census uses may CATI be effective?,excerpt-not-verbatim,57,,"59 CHAPTER 5: METHODOLOGICAL CONSIDERATIONS tool for follow-up and quality checking, parti"
+qa,row 127: How can social media and online tools support field teams?,excerpt-not-verbatim,58,,60 WORLD PROGRAMME FOR THE CENSUS OF AGRICULTURE 2030 5.52 Social media: Social media plat
+qa,row 133: What must be in place before using automated field boundary delineation in census fieldwor,excerpt-not-verbatim,61,,Such maps should be developed ahead of the census fieldwork using satellite images and app
+qa,row 144: What is the essential WCA 2030 irrigation item?,page-mismatch,70,68,excerpt starts on p. 68
+qa,row 145: What are two crop-area essential items for temporary crops?,page-mismatch,70,68,excerpt starts on p. 68
+qa,row 154: How does WCA 2030 classify holding sectors?,excerpt-not-verbatim,76,,78 WORLD PROGRAMME FOR THE CENSUS OF AGRICULTURE 2030 7.1.7 The sector to which the holdin
+qa,"row 178: For mixed crops grown unsystematically, what must be true of the estimated component areas",excerpt-not-verbatim,89,,91 CHAPTER 7: DESCRIPTION OF ESSENTIAL ITEMS plot or field is assigned to each crop in pro
+qa,row 196: What is a community for community-level data collection?,page-mismatch,103,101,excerpt starts on p. 101
+qa,row 232: What balance is required when providing microdata access?,excerpt-not-verbatim,122,,124 WORLD PROGRAMME FOR THE CENSUS OF AGRICULTURE 2030 10.16 Providing access to microdata
+qa,row 236: What is the first step when faced with conflicting data?,excerpt-not-verbatim,124,,"126 WORLD PROGRAMME FOR THE CENSUS OF AGRICULTURE 2030 10.27 Therefore, when faced with co"
+qa,row 258: How does Annex 10 define work?,excerpt-not-verbatim,193,,195 ANNEXES ANNEX 10 OVERVIEW OF ILO RESOLUTIONS CONCERNING STATISTICS OF WORK The Resolut
+qa,row 262: Can WCA 2030 land-tenure items alone compute SDG 5.a.1?,excerpt-not-verbatim,198,,Only if the three proxies are included in the questionnaire the indicator could be compute
+qa,row 263: Why are agricultural surveys preferred for SDG 2.3.1 and 2.3.2?,page-mismatch,201,199,excerpt starts on p. 199
+qa,row 267: What is a table in the glossary?,excerpt-not-verbatim,207,,"209 GLOSSARY OF TERMS Table: A structured presentation of statistical data, typically used"
+qa,row 268: What is a census of agriculture?,excerpt-not-verbatim,2,,"A census of agriculture is a statistical operation for collecting, processing and dissemin"
+qa,row 270: How often should a census of agriculture be conducted?,excerpt-not-verbatim,5,,"The implementation plan involves a multiyear programme of statistical activities, in which"
+qa,row 272: What are the main features and innovations of the WCA 2030?,excerpt-not-verbatim,64,,"In the WCA 2030, there are a total of 123 items categorized as follows: 27 items are class"
+qa,row 273: What are the 12 themes of the WCA 2030?,excerpt-not-verbatim,74,,Theme 1: Identification and general characteristics 75 Theme 2: Land 79 Theme 3: Irrigatio
+qa,row 274: Which themes and items were omitted from the WCA 2030?,excerpt-not-verbatim,9,,"The theme ""Intra-household distribution of managerial decisions and ownership on the holdi"
+qa,row 275: How does the agricultural census relate to the overall programme of agricultural surveys?,excerpt-not-verbatim,5,,"A national agricultural statistical system encompasses several elements, including the cen"
+qa,row 276: What are the main uses of agricultural census data?,excerpt-not-verbatim,12,,The census of agriculture is the principal means of collecting basic agricultural statisti
+qa,row 277: How does the agricultural census contribute to gender statistics?,excerpt-not-verbatim,16,,It is widely acknowledged that promoting gender equality and the empowerment of women are 
+qa,row 278: How is census data used for Small Area Estimation?,excerpt-not-verbatim,21,,Small area estimation (SAE) techniques can be applied to produce more precise estimators. 
+qa,row 279: What is a statistical farm register and how does the agricultural census contribute to it?,excerpt-not-verbatim,19,,An important aim of the agricultural census is being a first step for establishing a stati
+qa,row 280: How does the agricultural census support monitoring of the Sustainable Development Goals?,excerpt-not-verbatim,23,,"While the census of agriculture is not considered a primary data source for tracking SDGs,"
+qa,row 281: What is the 50x2030 Initiative and how does it relate to the agricultural census?,excerpt-not-verbatim,22,,The 50x2030 Initiative is a multipartner programme launched in 2018 that seeks to bridge t
+qa,row 282: What is the Global Strategy to Improve Agricultural and Rural Statistics?,excerpt-not-verbatim,21,,"The Global Strategy to Improve Agricultural and Rural Statistics (FAO, 2015b) began implem"
+qa,row 283: What is the Cape Town Global Action Plan and how is it relevant to the agricultural census,excerpt-not-verbatim,22,,"The CTGAP proposes six strategic areas, each associated with several objectives and relate"
+qa,row 284: What is the difference between a reporting system and an agricultural census?,excerpt-not-verbatim,18,,"Another limitation of a reporting system based on field officials, when not supported by a"
+qa,row 285: How can census data be integrated with geospatial data?,excerpt-not-verbatim,20,,"When holdings are georeferenced, census data can be linked to geospatial data and availabl"
+qa,row 287: What are the options for coordinating the agricultural and population censuses?,excerpt-not-verbatim,26,,The coordination between the two censuses can cover: coordinating aspects of the two censu
+qa,row 288: What screening items can the population census include to build a frame for the agricultur,excerpt-not-verbatim,28,,This includes households using land – wholly or partly – for agricultural purposes or rais
+qa,row 289: Can the agricultural census and the population census be conducted as a single joint opera,excerpt-not-verbatim,30,,Countries often face administrative difficulties in synchronising the field operations and
+qa,row 290: What is the scope of a census of aquaculture and its link to the agricultural census?,excerpt-not-verbatim,30,,"There remains strong demand for structural data on aquaculture, and many countries are int"
+qa,row 291: What is the statistical unit for the aquacultural census?,excerpt-not-verbatim,30,,"The statistical unit for the aquacultural census is the aquacultural holding, defined in a"
+qa,row 292: How does the agricultural census relate to the economic census?,excerpt-not-verbatim,33,,"Economic censuses are normally carried out using the ""establishment"" as the statistical un"
+qa,row 293: What is a forestry module in the context of the agricultural census?,excerpt-not-verbatim,34,,For agricultural holdings: Core module: Item 1101; Supplementary forestry module (sample-b
+qa,row 300: What is the definition of a household in the WCA 2030?,excerpt-not-verbatim,38,,"The concept of ""household"" is based on the arrangements that a person or a group of person"
+qa,row 301: What is a parcel in the context of an agricultural census?,excerpt-not-verbatim,40,,"The agricultural holding is divided into parcels, where a parcel is defined as any piece o"
+qa,row 303: Who is the agricultural holder?,excerpt-not-verbatim,40,,"The agricultural holder is defined as the civil person, group of civil persons or juridica"
+qa,row 305: What is the scope of the census of agriculture?,excerpt-not-verbatim,41,,"Broadly speaking, an agricultural census aims to measure the structure of the agricultural"
+qa,row 306: What activities fall outside the scope of the agricultural census?,excerpt-not-verbatim,41,,"However, support activities to agriculture and post-harvest crop activities – such as agro"
+qa,row 308: What is a cut-off threshold for agricultural holdings?,excerpt-not-verbatim,42,,Many countries apply a minimum size limit for the inclusion of units in the census. This i
+qa,row 309: What are the disadvantages of applying a cut-off threshold?,excerpt-not-verbatim,42,,"However, in many developing countries, small-scale agriculture makes a significant contrib"
+qa,row 311: What is the census reference period?,excerpt-not-verbatim,43,,The census has two main reference periods: the census reference year and the census refere
+qa,row 312: What is the difference between the census reference year and the census reference day?,excerpt-not-verbatim,43,,The census has two main reference periods: the census reference year and the census refere
+qa,row 313: When is the census reference day used instead of the census reference year?,excerpt-not-verbatim,43,,"The census reference day refers to a specific point in time, used for livestock numbers an"
+qa,row 314: What is the recommended timing for the census of agriculture?,excerpt-not-verbatim,44,,"Following a successful and satisfactory census, subsequent censuses should be conducted at"
+qa,row 315: What factors determine the content of an agricultural census?,excerpt-not-verbatim,45,,The suitability of the census vehicle for the collection of the data required. An agricult
+qa,row 316: What are the main steps in developing and conducting an agricultural census?,excerpt-not-verbatim,46,,Identify the role of the census as a component of the system of integrated agricultural ce
+qa,row 318: What is the classical approach to conducting an agricultural census?,excerpt-not-verbatim,49,,"In a few instances, countries wishing to add items that are not usually covered in the cen"
+qa,row 319: What is the modular approach to conducting an agricultural census?,excerpt-not-verbatim,49,,The modular approach consists of a clearly defined core module and one or more supplementa
+qa,row 320: What is the difference between the classical approach and the modular approach?,excerpt-not-verbatim,49,,The long questionnaire should not be confused with a supplementary module of the modular a
+qa,row 323: What is the short-and-long questionnaire concept under the classical approach?,excerpt-not-verbatim,49,,"In a few instances, countries wishing to add items that are not usually covered in the cen"
+qa,row 324: How can administrative records and registers be used in an agricultural census?,excerpt-not-verbatim,51,,"In most cases, registers cannot provide all the essential items, therefore the most reason"
+qa,row 325: What are the challenges of using administrative records in an agricultural census?,excerpt-not-verbatim,52,,"The use of administrative records may pose some challenges, including: access to datasets "
+qa,row 327: What is a flexible enumeration strategy for agricultural censuses?,excerpt-not-verbatim,54,,To address these constraints while maintaining the integrity and usefulness of census resu
+qa,row 328: What is quality assurance in the context of an agricultural census?,excerpt-not-verbatim,55,,Quality assurance is the process of ensuring that quality goals are consistently met throu
+qa,row 329: What methods of enumeration are used in agricultural censuses?,excerpt-not-verbatim,56,,"The advent of advanced technologies, such as information technology, GIS and the global po"
+qa,row 330: What is georeferencing and why is it important for the agricultural census?,excerpt-not-verbatim,58,,An important factor in expanding the coverage of the census of agriculture is the georefer
+qa,row 331: How can Earth Observation data enhance agricultural census statistics?,excerpt-not-verbatim,59,,"Earth observation is the gathering of information about the Earth's surface, waters and at"
+qa,row 332: How is geospatial data used to estimate holding area?,excerpt-not-verbatim,61,,It is possible to use a variety of proprietary and open-source GIS software to estimate th
+qa,row 334: How many essential items are there in the WCA 2030?,excerpt-not-verbatim,64,,"In the WCA 2030, there are a total of 123 items categorized as follows: 27 items are class"
+qa,row 335: What are the additional items in the WCA 2030?,excerpt-not-verbatim,65,,The remaining items are classified as additional and are preferably covered in surveys or 
+qa,row 336: What is the difference between essential and additional items?,excerpt-not-verbatim,64,,There are 27 essential items. These represent the minimum data set that all countries shou
+qa,row 337: What criteria determine whether an item should be included in the census?,excerpt-not-verbatim,66,,"Is the item one of the WCA 2030's 27 essential items (e.g. holder sex, age and type, land "
+qa,row 338: What are the 12 themes of the WCA 2030 and which have essential items?,excerpt-not-verbatim,70,,THEME 7: SERVICES FOR AGRICULTURE — Additional items (see Theme 7 in Annex 4). THEME 8: DE
+qa,row 339: Which themes have only additional items in the WCA 2030?,excerpt-not-verbatim,95,,THEME 7: SERVICES FOR AGRICULTURE — All items of this theme are classified as additional; 
+qa,row 340: What are community-level items in the WCA 2030?,excerpt-not-verbatim,72,,"In addition to items collected at holding-level, the WCA 2030 also proposes items to be co"
+qa,row 342: What identification and location information is collected for agricultural holdings?,excerpt-not-verbatim,75,,Identification of the agricultural holding usually includes the holding name and administr
+qa,row 343: What is meant by the legal status of the agricultural holder?,excerpt-not-verbatim,76,,"The sector to which the holding belongs may be classified as ""household sector"" or ""non-ho"
+qa,row 344: Why is data on the sex of the agricultural holder collected?,excerpt-not-verbatim,76,,Item 0104 is important for analysing the gender aspects of agricultural production. Data o
+qa,row 345: What does main purpose of production mean for an agricultural holding?,excerpt-not-verbatim,78,,The aim of this item is to obtain a broad indicator of the extent to which agricultural ho
+qa,row 347: What is the FAO land use classification used in the agricultural census?,excerpt-not-verbatim,80,,The internationally accepted standard for land use is the FAO land use classification. The
+qa,row 348: What are the nine land use classes in the WCA 2030?,excerpt-not-verbatim,81,,"For the purposes of the agricultural census, it is recommended that nine basic land use cl"
+qa,row 349: What is the difference between land use and land cover?,excerpt-not-verbatim,80,,The internationally accepted standard for land use is the FAO land use classification. Lan
+qa,row 350: What is land under temporary crops?,excerpt-not-verbatim,82,,Land under temporary crops includes all land used for crops with a less than one-year grow
+qa,row 351: What is land temporarily fallow?,excerpt-not-verbatim,82,,Land temporarily fallow refers to land that is not seeded for one or more growing seasons 
+qa,row 352: What is land under permanent crops?,excerpt-not-verbatim,82,,Land under permanent crops refers to land cultivated with long-term crops that do not need
+qa,row 354: What is land tenure and what types are recognised in the WCA 2030?,excerpt-not-verbatim,85,,Item 0204 refers to the breakdown of the total area of the holding according to specific l
+qa,row 355: What is the definition of irrigation in the WCA 2030?,excerpt-not-verbatim,86,,"Irrigation refers to the intentional supply of water to land, as opposed to the supply by "
+qa,row 357: Which irrigation item is essential and which are additional?,excerpt-not-verbatim,68,,Essential items: For the holdings — 0302 Area of land actually irrigated: fully controlled
+qa,row 359: How are intercropped and mixed crops measured in the agricultural census?,excerpt-not-verbatim,89,,"For intercropping, the plot or field is assigned to each crop in proportion to the area it"
+qa,row 361: What fertilizing products are covered in the WCA 2030?,excerpt-not-verbatim,90,,"For the purposes of the agricultural census, fertilizers are mineral or organic substances"
+qa,row 362: What is included in the definition of livestock for the agricultural census?,excerpt-not-verbatim,93,,The number of animals refers to the animal population on the holding at a specific point i
+qa,row 363: What is a livestock production system in the WCA 2030?,excerpt-not-verbatim,92,,The livestock production system (LPS) refers to the general characteristics and practices 
+qa,row 364: What is the difference between number of animals and number of female breeding animals?,excerpt-not-verbatim,93,,The number of animals refers to the animal population on the holding at a specific point i
+qa,row 365: What types of pesticides are covered in the WCA 2030?,excerpt-not-verbatim,94,,"Pesticides refer to any substance, or mixture of substances of chemical, biological or gen"
+qa,row 366: What machinery and equipment items are essential in the agricultural census?,excerpt-not-verbatim,94,,"This item identifies machinery and equipment used on the holding, wholly or partly for agr"
+qa,row 367: What items are included under Theme 7 (Services for Agriculture) in the WCA 2030?,excerpt-not-verbatim,70,,THEME 7: SERVICES FOR AGRICULTURE — Additional items (see Theme 7 in Annex 4) For the hold
+qa,row 368: What items are included under Theme 8 (Demographic and Social Characteristics)?,excerpt-not-verbatim,70,,THEME 8: DEMOGRAPHIC AND SOCIAL CHARACTERISTICS — Additional items (see Theme 8 in Annex 4
+qa,row 369: Are there essential items in Theme 7 or Theme 8?,excerpt-not-verbatim,95,,THEME 7: SERVICES FOR AGRICULTURE — All items of this theme are classified as additional; 
+qa,row 370: What types of work on the holding are covered in Theme 9?,excerpt-not-verbatim,95,,This theme covers items related to the two types of labour inputs on agricultural holdings
+qa,row 371: Who is considered an employee on the holding?,excerpt-not-verbatim,98,,An employee on the holding is a person who had a job on the holding at some time during th
+qa,row 373: What is an agricultural service contractor?,excerpt-not-verbatim,98,,A distinction is made between hiring an employee to work on the holding for a defined remu
+qa,row 374: What is aquaculture as defined in the WCA 2030?,excerpt-not-verbatim,99,,"Aquaculture is the farming of aquatic organisms such as fish, molluscs, crustaceans, plant"
+qa,row 375: How is aquaculture distinguished from capture fishing in the WCA 2030?,excerpt-not-verbatim,99,,"Aquaculture is the farming of aquatic organisms such as fish, molluscs, crustaceans, plant"
+qa,row 376: What is the essential item for aquaculture in the WCA 2030?,excerpt-not-verbatim,99,,1001 Presence of aquaculture on the holding — Essential item. Reference period: census ref
+qa,row 377: Are forestry and fishing items essential or additional in the WCA 2030?,excerpt-not-verbatim,71,,THEME 11: FORESTRY — Additional items (see Theme 11 in Annex 4): 1101 Presence of woodland
+qa,row 378: What is community-level data in the agricultural census?,excerpt-not-verbatim,100,,The collection of community-level data was first introduced in the WCA 2010 programme and 
+qa,row 379: Why is community-level data collected in the agricultural census?,excerpt-not-verbatim,100,,"Some types of community-level data are of interest for policymaking, particularly for plan"
+qa,row 380: How is a community defined as a statistical unit for the agricultural census?,excerpt-not-verbatim,101,,A community can be defined as a self-contained unit of social and economic activities. Pop
+qa,row 381: What categories of community-level items are recommended in the WCA 2030?,excerpt-not-verbatim,72,,The WCA 2030 recommends the following items: Geography — 2101 Location; 2102 Agroecologica
+qa,row 382: What are the main classification variables used for tabulations in the WCA 2030?,excerpt-not-verbatim,125,,9.12 Nine main classification variables have been identified for tabulations of the essent
+qa,row 383: What is data disclosure control and why is it needed in census tabulations?,excerpt-not-verbatim,129,,Data collected during the agricultural census must be tabulated and disseminated in a mann
+qa,row 384: What are the recommended modes of disseminating agricultural census results?,excerpt-not-verbatim,120,,A census is not complete until the information collected is made available to potential us
+qa,row 385: What is safe access to census microdata?,excerpt-not-verbatim,122,,Providing access to microdata requires balancing the demands of the research community wit
+qa,row 386: What causes data conflicts between census results and current agricultural statistics?,excerpt-not-verbatim,123,,Conflicts and discrepancies between census data and current agricultural statistics can be
+qa,row 387: What is data archiving in the context of an agricultural census?,excerpt-not-verbatim,124,,Data archiving is a means of ensuring long-term preservation of data and assists users in 
+qa,row 388: How does the agricultural holding relate to the System of National Accounts?,excerpt-not-verbatim,127,,An establishment is an enterprise or part of an enterprise situated in a single location a
+qa,row 389: What ISIC categories are covered by the agricultural census scope?,excerpt-not-verbatim,130,,ISIC Group 011: Growing of non-perennial crops — This group comprises the activity of grow
+qa,row 390: What ISIC categories cover aquaculture?,excerpt-not-verbatim,133,,ISIC Group 032: Aquaculture — This group includes aquaculture (or aquafarming) – i.e. the 
+qa,row 391: Which SDG indicators can be partially monitored through agricultural censuses?,excerpt-not-verbatim,198,,"In the absence of periodic household surveys, a sample-based module in the agricultural ce"
+qa,row 392: What ILO frameworks underpin the work-on-the-holding items in the WCA 2030?,excerpt-not-verbatim,193,,"The Resolution concerning statistics of work, employment and labour underutilization (ILO,"
+qa,row 393: How do the WCA 2030 land use classes correspond to SEEA and FAO land use classifications?,excerpt-not-verbatim,80,,The internationally accepted standard for land use is the FAO land use classification. The
+qa,row 394: What is the recommended age reference for the agricultural holder?,excerpt-not-verbatim,76,,The age of the holder is important for studying the relationship between age and farm size
+qa,row 395: What other economic activities of the household are collected in Theme 1?,excerpt-not-verbatim,78,,"Other economic activities are those undertaken by the household, linked to the agricultura"
+qa,row 396: How are livestock classified in the WCA 2030?,excerpt-not-verbatim,189,,"ANNEX 8 — CLASSIFICATION OF LIVESTOCK: Group 1: Bovine animals (Cattle, Buffaloes, Other b"
+qa,row 397: How is machinery and equipment classified in the WCA 2030?,excerpt-not-verbatim,190,,ANNEX 9 — CLASSIFICATION OF MACHINERY AND EQUIPMENT: Group 1: Manually-operated equipment.
+qa,row 398: Why is holding-level data important in a census of agriculture?,excerpt-not-verbatim,17,,The census of agriculture involves the collection of data at the individual holding-level.
+qa,row 399: What types of frames can be used for the household sector in an agricultural census?,excerpt-not-verbatim,53,,Another type of frame for the household sector of an agricultural census can be created fr
+qa,row 400: Why is it important for countries to specify the census coverage clearly?,excerpt-not-verbatim,42,,"It should be recognized that, in an integrated agricultural statistical system, any exclus"
+qa,row 401: How does the agricultural census serve as a benchmark for current agricultural statistics?,excerpt-not-verbatim,18,,A decennial agricultural census cannot be used as a source of current agricultural statist
+qa,row 402: What is the role of the agricultural census for rare events and rare crops?,excerpt-not-verbatim,19,,The most common sampling frames used in agricultural surveys are lists of holdings (which 
+qa,row 403: What is the AGRISurvey and how does it relate to the agricultural census?,excerpt-not-verbatim,22,,An important methodological development under pillar 2 was the elaboration of an Agricultu
+qa,row 404: How can objective measurement improve crop area data in the agricultural census?,excerpt-not-verbatim,80,,The most common method for collecting data on parcel and total holding areas in the census
+qa,row 405: What is the MSF (Master Sampling Frame) and how does the agricultural census contribute to,excerpt-not-verbatim,19,,The Global Strategy to Improve Agricultural and Rural Statistics advocates for the buildin
+chunk,annex5-1.1.1-1,text-not-verbatim,173,,"ANNEX 5 CORRESPONDENCE BETWEEN THE WCA 2030, FAO AND SEEA LAND USE CLASSES WCA 2030 main l"
+chunk,annex6-1.90-5,text-not-verbatim,176,,"1.90 Other cereals, n.e.c. T 2 Vegetables and melons T 2.01 Leafy or stem vegetables T 2.0"
+chunk,annex6-4.03.09-6,text-not-verbatim,178,,"4.03.09 Shea tree (shea butter or karite nuts) T 4.03.90 Other temporary oilseed crops, n."
+chunk,glossary-intro-4,text-not-verbatim,202,,"Compact plantation: Plants, trees or shrubs planted in a regular or dense manner – typical"
+chunk,glossary-intro-5,text-not-verbatim,203,,"Employer: A self-employed person who, alone or with partners, has engaged one or more pers"
+chunk,glossary-intro-6,text-not-verbatim,204,,Inter-planted crops: Crops planted between the rows of another crop (paragraph 7.4.10). Ir
+chunk,glossary-intro-9,text-not-verbatim,206,,Scattered plants: Plants or trees distributed in such a way that the area they occupy cann
