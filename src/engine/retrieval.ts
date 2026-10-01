@@ -453,6 +453,7 @@ export class RetrievalEngine {
     let bestIndex = -1;
 
     for (let i = 0; i < this.qaVecs.length; i++) {
+      if (this.qaItems[i].servable === false) continue; // OD.2: unapproved excerpt
       const ev = this.qaVecs[i];
       let dot  = 0;
       for (let k = 0; k < DIM; k++) dot += qVec[k] * ev[k];

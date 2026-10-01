@@ -24,7 +24,10 @@ const BATCH_SIZE = 32;
 
 interface QaRowOut {
   question: string; answer: string; page_number: string; section_title: string;
-  excerpt: string; tags: string; confidence: string; embedding: number[];
+  excerpt: string; tags: string; confidence: string;
+  /** OD.2: false while the excerpt awaits owner approval; the Q&A tier never serves such a row. */
+  servable: boolean;
+  embedding: number[];
 }
 
 /** Embeddings already in qa.json, keyed by question text (the only embedded field). */
@@ -64,6 +67,7 @@ async function main(): Promise<void> {
   const out: QaRowOut[] = records.map(r => ({
     question: r.question, answer: r.answer, page_number: r.page_number,
     section_title: r.section_title, excerpt: r.excerpt, tags: r.tags, confidence: r.confidence,
+    servable: !(r.needs_owner_review === 'yes' && r.approved_by !== 'owner'),
     embedding: embeddings.get(r.question)!,
   }));
   if (out.some(r => r.embedding.length !== DIM)) throw new Error(`Expected dim=${DIM} for every row`);
@@ -71,6 +75,7 @@ async function main(): Promise<void> {
   fs.mkdirSync(path.dirname(JSON_OUT), { recursive: true });
   fs.writeFileSync(JSON_OUT, JSON.stringify(out), 'utf-8');
   const kb = (fs.statSync(JSON_OUT).size / 1024).toFixed(0);
+  console.log(`Servable rows: ${out.filter(r => r.servable).length} of ${out.length} (the rest await owner approval)`);
   console.log(`Rows written: ${out.length}  →  ${path.relative(ROOT, JSON_OUT)}  (${kb} KB)`);
 }
 

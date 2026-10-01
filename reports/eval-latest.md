@@ -1,4 +1,4 @@
-# Evaluation — current data
+# Evaluation — OD.2: flagged excerpts withheld
 
 Data: `public/data` — 414 chunks, 1016 embedded vectors. Ranking: `chunk-raw`. Thresholds: semantic 0.52, Q&A 0.8, lexical floor 0.38. Recall = the expected paragraph, or a chunk within one printed page of the expected page (short queries: the answer chunk contains the term; an item card or curated row counts when its verbatim text holds the answer).
 
@@ -6,12 +6,12 @@ Data: `public/data` — 414 chunks, 1016 embedded vectors. Ranking: `chunk-raw`.
 
 |  | n | answered | recall@1 | recall@5 | top citation correct (of answered) |
 | --- | --- | --- | --- | --- | --- |
-| all gold | 140 | 100.0 % | 83.6 % | 94.3 % | 83.6 % |
-| reworded | 80 | 100.0 % | 85.0 % | 96.3 % | 85.0 % |
+| all gold | 140 | 100.0 % | 80.0 % | 92.1 % | 80.0 % |
+| reworded | 80 | 100.0 % | 78.8 % | 92.5 % | 78.8 % |
 | new | 40 | 100.0 % | 75.0 % | 90.0 % | 75.0 % |
 | short | 20 | 100.0 % | 95.0 % | 95.0 % | 95.0 % |
 
-Tier that answered: verified 69, document 61, item 4, glossary 6.
+Tier that answered: document 66, verified 64, item 4, glossary 6.
 
 ## Document tier only (lookups and Q&A bypassed): ranking comparison (C0.1)
 
@@ -75,13 +75,13 @@ A pure domain-vocabulary query (C0.2) keeps floor 0 in every row.
 
 | Q&A threshold | gold recall@5 | reworded | new | short | answered by Q&A | tuning false | held-out false | near-domain false |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 0.50 | 84.3 % | 96.3 % | 60.0 % | 85.0 % | 128 | 0/60 | 2/36 | 2/10 |
-| 0.55 | 85.0 % | 96.3 % | 62.5 % | 85.0 % | 125 | 0/60 | 2/36 | 2/10 |
-| 0.60 | 87.9 % | 97.5 % | 70.0 % | 85.0 % | 115 | 0/60 | 2/36 | 2/10 |
-| 0.65 | 87.9 % | 96.3 % | 70.0 % | 90.0 % | 107 | 0/60 | 2/36 | 2/10 |
-| 0.70 | 93.6 % | 98.8 % | 85.0 % | 90.0 % | 95 | 0/60 | 2/36 | 2/10 |
-| 0.75 | 93.6 % | 97.5 % | 87.5 % | 90.0 % | 82 | 0/60 | 2/36 | 2/10 |
-| 0.80 | 94.3 % | 96.3 % | 90.0 % | 95.0 % | 69 | 0/60 | 2/36 | 2/10 |
-| 0.85 | 93.6 % | 95.0 % | 90.0 % | 95.0 % | 52 | 0/60 | 2/36 | 2/10 |
-| 0.90 | 92.9 % | 93.8 % | 90.0 % | 95.0 % | 38 | 0/60 | 2/36 | 2/10 |
-| 0.95 | 90.7 % | 90.0 % | 90.0 % | 95.0 % | 20 | 0/60 | 2/36 | 2/10 |
+| 0.50 | 80.0 % | 88.8 % | 60.0 % | 85.0 % | 125 | 0/60 | 2/36 | 2/10 |
+| 0.55 | 80.7 % | 88.8 % | 62.5 % | 85.0 % | 123 | 0/60 | 2/36 | 2/10 |
+| 0.60 | 84.3 % | 90.0 % | 72.5 % | 85.0 % | 113 | 0/60 | 2/36 | 2/10 |
+| 0.65 | 84.3 % | 90.0 % | 70.0 % | 90.0 % | 105 | 0/60 | 2/36 | 2/10 |
+| 0.70 | 90.0 % | 92.5 % | 85.0 % | 90.0 % | 92 | 0/60 | 2/36 | 2/10 |
+| 0.75 | 90.0 % | 91.3 % | 87.5 % | 90.0 % | 78 | 0/60 | 2/36 | 2/10 |
+| 0.80 | 92.1 % | 92.5 % | 90.0 % | 95.0 % | 64 | 0/60 | 2/36 | 2/10 |
+| 0.85 | 91.4 % | 91.3 % | 90.0 % | 95.0 % | 42 | 0/60 | 2/36 | 2/10 |
+| 0.90 | 90.7 % | 90.0 % | 90.0 % | 95.0 % | 29 | 0/60 | 2/36 | 2/10 |
+| 0.95 | 89.3 % | 87.5 % | 90.0 % | 95.0 % | 15 | 0/60 | 2/36 | 2/10 |

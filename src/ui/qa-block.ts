@@ -3,7 +3,7 @@
 // self-test views. The VERBATIM excerpt is the primary answer; the paraphrased
 // curated `answer` field is rendered beneath it, visually subordinate and
 // always labelled "Curated summary (not verbatim)".
-import type { QaRow } from '../engine/types';
+import type { Chunk, QaRow } from '../engine/types';
 
 function esc(s: string): string {
   return s
@@ -24,5 +24,21 @@ export function qaAnswerBlockHtml(row: QaRow): string {
     `<p class="qa-summary-label">${CURATED_SUMMARY_LABEL}</p>` +
     `<p class="learn-answer-text qa-summary">${esc(row.answer)}</p>` +
     `<p class="learn-citation">§ ${esc(row.section_title)}</p>`
+  );
+}
+
+/**
+ * OD.2: a curated row whose excerpt awaits owner approval is never shown. The reveal shows the
+ * best passage found by document search instead (verbatim, cited), or says that none was found.
+ */
+export function documentPassageBlockHtml(chunk: Chunk | null): string {
+  if (!chunk) {
+    return '<p class="qa-excerpt-label">No passage in the WCA 2030 guidelines answers this question with enough confidence.</p>';
+  }
+  const paragraph = chunk.paragraphs[0] ? `§${esc(chunk.paragraphs[0])} · ` : '';
+  const pages = chunk.printedPageEnd > chunk.printedPage ? `pp. ${chunk.printedPage}–${chunk.printedPageEnd}` : `p. ${chunk.printedPage}`;
+  return (
+    `<p class="qa-excerpt-label">Passage found by search · ${paragraph}${esc(chunk.sectionTitle)} · ${pages}</p>` +
+    `<blockquote class="qa-excerpt"><p>${esc(chunk.text)}</p></blockquote>`
   );
 }

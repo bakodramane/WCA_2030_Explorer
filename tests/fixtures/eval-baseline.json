@@ -1,6 +1,6 @@
 {
   "description": "C3 baseline for tests/eval-regression.test.ts, from reports/eval-latest.md. The test fails when full-cascade gold recall@5 falls more than 3 points below this, when any tuning off-topic question is answered, or when a held-out set leaks more than its recorded count. Update it deliberately, with a changelog line, when the data or thresholds change.",
-  "goldRecall5": 0.943,
+  "goldRecall5": 0.921,
   "tuningFalseAnswers": 0,
   "heldoutFalseAnswers": 2,
   "heldout2FalseAnswers": 2

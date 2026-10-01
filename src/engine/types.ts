@@ -112,6 +112,8 @@ export interface QaRow {
   excerpt:       string;
   tags:          string;
   confidence:    string;
+  /** OD.2: false = excerpt awaits owner approval; never served by the Q&A tier. Absent = servable. */
+  servable?:     boolean;
   embedding:     number[];
 }
 

@@ -22,6 +22,7 @@ async function main(): Promise<void> {
   const source = await loadSourceText();
   const index = buildSourceIndex(source);
   const { headers, records } = readCsvRecords(CSV_PATH);
+  for (const column of ['needs_owner_review', 'approved_by']) if (!headers.includes(column)) headers.push(column);
   const log: CsvRecord[] = [];
   let unrepaired = 0;
 
@@ -46,6 +47,7 @@ async function main(): Promise<void> {
       return;
     }
     row.excerpt = repair.text;
+    if (repair.confidence === 'low') { row.needs_owner_review = 'yes'; row.approved_by = ''; }
     row.page_number = String(repair.page);
     log.push({
       ...entry,

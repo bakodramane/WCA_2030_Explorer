@@ -5,10 +5,10 @@ import { logQuery, getLog, clearLog, toCSV } from '../engine/logger';
 import { SearchBar }        from './SearchBar';
 import { ResultCard }       from './ResultCard';
 import { setKnownItemCodes } from './linkify';
-import { qaAnswerBlockHtml } from './qa-block';
+import { documentPassageBlockHtml, qaAnswerBlockHtml } from './qa-block';
 import { showUpdateBanner } from './update-banner';
 import { runVersionHandshake } from '../engine/index-version';
-import type { ItemRow, GlossaryEntry, LearningModule, FigureTableEntry } from '../engine/types';
+import type { QaRow, ItemRow, GlossaryEntry, LearningModule, FigureTableEntry } from '../engine/types';
 
 
 export class App {
@@ -372,6 +372,13 @@ export class App {
     setTimeout(() => filterInput.focus(), 50);
   }
 
+  /** Fill a reveal block; a row awaiting owner approval (OD.2) shows a document-search passage instead. */
+  private async fillAnswerBlock(block: HTMLElement, row: QaRow): Promise<void> {
+    if (row.servable !== false) { block.innerHTML = qaAnswerBlockHtml(row); return; }
+    const outcome = await answerQuery(this.engine, row.question, { documentOnly: true });
+    block.innerHTML = documentPassageBlockHtml(outcome.tier === 'document' ? outcome.results[0].chunk : null);
+  }
+
   // ── Self-test modal ──────────────────────────────────────────────────────
 
   private openTestModal(): void {
@@ -467,7 +474,7 @@ export class App {
       const answerBlock = document.createElement('div');
       answerBlock.className = 'learn-answer-block';
       answerBlock.hidden = true;
-      answerBlock.innerHTML = qaAnswerBlockHtml(row);
+      void this.fillAnswerBlock(answerBlock, row);
 
       // Mark buttons (appear after reveal)
       const markRow = document.createElement('div');
@@ -695,7 +702,7 @@ export class App {
       const answerBlock = document.createElement('div');
       answerBlock.className = 'learn-answer-block';
       answerBlock.hidden = true;
-      answerBlock.innerHTML = qaAnswerBlockHtml(row);
+      void this.fillAnswerBlock(answerBlock, row);
 
       showBtn.addEventListener('click', () => {
         answerBlock.hidden = false;
