@@ -10,3 +10,6 @@ dist/
 src/**/*.js
 scripts/**/*.js
 reports/screenshots/
+
+tests/**/*.js
+.netlify/

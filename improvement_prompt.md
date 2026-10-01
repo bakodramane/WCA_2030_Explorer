@@ -681,7 +681,7 @@ installed browser) saved as `scripts/screenshot.ts`.
   `.gitignore`.
 - Delete `.netlify/` (it points at another project's Windows path) and add it to
   `.gitignore`.
-- Delete or move `scripts/debug-sections.ts` and `scripts/qa_sim_test.ts` into
+- Delete or move `scripts/dev/debug-sections.ts` and `scripts/qa_sim_test.ts` into
   `scripts/dev/`, with a one-line comment on each.
 - **Ask first (see §0.6):** propose a GitHub Actions workflow that builds and deploys
   to Pages, so that `docs/` no longer needs committing. Draft it as

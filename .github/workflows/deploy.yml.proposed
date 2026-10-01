@@ -1,0 +1,38 @@
+# PROPOSED, NOT ACTIVE. Rename to deploy.yml only after the owner approves (improvement_prompt.md §0.6).
+# Today GitHub Pages serves the committed `docs/` folder from the branch. This workflow would instead
+# test, then publish `docs/` through the Pages artifact flow, so the folder no longer needs to be
+# rebuilt by hand on every data change.
+#
+# Switch-over steps (all owner actions):
+#   1. Settings → Pages → Source: "GitHub Actions".
+#   2. Rename this file to deploy.yml.
+#   3. Optionally stop committing `docs/` (requires a fresh §0.6 approval; `public/models/` is still needed to build).
+name: Deploy
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npx vitest run
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: docs }
+      - id: deployment
+        uses: actions/deploy-pages@v4

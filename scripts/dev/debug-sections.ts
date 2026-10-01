@@ -2,13 +2,13 @@
  * Debug script: initialise RetrievalEngine from the pre-built chunks.json and
  * print the section-index summary produced by debugSectionIndex().
  *
- * Usage: npx tsx scripts/debug-sections.ts
+ * Usage: npx tsx scripts/dev/debug-sections.ts
  */
 
 import fs   from 'node:fs';
 import path from 'node:path';
-import { RetrievalEngine } from '../src/engine/retrieval.js';
-import type { Chunk }      from '../src/engine/types.js';
+import { RetrievalEngine } from '../../src/engine/retrieval.js';
+import type { Chunk }      from '../../src/engine/types.js';
 
 const chunksPath = path.join(process.cwd(), 'src', 'data', 'chunks.json');
 

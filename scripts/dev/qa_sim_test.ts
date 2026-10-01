@@ -1,3 +1,4 @@
+// Developer-only: simulates curated-Q&A matching against the embedding model (not part of the build).
 import { pipeline, env } from '@xenova/transformers';
 import fs from 'node:fs';
 import path from 'node:path';
