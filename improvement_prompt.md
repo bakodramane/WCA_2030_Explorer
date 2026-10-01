@@ -6,29 +6,32 @@
 
 ---
 
-## Progress status (updated 1 October 2026, after review of the second agent's work)
+## Progress status (updated 1 October 2026, after the B4-R / B2.1 / B5 / C0–C3 session)
 
 | Task | Status | Commit | Notes |
 |---|---|---|---|
 | A1–A6 | ✅ Done | `4d95cb1`…`aca024a` | See the Phase A changelog. |
-| B0 Recovery | ✅ Done | `ef52fa4` | B1 changelog entry added. |
-| B1 Outline | ✅ Done | `7c82043` | 125 entries. |
-| B2 Chunker rewrite | ✅ Done, **with follow-ups B2.1 and C0.4** | `b4da090`…`c05a475` | 831 → 400 chunks, 65 canonical titles, 80 % carry paragraph numbers, no running headers. |
-| B3 Data builders | ✅ Done | `cfb9b36` | Items, glossary, and figures rebuilt from the PDF; differences documented. |
-| B4 Validation | ⚠️ **Done but NOT committed** | — | The agent reported that `validate-data.ts` passes after 137 excerpt replacements and 4 page-only corrections in `data/wca-qa.csv`, plus a resumable `build-qa.ts`. None of it reached GitHub. See B4-R. |
-| B5 Version handshake | Not started | — | |
-| B2.1 Section granularity | **New** | — | See below. |
-| C–E | Not started | — | C0 now lists five findings. |
+| B0 Recovery | ✅ Done | `ef52fa4` | |
+| B1 Outline | ✅ Done | `7c82043` | Now 137 entries (Annex 4 themes added in B2.1). |
+| B2 Chunker rewrite | ✅ Done | `b4da090`…`c05a475` | |
+| B3 Data builders | ✅ Done | `cfb9b36` | |
+| B4 Validation (B4-R) | ✅ Done, redone from scratch | `68bdbed`, `2c2917a`, `4478515` | `validate-data.ts` passes; 131 excerpts repaired and 4 pages fixed; every repair in `reports/qa-excerpt-repairs.csv` (**55 rows flagged `needs_owner_review`**). Also fixed a chunker bug that dropped short units. |
+| B2.1 Section granularity | ✅ Done | `f6ea822`, `9d48fda` | Section/theme-level titles 37 % → 83.8 %; Annex 4 split into 12 themes; References excluded. |
+| B5 Version handshake | ✅ Done | `79227a5` | Content-hash version; startup comparison; banner no longer fires on first install. |
+| C0.1–C0.5 | ✅ Done | `579f1e8`, `1173381` | Windows (C0.4), chunk-raw ranking (C0.1), vocabulary gate (C0.2), independent off-topic sets (C0.3), `npm run eval` replaces the probe (C0.5). |
+| C1 Gold set | ✅ Done | `a12004a` | 140 in-domain items; two held-out sets (36 each). |
+| C2 Evaluation script | ✅ Done | `1173381` | `npm run eval` → `reports/eval-latest.md`; cascade shared in `src/engine/answer.ts`. |
+| C3 Tune | ✅ Done, **one target missed** | `1173381` | Recall@5 94.3 %, top citation 83.6 %, tuning false answers 0/60. Held-out false answers 2/36 (5.6 %) on both sets, one question over the 5 % target; see the changelog and the open question. |
+| D, E | Not started | — | E2 is partly done (thresholds in `config.ts`, `DEFAULT_QA_THRESHOLD` removed). |
 
-**Verified by review on `claude/awesome-meitner-8pm5np` @ `cfb9b36`:** `npx tsc --noEmit`
-passes; `npx vitest run` passes **179 tests in 17 files**; every `docs/data/*.json`
-is byte-identical to `public/data/`.
+**State at `1173381`:** `npx tsc --noEmit` passes; `npx vitest run` passes **249 tests in 29 files**; `docs/`
+matches `public/`. The gitignored `src/data/chunks-raw.json` in a working copy is current; if it is ever
+stale, regenerate it with `npm run ingest` or move it aside.
 
-**Local-environment trap:** an old, gitignored `src/data/chunks-raw.json` left over
-from earlier runs makes tests prefer stale data, giving 5 false failures. Move it
-aside (or regenerate it with `npm run ingest`) before trusting a red test run.
-
-**Next steps, in order:** B4-R → B2.1 → B5 → C0 → C1–C3 → D → E.
+**Next steps, in order:** D → E (E2's remaining items, E3, E4, E5). Open questions for the owner are in the
+final summary of `CHANGELOG-improvements.md`'s C section: the 0.52 vs 0.54 semantic threshold, the 55
+excerpts flagged for review, and whether the item-code lookup should require the code to be the main
+content of the query.
 
 ---
 
