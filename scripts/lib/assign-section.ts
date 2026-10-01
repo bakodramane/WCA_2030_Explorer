@@ -42,7 +42,11 @@ function topLevelForUnit(
     ? `annex${paragraphParts(paragraph)[0]}`
     : paragraph ? `ch${paragraphParts(paragraph)[0]}` : null;
   const direct = directId ? outline.find(entry => entry.id === directId) : undefined;
-  if (direct) return direct;
+  if (
+    direct &&
+    unit.printedPage >= direct.printedStart &&
+    unit.printedPage <= direct.printedEnd
+  ) return direct;
 
   return outline
     .filter(entry => TOP_LEVEL_KINDS.has(entry.kind))

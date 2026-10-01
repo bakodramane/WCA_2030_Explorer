@@ -44,4 +44,16 @@ describe('B2 strip-furniture', () => {
     expect(kept.filter(text => text.startsWith('Essential item.'))).toHaveLength(5);
     expect(kept.filter(text => text === 'Repeated substantive guidance')).toHaveLength(5);
   });
+
+  it('drops title-only part divider pages', () => {
+    const kept = stripPageFurniture([
+      line('PART TWO', 50, 0, 3),
+      line('THE WORLD PROGRAMME', 50, 1, 2),
+      line('FOR THE CENSUS', 50, 2, 1),
+      line('OF AGRICULTURE 2030', 50, 3, 0),
+      line('4.1 Substantive guidance', 51, 3, 3),
+    ]);
+
+    expect(kept.map(item => item.text)).toEqual(['4.1 Substantive guidance']);
+  });
 });

@@ -18,12 +18,30 @@ function isPageNumberLine(line: PdfLine): boolean {
   return lineKey(line.text) === String(line.printedPage);
 }
 
+function dividerPages(lines: PdfLine[]): Set<number> {
+  const byPage = new Map<number, PdfLine[]>();
+  for (const line of lines) {
+    const page = byPage.get(line.pdfPage) ?? [];
+    page.push(line);
+    byPage.set(line.pdfPage, page);
+  }
+
+  return new Set([...byPage.entries()]
+    .filter(([, page]) =>
+      page.length <= 6 &&
+      page.some(line => /^PART (ONE|TWO)$/i.test(line.text)) &&
+      page.every(line => line.text === line.text.toUpperCase()),
+    )
+    .map(([pdfPage]) => pdfPage));
+}
+
 /**
  * Remove front matter, page numbers, and repeated edge furniture. Repeated
  * content in the page body is retained, as are item reference-period lines.
  */
 export function stripPageFurniture(lines: PdfLine[]): PdfLine[] {
   const edgePagesByText = new Map<string, Set<number>>();
+  const structuralDividers = dividerPages(lines);
 
   for (const line of lines) {
     if (line.printedPage < 1 || !isEdgeLine(line)) continue;
@@ -35,6 +53,7 @@ export function stripPageFurniture(lines: PdfLine[]): PdfLine[] {
 
   return lines.filter(line => {
     if (line.printedPage < 1) return false;
+    if (structuralDividers.has(line.pdfPage)) return false;
     if (isPageNumberLine(line)) return false;
     if (isProtectedMetadata(line.text)) return true;
     if (!isEdgeLine(line)) return true;

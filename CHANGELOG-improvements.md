@@ -214,3 +214,6 @@ number is the first extracted line of each PDF page.
 - `feat(B2): pack outline units into stable chunks` — packs consecutive units
   within a section up to 350 words, preserves paragraph/page metadata, and uses
   a 50-word overlap only when a single atomic unit must be split.
+- `fix(B2): keep annex codes in annexes and drop part dividers` — prevents crop
+  classification codes from masquerading as chapter paragraphs and excludes
+  title-only Part One/Two divider pages from answer text.

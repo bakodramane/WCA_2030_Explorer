@@ -14,7 +14,7 @@ export interface UnitSplitOptions {
   isGlossaryPage?: (printedPage: number) => boolean;
 }
 
-const PARAGRAPH_START = /^((?:\d+\.\d+(?:\.\d+)?)|(?:A\d+\.\d+))\s+/;
+const PARAGRAPH_START = /^((?:[1-9]\d*\.\d+(?:\.\d+)?)|(?:A[1-9]\d*\.\d+))\s+/;
 const GLOSSARY_START = /^([A-Z][^:]{1,80}):\s+\S/;
 
 function makeUnit(

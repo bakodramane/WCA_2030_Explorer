@@ -39,4 +39,11 @@ describe('B2 outline assignment', () => {
     ]);
     expect(assigned.every(unit => unit.priority === 'high')).toBe(true);
   });
+
+  it('does not treat annex classification codes as chapter paragraphs', () => {
+    const units = splitIntoUnits([sourceLine('4.03 Crop classification entry', 136)]);
+    const assigned = assignUnitsToSections(units, outline);
+    expect(assigned[0].sectionId).toBe('annex4');
+    expect(assigned[0].chapterLabel).toBe('Annex 4');
+  });
 });
