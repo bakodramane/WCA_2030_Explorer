@@ -18,11 +18,13 @@ function mkResult(
   return {
     chunk: {
       id:           opts.id ?? 'x',
+      sectionId:    opts.id ?? 'x',
       sectionTitle: opts.section ?? `Section ${opts.id ?? 'x'}`,
+      chapterLabel: 'Chapter 1',
+      paragraphs:   ['1.1'],
       pdfPage:      15,
       printedPage:  1,
       printedPageEnd: 1,
-      pageRef:      1, // deprecated alias of printedPage
       text:         'placeholder text',
       priority:     opts.priority ?? 'normal',
       embedding:    [],

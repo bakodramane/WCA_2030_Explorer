@@ -72,11 +72,11 @@ function scoreLabel(score: number, matchType: 'semantic' | 'lexical'): string {
  * matter — never display a bogus page number. A chunk that spans a page break
  * shows a range: `p. 81` / `pp. 81–82`.
  */
-function pageRefLabel(printedPage: number, printedPageEnd: number): string {
+function printedPageLabel(printedPage: number, printedPageEnd: number): string {
   if (printedPage < 1) return 'front matter';
   return printedPage === printedPageEnd
-    ? `p.${printedPage}`
-    : `pp.${printedPage}–${printedPageEnd}`;
+    ? `p. ${printedPage}`
+    : `pp. ${printedPage}–${printedPageEnd}`;
 }
 
 function pageHeaderLabel(printedPage: number, printedPageEnd: number): string {
@@ -96,10 +96,18 @@ export class ResultCard {
     const label      = scoreLabel(score, matchType);
     const badgeLabel = matchType === 'semantic' ? 'Best meaning match' : 'Keyword match';
 
-    // Citation string: WCA 2030, §Section (p.N / pp.N–M): first 80 chars…
+    const paragraph = chunk.paragraphs[0] ?? null;
+    const citationLead = paragraph
+      ? `§${paragraph}, ${chunk.sectionTitle}`
+      : chunk.sectionTitle;
+    const visibleCitation = paragraph
+      ? `§${paragraph} · ${chunk.sectionTitle} · ${printedPageLabel(chunk.printedPage, chunk.printedPageEnd)}`
+      : `${chunk.sectionTitle} · ${printedPageLabel(chunk.printedPage, chunk.printedPageEnd)}`;
+
+    // B2: paragraph-aware citation, quoting only the verbatim chunk text.
     const citationText =
-      `WCA 2030, ${chunk.sectionTitle} (${pageRefLabel(chunk.printedPage, chunk.printedPageEnd)}): ` +
-      `${chunk.text.slice(0, 80)}…`;
+      `WCA 2030, ${citationLead} (${printedPageLabel(chunk.printedPage, chunk.printedPageEnd)}): ` +
+      `"${chunk.text.slice(0, 80)}…"`;
 
     const card = document.createElement('article');
     card.className = 'result-card';
@@ -107,12 +115,12 @@ export class ResultCard {
     card.innerHTML = `
       <header class="card-header">
         <span class="card-section" title="${esc(chunk.sectionTitle)}">
-          § ${esc(chunk.sectionTitle)}
+          ${paragraph ? `§${esc(paragraph)} · ` : ''}${esc(chunk.sectionTitle)}
         </span>
         <span class="card-page">${pageHeaderLabel(chunk.printedPage, chunk.printedPageEnd)}</span>
       </header>
       <div class="card-body">
-        <p class="card-source">Source: §&nbsp;${esc(chunk.sectionTitle)}&nbsp;·&nbsp;${pageRefLabel(chunk.printedPage, chunk.printedPageEnd)}</p>
+        <p class="card-source">${esc(visibleCitation)}</p>
         <p class="card-text">${highlight(chunk.text, query)}</p>
       </div>
       <footer class="card-footer">

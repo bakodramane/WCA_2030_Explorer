@@ -42,4 +42,17 @@ describe('B2 paragraph units', () => {
     ]);
     expect(units[1].text).toContain('management control');
   });
+
+  it('ends a numbered paragraph when a chapter or annex begins', () => {
+    const units = splitIntoUnits([
+      line('10.31 Final chapter paragraph', 126),
+      line('ANNEX 1', 127),
+      line('Unnumbered annex introduction', 127),
+      line('ANNEX 2', 130),
+    ]);
+
+    expect(units.map(unit => unit.paragraphNumber)).toEqual(['10.31', null, null]);
+    expect(units[0].printedPageEnd).toBe(126);
+    expect(units[1].text).toContain('Unnumbered annex introduction');
+  });
 });

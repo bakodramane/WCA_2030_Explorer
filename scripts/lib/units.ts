@@ -16,6 +16,7 @@ export interface UnitSplitOptions {
 
 const PARAGRAPH_START = /^((?:[1-9]\d*\.\d+(?:\.\d+)?)|(?:A[1-9]\d*\.\d+))\s+/;
 const GLOSSARY_START = /^([A-Z][^:]{1,80}):\s+\S/;
+const TOP_LEVEL_START = /^(?:CHAPTER|ANNEX)\s+\d+\b|^GLOSSARY OF TERMS$|^REFERENCES AND FURTHER READING$/i;
 
 function makeUnit(
   lines: PdfLine[],
@@ -57,8 +58,9 @@ export function splitIntoUnits(
     const glossary = options.isGlossaryPage?.(line.printedPage)
       ? line.text.match(GLOSSARY_START)?.[1] ?? null
       : null;
+    const topLevel = TOP_LEVEL_START.test(line.text);
 
-    if (paragraph || glossary) {
+    if (paragraph || glossary || topLevel) {
       flush();
       paragraphNumber = paragraph;
       glossaryTerm = glossary;

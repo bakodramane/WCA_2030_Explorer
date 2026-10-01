@@ -221,3 +221,13 @@ number is the first extracted line of each PDF page.
   orchestrator produces 387 chunks; 353/387 (91.2%) are 150–350 words, the
   maximum is 350, 153/387 (39.5%) are high priority, 95.3% carry paragraph
   numbers, all titles come from the outline, and no running header remains.
+- `feat(B2): replace the chunker and publish the structured index` — switched
+  the entry point only after the side-by-side pipeline passed, added top-level
+  structural boundaries and whole-unit packing, regenerated embeddings, removed
+  `pageRef`, and added paragraph-aware UI/copy citations. Runtime index metrics:
+  **831 → 400 chunks**; **32.1% → 90.3%** at 150–350 words; average **135.3 →
+  275.8** words; maximum **300 → 350**; distinct titles **137 audit baseline /
+  112 immediately before B2 → 65**, all canonical outline titles; chunks with a
+  paragraph number **0 → 321/400 (80.3%)**. The full guardrail regression remains
+  clean; 389 chunks were embedded offline and 11 byte-identical texts reused
+  their valid prior vectors.

@@ -1,14 +1,15 @@
 export interface Chunk {
   id: string;
+  sectionId: string;
   sectionTitle: string;
+  chapterLabel: string;
+  paragraphs: string[];
   /** Page in the source PDF file (1-based). */
   pdfPage: number;
   /** Printed page of the chunk's first word (= pdfPage − 14). */
   printedPage: number;
   /** Printed page of the chunk's last word (A2: per-chunk page tracking). */
   printedPageEnd: number;
-  /** @deprecated Alias of `printedPage`. Kept until Phase B retires it. */
-  pageRef: number;
   text: string;
   priority: 'high' | 'normal';
   embedding: number[];

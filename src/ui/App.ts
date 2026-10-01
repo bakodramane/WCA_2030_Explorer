@@ -1386,7 +1386,7 @@ export class App {
         }
         for (const r of response.results) {
           const card = ResultCard.render(r, query);
-          card.dataset.group = deriveGroup(r.chunk.sectionTitle, r.chunk.printedPage);
+          card.dataset.group = r.chunk.chapterLabel || deriveGroup(r.chunk.sectionTitle, r.chunk.printedPage);
           this.resultsArea.appendChild(card);
         }
         this.resultsArea.appendChild(this.buildEncouragementNote());

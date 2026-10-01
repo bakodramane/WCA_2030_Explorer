@@ -5,15 +5,17 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
+import OUTLINE_JSON from '../src/data/outline.json';
 
 interface Chunk {
   id: string;
+  sectionId: string;
   sectionTitle: string;
+  chapterLabel: string;
+  paragraphs: string[];
   pdfPage: number;
   printedPage: number;
   printedPageEnd: number;
-  /** @deprecated Alias of printedPage. */
-  pageRef: number;
   text: string;
   priority: 'high' | 'normal';
 }
@@ -56,6 +58,14 @@ describe('chunking', () => {
     }
   });
 
+  it('at least 90% of chunks contain 150–350 words', () => {
+    const inRange = chunks.filter(chunk => {
+      const count = wordCount(chunk.text);
+      return count >= 150 && count <= 350;
+    });
+    expect(inRange.length / chunks.length).toBeGreaterThanOrEqual(0.9);
+  });
+
   it('every chunk has a non-empty sectionTitle, a positive printedPage, and printedPage = pdfPage − 14', () => {
     for (const chunk of chunks) {
       expect(
@@ -73,15 +83,34 @@ describe('chunking', () => {
     }
   });
 
-  it('at least 10% of chunks carry priority: high', () => {
+  it('every section title exists in outline.json', () => {
+    const titles = new Set(OUTLINE_JSON.map(entry => entry.title));
+    for (const chunk of chunks) {
+      expect(titles.has(chunk.sectionTitle), `${chunk.id}: ${chunk.sectionTitle}`).toBe(true);
+    }
+  });
+
+  it('10–45% of chunks carry priority: high', () => {
     const highCount = chunks.filter(c => c.priority === 'high').length;
     const ratio = highCount / chunks.length;
     expect(ratio, `Only ${(ratio * 100).toFixed(1)}% are high-priority`).toBeGreaterThanOrEqual(0.1);
+    expect(ratio, `${(ratio * 100).toFixed(1)}% are high-priority`).toBeLessThanOrEqual(0.45);
   });
 
   it('all chunk IDs are unique', () => {
     const ids = chunks.map(c => c.id);
     const unique = new Set(ids);
     expect(unique.size).toBe(ids.length);
+  });
+
+  it('preserves item metadata and removes the repeated running header', () => {
+    const item0101 = chunks.find(chunk =>
+      chunk.text.includes('0101') && chunk.text.includes('Reference period:'),
+    );
+    expect(item0101, 'item 0101 not found').toBeDefined();
+    expect(item0101!.text).toContain('Reference period:');
+    expect(chunks.some(chunk =>
+      chunk.text.includes('WORLD PROGRAMME FOR THE CENSUS OF AGRICULTURE 2030'),
+    )).toBe(false);
   });
 });

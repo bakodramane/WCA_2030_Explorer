@@ -6,15 +6,16 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import { deriveGroup, groupForPrintedPage, OUTLINE } from '../src/engine/outline';
-import type { OutlineEntry } from '../src/engine/outline';
 
 interface Chunk {
   id: string;
+  sectionId: string;
   sectionTitle: string;
+  chapterLabel: string;
+  paragraphs: string[];
   pdfPage: number;
   printedPage: number;
   printedPageEnd: number;
-  pageRef: number;
   text: string;
   priority: 'high' | 'normal';
 }
@@ -36,7 +37,7 @@ describe('A1 — printed-page citations', () => {
     // Printed page of ¶7.4.18 is 89 (PDF page 103 — C1 evidence in §0.2).
     expect(chunk!.printedPage).toBe(89);
     expect(chunk!.pdfPage).toBe(103);
-    expect(chunk!.pageRef).toBe(89); // deprecated alias follows printedPage
+    expect(chunk!.paragraphs).toContain('7.4.18');
     // The filter pill must be "Chapter 7", not the old "Chapter 8" mislabel.
     expect(deriveGroup(chunk!.sectionTitle, chunk!.printedPage)).toBe('Chapter 7');
   });
@@ -58,33 +59,25 @@ describe('A1 — printed-page citations', () => {
     }
   });
 
-  it('every chunk whose section is a chapter/annex heading has a printedPage inside that outline range', () => {
-    const byKindNumber = (kind: OutlineEntry['kind'], n: number): OutlineEntry | undefined =>
-      OUTLINE.find(e => e.kind === kind && e.number === n);
-
-    // Only heading-shaped titles ("CHAPTER 4: …", "ANNEX 1") name a chapter
-    // unambiguously. Corrupt body-sentence titles that merely *mention*
-    // chapters (C3, e.g. "Chapter 7 for essential items and Annex 4 for
-    // additional items.") are fixed by the Phase B chunker rewrite.
-    const headingRe = /^(CHAPTER|ANNEX)\s+(\d+)\s*(?::|$)/i;
-
-    let checked = 0;
+  it('every chunk title and chapter label agree with the outline', () => {
     for (const c of chunks) {
-      const hm = c.sectionTitle.match(headingRe);
-      if (!hm) continue;
-      const kind = hm[1].toUpperCase() === 'CHAPTER' ? 'chapter' : 'annex';
-      const entry = byKindNumber(kind as OutlineEntry['kind'], parseInt(hm[2], 10));
-      expect(entry, `No outline entry for «${c.sectionTitle}»`).toBeDefined();
+      const section = OUTLINE.find(entry => entry.id === c.sectionId);
+      expect(section, `No outline entry for ${c.sectionId}`).toBeDefined();
+      expect(c.sectionTitle).toBe(section!.title);
+      const topId = section!.kind === 'section' || section!.kind === 'theme'
+        ? section!.parentId
+        : section!.id;
+      const top = OUTLINE.find(entry => entry.id === topId)!;
+      const expectedLabel = top.kind === 'chapter' ? `Chapter ${top.number}`
+        : top.kind === 'annex' ? `Annex ${top.number}`
+          : top.kind === 'glossary' ? 'Glossary' : 'References';
+      expect(c.chapterLabel).toBe(expectedLabel);
       expect(
         c.printedPage,
-        `Chunk ${c.id} «${c.sectionTitle}»: printedPage ${c.printedPage} outside ` +
-        `${entry!.id} range ${entry!.printedStart}–${entry!.printedEnd}`,
-      ).toBeGreaterThanOrEqual(entry!.printedStart);
-      expect(c.printedPage).toBeLessThanOrEqual(entry!.printedEnd);
-      checked++;
+        `Chunk ${c.id}: page ${c.printedPage} outside ${top.id}`,
+      ).toBeGreaterThanOrEqual(top.printedStart);
+      expect(c.printedPage).toBeLessThanOrEqual(top.printedEnd);
     }
-    // Sanity: several genuine chapter/annex headings exist in the corpus.
-    expect(checked).toBeGreaterThan(0);
   });
 
   it('groupForPrintedPage maps boundary pages to the right group', () => {

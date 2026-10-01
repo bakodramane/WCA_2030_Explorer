@@ -42,7 +42,7 @@ for (const c of chunks) {
   if (!sectionMap.has(c.sectionTitle)) sectionMap.set(c.sectionTitle, { count: 0, pages: [] });
   const s = sectionMap.get(c.sectionTitle)!;
   s.count++;
-  s.pages.push(c.pageRef);
+  s.pages.push(c.printedPage);
 }
 
 const bySpan = [...sectionMap.entries()]

@@ -43,4 +43,25 @@ describe('B2 unit packing', () => {
     expect(words[1].slice(-50)).toEqual(words[2].slice(0, 50));
     expect(chunks.every(chunk => chunk.paragraphs[0] === '4.1')).toBe(true);
   });
+
+  it('rebalances whole units to avoid a short final chunk', () => {
+    const chunks = packUnits([
+      unit('s1', '4.1', 120),
+      unit('s1', '4.2', 120),
+      unit('s1', '4.3', 100),
+      unit('s1', '4.4', 100),
+    ]);
+
+    expect(chunks.map(chunk => chunk.text.split(' ').length)).toEqual([240, 200]);
+    expect(chunks[0].paragraphs).toEqual(['4.1', '4.2']);
+    expect(chunks[1].paragraphs).toEqual(['4.3', '4.4']);
+  });
+
+  it('drops standalone heading fragments shorter than five words', () => {
+    const chunks = packUnits([
+      unit('s1', '4.1', 4),
+      unit('s2', '4.2', 150),
+    ]);
+    expect(chunks.map(chunk => chunk.sectionId)).toEqual(['s2']);
+  });
 });

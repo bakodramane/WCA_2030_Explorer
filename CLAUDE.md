@@ -35,14 +35,15 @@ Absolute path : C:\Users\BAKO\OneDrive - Food and Agriculture Organization\Docum
 > **Before running any script**, confirm the file exists at the path above.
 > If the filename differs, update every reference to it in `scripts/chunk.ts` accordingly.
 
-Key content regions to prioritise during chunking (by expected page range — verify against your copy):
+Key content regions to prioritise during chunking (verified **printed** pages,
+from `data/source-outline.md`):
 
-| Content | Approximate pages |
+| Content | Printed pages |
 |---|---|
-| Chapter 4 — Concepts & Definitions | 55–70 |
-| Chapter 7 — Essential Items | 100–140 |
-| Annex 4 — Additional Items | ~175 |
-| Authoritative Glossary | last 30 pages |
+| Chapter 4 — Concepts & Definitions | 37–46 |
+| Chapter 7 — Essential Items | 74–99 |
+| Annex 4 — Additional Items | 134–172 |
+| Authoritative Glossary | 201–207 |
 
 Chunks from these regions receive a `priority: 'high'` flag and a `1.15×` retrieval score boost.
 
@@ -198,18 +199,27 @@ If `pagerender` is unsupported by the installed version of `pdf-parse`, fall bac
 
 ### Step 2b — Chunking
 
-After extraction, chunk the page array using this strategy:
+After extraction, use the modular B2 pipeline under `scripts/lib/`:
 
-- Detect section headings using regex patterns that match: numbered headings (`4.1`, `7.2.3`), `CHAPTER`, `ANNEX`, `GLOSSARY`, and all-caps lines of 3–10 words.
-- Split each section into overlapping paragraphs of **200–350 words**. Overlap consecutive chunks by **50 words** (slide the window).
+- `pdf-lines.ts` preserves page and line positions; `strip-furniture.ts` removes
+  front matter and repeated edge furniture without deleting item metadata.
+- `units.ts` detects numbered body/annex paragraphs and glossary entries.
+- `assign-section.ts` assigns canonical structure exclusively from
+  `data/source-outline.md` / `src/data/outline.json` — never from ALL-CAPS
+  title guessing.
+- `pack.ts` packs consecutive units in one section into **200–350 words**.
+  Only an atomic unit over 350 words is split, with a 50-word overlap.
 - Assign each chunk:
   ```ts
   interface Chunk {
-    id: string;          // e.g. "ch4-s2-p3"
+    id: string;          // `${sectionId}-${firstParagraphNumber ?? 'intro'}-${n}`
+    sectionId: string;
     sectionTitle: string;
+    chapterLabel: string;
+    paragraphs: string[];
     pdfPage: number;     // page in the source PDF (1-based)
     printedPage: number; // page as printed in the document footer (pdfPage − 14)
-    pageRef: number;     // DEPRECATED alias of printedPage — remove in Phase B
+    printedPageEnd: number;
     text: string;        // verbatim extracted text
     priority: 'high' | 'normal';
   }
@@ -229,7 +239,9 @@ After extraction, chunk the page array using this strategy:
   - No chunk exceeds 420 words.
   - Every chunk has a non-empty `sectionTitle`, a positive `printedPage`,
     and `printedPage === pdfPage − 14`.
-  - At least 10% of chunks carry `priority: 'high'`.
+  - At least 90% of chunks contain 150–350 words.
+  - Every section title occurs in `outline.json`.
+  - Between 10% and 45% of chunks carry `priority: 'high'`.
 
 **Phase 2 complete when:** `npx tsx scripts/chunk.ts` exits cleanly and the assertions above pass.
 
@@ -276,11 +288,13 @@ Implement a `RetrievalEngine` class:
 ```ts
 export interface Chunk {
   id: string;
+  sectionId: string;
   sectionTitle: string;
+  chapterLabel: string;
+  paragraphs: string[];
   pdfPage: number;
   printedPage: number;
-  /** @deprecated Alias of printedPage. */
-  pageRef: number;
+  printedPageEnd: number;
   text: string;
   priority: 'high' | 'normal';
   embedding: number[];

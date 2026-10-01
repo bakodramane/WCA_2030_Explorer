@@ -9,11 +9,13 @@ import path from 'node:path';
 
 interface Chunk {
   id: string;
+  sectionId: string;
   sectionTitle: string;
+  chapterLabel: string;
+  paragraphs: string[];
   pdfPage: number;
   printedPage: number;
   printedPageEnd: number;
-  pageRef: number;
   text: string;
   priority: 'high' | 'normal';
 }
