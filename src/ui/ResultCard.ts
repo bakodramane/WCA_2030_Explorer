@@ -18,24 +18,35 @@ function escRe(s: string): string {
 }
 
 // ── Term highlighting ─────────────────────────────────────────────────────────
-// 1. Escape the verbatim text so no raw HTML leaks through.
-// 2. Split on non-word characters so trailing punctuation (e.g. "holder?")
-//    does not prevent a match in the chunk text.
-// 3. Keep only content words: length ≥ 4 AND not in STOP_WORDS.
-//    For "what is the definition of a holder?" this leaves only
-//    "definition" and "holder" — stop words like "what", "the", "is"
-//    are never highlighted.
+// A6: whole-word matching with simple suffix tolerance, applied to the RAW
+// text BEFORE escaping:
+//   1. Split matches out of the raw text, escape each segment, and wrap the
+//      matched words in <mark> — so a term is never highlighted inside an
+//      HTML entity (&quot; etc.) and nothing is double-escaped.
+//   2. Keep only content words: length ≥ 4 AND not in STOP_WORDS.
+//   3. Match whole words with suffix tolerance — \b(term)(s|es|ed|ing)?\b —
+//      so "land" does not light up inside "inland", while the query "holder"
+//      still highlights "holders".
 
-function highlight(text: string, query: string): string {
-  const escaped = esc(text);
+export function highlight(text: string, query: string): string {
   const tokens = query
     .toLowerCase()
     .split(/\W+/)
-    .filter(t => t.length >= 4 && !STOP_WORDS.has(t))
-    .map(escRe);
-  if (tokens.length === 0) return escaped;
-  const re = new RegExp(`(${tokens.join('|')})`, 'gi');
-  return escaped.replace(re, '<mark>$1</mark>');
+    .filter(t => t.length >= 4 && !STOP_WORDS.has(t));
+  if (tokens.length === 0) return esc(text);
+
+  // Longest first so longer query words win over their shorter prefixes.
+  const terms = [...new Set(tokens)].sort((a, b) => b.length - a.length);
+  const re = new RegExp(`\\b(${terms.map(escRe).join('|')})(s|es|ed|ing)?\\b`, 'gi');
+
+  let out  = '';
+  let last = 0;
+  for (const m of text.matchAll(re)) {
+    out += esc(text.slice(last, m.index!));
+    out += `<mark>${esc(m[0])}</mark>`;
+    last = m.index! + m[0].length;
+  }
+  return out + esc(text.slice(last));
 }
 
 // ── Score normalisation ───────────────────────────────────────────────────────
@@ -180,10 +191,10 @@ export class ResultCard {
       <div class="card-body">
         <p class="qa-excerpt-label">WCA 2030 excerpt (Page ${esc(String(row.page_number))})</p>
         <blockquote class="qa-excerpt">
-          <p>${linkifyItems(highlight(esc(row.excerpt), query))}</p>
+          <p>${linkifyItems(highlight(row.excerpt, query))}</p>
         </blockquote>
         <p class="qa-summary-label">Curated summary (not verbatim)</p>
-        <p class="qa-summary">${linkifyItems(highlight(esc(row.answer), query))}</p>
+        <p class="qa-summary">${linkifyItems(highlight(row.answer, query))}</p>
         <p class="card-source">Source: §&nbsp;${esc(row.section_title)}&nbsp;·&nbsp;p.${esc(String(row.page_number))}</p>
       </div>
       <footer class="card-footer">
