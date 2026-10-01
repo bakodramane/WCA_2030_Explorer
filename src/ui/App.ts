@@ -1276,8 +1276,7 @@ export class App {
   private showItemCard(item: ItemRow): void {
     if (!this.firstSearchDone) {
       this.firstSearchDone = true;
-      this.chipsEl.style.display = 'none';
-      this.collapseIntro();
+      this.enterCompactMode();
     }
     this.clearResults();
     this.resultsArea.appendChild(ResultCard.renderItem(item));
@@ -1290,8 +1289,7 @@ export class App {
 
     if (!this.firstSearchDone) {
       this.firstSearchDone = true;
-      this.chipsEl.style.display = 'none';
-      this.collapseIntro();
+      this.enterCompactMode();
     }
     this.searchBar.setLoading(true);
     this.clearResults();
@@ -1469,6 +1467,32 @@ export class App {
     panel.appendChild(this.introBody);
     panel.appendChild(this.introToggle);
     return panel;
+  }
+
+  /**
+   * D1: after the first search the header shrinks to a compact bar (title + search box) so the first
+   * result is above the fold. Subtitle, trust strip, About panel, Learn/Browse groups, and chips
+   * stay available behind the "Browse & learn" toggle.
+   */
+  private enterCompactMode(): void {
+    const header = document.querySelector<HTMLElement>('.app-header');
+    this.chipsEl.style.display = 'none';
+    this.collapseIntro();
+    if (!header || header.classList.contains('app-header--compact')) return;
+    header.classList.add('app-header--compact');
+
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'browse-learn-toggle';
+    toggle.textContent = 'Browse & learn';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.addEventListener('click', () => {
+      const open = header.classList.toggle('app-header--expanded');
+      toggle.setAttribute('aria-expanded', String(open));
+      if (open) this.chipsEl.style.display = '';
+      else this.chipsEl.style.display = 'none';
+    });
+    header.querySelector('.app-title')!.after(toggle);
   }
 
   private collapseIntro(): void {

@@ -9,3 +9,4 @@ dist/
 # safeguard so accidental tsc emits are never tracked by git.
 src/**/*.js
 scripts/**/*.js
+reports/screenshots/

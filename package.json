@@ -18,7 +18,8 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "eval": "npx tsx scripts/eval.ts"
+    "eval": "npx tsx scripts/eval.ts",
+    "screenshot": "npx tsx scripts/screenshot.ts"
   },
   "dependencies": {
     "@xenova/transformers": "^2.17.2",
@@ -26,9 +27,11 @@
     "pdf-parse": "^2.4.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@types/node": "^25.9.1",
     "@types/pdf-parse": "^1.1.5",
     "happy-dom": "^20.14.5",
+    "playwright-core": "^1.56.1",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
     "vite": "^8.0.16",

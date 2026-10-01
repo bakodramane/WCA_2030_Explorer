@@ -1948,3 +1948,39 @@ body {
   color: var(--muted);
   margin-bottom: 0.2rem;
 }
+
+/* ── D1: compact header after the first search ──────────────────────────
+   Title + search box only; everything else sits behind "Browse & learn". */
+.browse-learn-toggle { display: none; }
+
+.app-header--compact {
+  padding: 0.75rem 0 0.75rem;
+  margin-bottom: 1rem;
+}
+.app-header--compact .app-title {
+  display: inline-block;
+  font-size: 1.05rem;
+  margin: 0 0.9rem 0.5rem 0;
+}
+.app-header--compact .browse-learn-toggle {
+  display: inline-block;
+  min-height: 44px;
+  padding: 0 1rem;
+  margin-bottom: 0.5rem;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.app-header--compact:not(.app-header--expanded) .app-subtitle,
+.app-header--compact:not(.app-header--expanded) .trust-strip,
+.app-header--compact:not(.app-header--expanded) .intro-panel,
+.app-header--compact:not(.app-header--expanded) .action-groups,
+.app-header--compact:not(.app-header--expanded) .hub-buttons,
+.app-header--compact:not(.app-header--expanded) .suggestion-chips,
+.app-header--compact .search-helper {
+  display: none !important;
+}
