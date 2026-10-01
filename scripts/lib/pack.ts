@@ -93,15 +93,15 @@ function draftsForRun(units: readonly AssignedUnit[]): ChunkDraft[] {
   let pending: AssignedUnit[] = [];
 
   const flush = (): void => {
-    drafts.push(...optimallyPack(pending));
+    // Short units (headings, code-table rows) stay in the stream so chunk text is
+    // a contiguous quote of the source; only a run too small to answer anything
+    // on its own (a lone heading fragment) is discarded.
+    drafts.push(...optimallyPack(pending).filter(draft => draft.words.length >= MIN_UNIT_WORDS));
     pending = [];
   };
 
   for (const unit of units) {
     const words = wordsForUnit(unit);
-    // Standalone outline headings can survive extraction as tiny units. They
-    // carry no answer text and would otherwise become misleading micro-chunks.
-    if (words.length < MIN_UNIT_WORDS) continue;
 
     if (words.length > MAX_WORDS) {
       flush();

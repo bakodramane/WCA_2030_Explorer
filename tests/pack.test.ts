@@ -57,7 +57,17 @@ describe('B2 unit packing', () => {
     expect(chunks[1].paragraphs).toEqual(['4.3', '4.4']);
   });
 
-  it('drops standalone heading fragments shorter than five words', () => {
+  it('keeps short units inside neighbouring chunks so the text stays contiguous', () => {
+    const chunks = packUnits([
+      unit('s1', '4.1', 160),
+      unit('s1', '4.2', 3),
+      unit('s1', '4.3', 160),
+    ]);
+    expect(chunks.map(chunk => chunk.text.split(' ').length).reduce((a, b) => a + b, 0)).toBe(323);
+    expect(chunks.flatMap(chunk => chunk.paragraphs)).toContain('4.2');
+  });
+
+  it('drops a run that is only a heading fragment shorter than five words', () => {
     const chunks = packUnits([
       unit('s1', '4.1', 4),
       unit('s2', '4.2', 150),
