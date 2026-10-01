@@ -231,3 +231,23 @@ number is the first extracted line of each PDF page.
   paragraph number **0 → 321/400 (80.3%)**. The full guardrail regression remains
   clean; 389 chunks were embedded offline and 11 byte-identical texts reused
   their valid prior vectors.
+
+### B3 — Reproducible runtime data (`feat(B3)`)
+
+- Added PDF-backed builders for **123 items** (27 essential, 96 additional),
+  **118 glossary terms**, and **16 figure/table captions**. `build-index` now runs
+  outline → chunk → embed → items → glossary → figures → Q&A; B4 appends validation.
+- Regression comparison: glossary and figure/table fields reproduce the committed
+  files exactly (only the missing final newline changed). Item names, reference
+  periods, themes, pages, categories, and row order reproduce exactly.
+- Every intentional item difference is listed here. Five descriptions now retain
+  the PDF extractor's verbatim typography: footnote markers no longer gain an
+  invented space (`0101`, `0201`), `specialised` is retained (`0104`), the source's
+  lowercase “SDG indicator” is retained (`0204`), and extracted `P2O5` no longer
+  gains an invented space (`0413`). `descriptionBlocks` were deterministically
+  re-split at source paragraph/bullet boundaries for `0101`, `0104`, `0201`,
+  `0203`, `0204`, `0209`, `0210`, `0301`, `0303`, `0401`, `0402`, `0403`,
+  `0404`, `0410`, `0412`, `0413`, `0501`, `0504`, `0505`, `0613`, `0614`,
+  `0616`, `0701`, `0702`, `0703`, `0704`, `0707`, `0803`, `0804`, `0903`,
+  `0904`, `1002`, and `1101`; their flattened text is unchanged except for the
+  five verbatim corrections above.

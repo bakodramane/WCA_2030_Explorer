@@ -6,8 +6,11 @@
   "scripts": {
     "ingest": "npx tsx scripts/chunk.ts",
     "embed": "npx tsx scripts/embed.ts",
+    "build-items": "npx tsx scripts/build-items.ts",
+    "build-glossary": "npx tsx scripts/build-glossary.ts",
+    "build-figures": "npx tsx scripts/build-figures.ts",
     "build-qa": "npx tsx scripts/build-qa.ts",
-    "build-index": "npx tsx scripts/build-index.ts && npx tsx scripts/build-qa.ts",
+    "build-index": "npx tsx scripts/build-index.ts",
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",

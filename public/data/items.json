@@ -2,7 +2,7 @@
   {
     "code": "0101",
     "name": "Identification and location of agricultural holding",
-    "description": "7.1.1 Identification of the agricultural holding usually includes the holding name and administrative unit code, the holder’s name, address and other contact information (telephone number, email address, etc.), and the location of the holding. The location of the holding may differ from the holder’s address, in which case both should be collected. 7.1.2 The location of the agricultural holding is needed to assign agricultural holdings to administrative units or agroecological zones, 27 which are key classification items in the tabulation of agricultural census results. Usually, the location of a holding is defined as the place where all or most of the agricultural production occurs – where administrative or farm buildings and agricultural machinery are located or, in case there is no administrative or farm building, where the majority of the land is located. Sometimes, the location of each parcel is also identified (see additional Item 0205, Annex 4). 7.1.3 Identification and location of the holding also play an important role when building sampling frames for sample census modules or ongoing sampling surveys. A list frame of holdings should contain clear identification and precise locations to facilitate the sample design and reach the sampled units. 7.1.4 Location is normally identified through a geographic coding system, based on the administrative structure of the country. Codes are provided for each administrative unit, such as province, district and/or village. This identifies the location of the holding down to the lowest administrative unit. Where a standard national geographic coding system exists, it should be used for the agricultural census to make it easier to link data between the different sources. 7.1.5 Other types of geocoding systems can also be used, such as direct georeferencing of holdings with the use of GPS or by using cadastral maps. The geocoding system can improve the presentation of census results through GIS and enables linking of the agricultural census data to other data sets. Countries are encouraged to move in this direction.",
+    "description": "7.1.1 Identification of the agricultural holding usually includes the holding name and administrative unit code, the holder’s name, address and other contact information (telephone number, email address, etc.), and the location of the holding. The location of the holding may differ from the holder’s address, in which case both should be collected. 7.1.2 The location of the agricultural holding is needed to assign agricultural holdings to administrative units or agroecological zones,27 which are key classification items in the tabulation of agricultural census results. Usually, the location of a holding is defined as the place where all or most of the agricultural production occurs – where administrative or farm buildings and agricultural machinery are located or, in case there is no administrative or farm building, where the majority of the land is located. Sometimes, the location of each parcel is also identified (see additional Item 0205, Annex 4). 7.1.3 Identification and location of the holding also play an important role when building sampling frames for sample census modules or ongoing sampling surveys. A list frame of holdings should contain clear identification and precise locations to facilitate the sample design and reach the sampled units. 7.1.4 Location is normally identified through a geographic coding system, based on the administrative structure of the country. Codes are provided for each administrative unit, such as province, district and/or village. This identifies the location of the holding down to the lowest administrative unit. Where a standard national geographic coding system exists, it should be used for the agricultural census to make it easier to link data between the different sources. 7.1.5 Other types of geocoding systems can also be used, such as direct georeferencing of holdings with the use of GPS or by using cadastral maps. The geocoding system can improve the presentation of census results through GIS and enables linking of the agricultural census data to other data sets. Countries are encouraged to move in this direction.",
     "referencePeriod": "census reference day",
     "theme": "Theme 1: Identification and general characteristics",
     "page": 75,
@@ -14,7 +14,7 @@
       },
       {
         "type": "paragraph",
-        "text": "7.1.2 The location of the agricultural holding is needed to assign agricultural holdings to administrative units or agroecological zones, 27 which are key classification items in the tabulation of agricultural census results. Usually, the location of a holding is defined as the place where all or most of the agricultural production occurs – where administrative or farm buildings and agricultural machinery are located or, in case there is no administrative or farm building, where the majority of the land is located. Sometimes, the location of each parcel is also identified (see additional Item 0205, Annex 4)."
+        "text": "7.1.2 The location of the agricultural holding is needed to assign agricultural holdings to administrative units or agroecological zones,27 which are key classification items in the tabulation of agricultural census results. Usually, the location of a holding is defined as the place where all or most of the agricultural production occurs – where administrative or farm buildings and agricultural machinery are located or, in case there is no administrative or farm building, where the majority of the land is located. Sometimes, the location of each parcel is also identified (see additional Item 0205, Annex 4)."
       },
       {
         "type": "paragraph",
@@ -64,7 +64,7 @@
   {
     "code": "0104",
     "name": "Sex of agricultural holder",
-    "description": "7.1.11 Item 0104 is important for analysing the gender aspects of agricultural production and, in particular, for examining the role of women in managing agricultural holdings. The sex of every holder (male or female) should be recorded in the census questionnaire. According to the Principles and recommendations for population and housing censuses (UN, 2025, paragraph 5.168), some countries have started collecting data on gender identity in addition to information on sex, to allow respondents to express their identity beyond traditional binary options. However, there are no international standards for measuring this fluid and evolving concept. Item 0104 is also useful for analysing gender aspects of agricultural production management and may serve as the basis for a sampling frame for specialized gender surveys. 7.1.12 Data on the sex of the agricultural holder are collected only for holdings in the household sector. For holdings in the non-household sector (corporations, government institutions, etc.), the sex of the manager is collected (see Item 0115). Where there are joint holders in a household-sector holding, the sex of each holder should be reported. For the definition of an agricultural holder, (see paragraphs 4.21–4.24). For guidance on tabulating sex of holder data, see Table 9.1 in Chapter 9.",
+    "description": "7.1.11 Item 0104 is important for analysing the gender aspects of agricultural production and, in particular, for examining the role of women in managing agricultural holdings. The sex of every holder (male or female) should be recorded in the census questionnaire. According to the Principles and recommendations for population and housing censuses (UN, 2025, paragraph 5.168), some countries have started collecting data on gender identity in addition to information on sex, to allow respondents to express their identity beyond traditional binary options. However, there are no international standards for measuring this fluid and evolving concept. Item 0104 is also useful for analysing gender aspects of agricultural production management and may serve as the basis for a sampling frame for specialised gender surveys. 7.1.12 Data on the sex of the agricultural holder are collected only for holdings in the household sector. For holdings in the non-household sector (corporations, government institutions, etc.), the sex of the manager is collected (see Item 0115). Where there are joint holders in a household-sector holding, the sex of each holder should be reported. For the definition of an agricultural holder, (see paragraphs 4.21–4.24). For guidance on tabulating sex of holder data, see Table 9.1 in Chapter 9.",
     "referencePeriod": "census reference day",
     "theme": "Theme 1: Identification and general characteristics",
     "page": 76,
@@ -72,7 +72,7 @@
     "descriptionBlocks": [
       {
         "type": "paragraph",
-        "text": "7.1.11 Item 0104 is important for analysing the gender aspects of agricultural production and, in particular, for examining the role of women in managing agricultural holdings. The sex of every holder (male or female) should be recorded in the census questionnaire. According to the Principles and recommendations for population and housing censuses (UN, 2025, paragraph 5.168), some countries have started collecting data on gender identity in addition to information on sex, to allow respondents to express their identity beyond traditional binary options. However, there are no international standards for measuring this fluid and evolving concept. Item 0104 is also useful for analysing gender aspects of agricultural production management and may serve as the basis for a sampling frame for specialized gender surveys."
+        "text": "7.1.11 Item 0104 is important for analysing the gender aspects of agricultural production and, in particular, for examining the role of women in managing agricultural holdings. The sex of every holder (male or female) should be recorded in the census questionnaire. According to the Principles and recommendations for population and housing censuses (UN, 2025, paragraph 5.168), some countries have started collecting data on gender identity in addition to information on sex, to allow respondents to express their identity beyond traditional binary options. However, there are no international standards for measuring this fluid and evolving concept. Item 0104 is also useful for analysing gender aspects of agricultural production management and may serve as the basis for a sampling frame for specialised gender surveys."
       },
       {
         "type": "paragraph",
@@ -203,7 +203,7 @@
   {
     "code": "0201",
     "name": "Total area of holding",
-    "description": "7.2.1 The total area of the holding is the area of all land making up the agricultural holding. It provides a measure of holding size, which is an important element of agricultural census analysis. It includes all land operated by the holding, regardless of ownership title or legal form. Land owned by household members but rented to others should not be included in the holding area, while land not owned by household members but rented from others for agricultural production purposes should be included. 7.2.2 In determining the total area of the holding, the following types of land should be included: Land used for cultivation of crops (temporary and permanent, including cropped land under protective cover, see Annex 4, Theme 4, paragraph 25), meadows and pastures, and fallow land; Unutilized agricultural land; Forest and other wooded land; Bodies of water; Farmyards and land occupied by farm buildings; Land for which a holding does not have any rights to agricultural use, except for the products of the trees growing on it. 7.2.3 Depending on national circumstances, the total area of a holding may be very small or even zero, while still having agricultural activity. For example, some holdings without land used for agricultural production may raise livestock solely on communal land. Such holdings may be considered landless. However, care should be taken in classifying them as landless, as they may use areas or buildings (own or rented) for keeping livestock, which, according to paragraph 7.2.2, form part of the total area of the holding (farmyards and land occupied by farm buildings). 7.2.4 The land of a holding may consist of one or more parcels, located in one or more separate areas or administrative units, provided that the parcels form part of the same economic production unit and share the same means of production, such as labour, farm buildings, machinery and draught animals. The total holding area is an important stratification variable for sampling frames used in census supplementary modules and ongoing surveys. Further information on defining holding units when land is located in more than one administrative unit is provided in paragraph 4.13. Land data are often collected parcel by parcel, with the total holding area derived by summing the area of all parcels. 7.2.5 The following special cases should be noted: When an agricultural holding is operated by a household, the land area of the household’s house should be included, provided the house is located on the holding (and not, for example, in a nearby village or town) and is used mainly for residential purposes. Where shifting cultivation is present, the area of the holding should include the area under crops and the area prepared for cultivation, but not sown or planted as of the census reference day. Land abandoned before the census reference day should be excluded. Open rangeland, such as land open to communal grazing, is not considered to be part of the holding. For holdings with access to communal grazing land, their share of such land should not be included in the holding area unless a specific area has been assigned to the holding and is delimited by fencing or another form of boundary demarcation. However, such agricultural land, which does not belong directly to any holding, may be covered in the census through community-level data collection, as recommended in Chapter 8. 7.2.6 Data on area of holding must refer to a point in time, i.e. the census reference day. 28 If a holder bought land before the census reference day, the area of land purchased should be included in the holding area; if land was sold before the census reference day, the area sold should be excluded. For more information, see paragraph 4.16. 7.2.7 The most common method for collecting data on parcel and total holding areas in the census of agriculture is by holder declaration. In some countries, holders may not be able to provide reliable estimates of crop areas. To address this problem, countries with additional resources may employ alternative methods in sample surveys, such as objective measurement in which the area is measured using GPS devices, including involving remote sensing (see paragraphs 5.49–5.50 and 5.67–5.69). The accuracy of crop areas could be improved if both declared areas and objective measurements could be drawn from a sample, where a correction factor may be constructed based on their correlation (for more details, see Chapter 20 of the World programme for the census of agriculture 2020. Volume 2 Operational guidelines, FAO, 2018a; as well as FAO, 2018c and David, 1978).",
+    "description": "7.2.1 The total area of the holding is the area of all land making up the agricultural holding. It provides a measure of holding size, which is an important element of agricultural census analysis. It includes all land operated by the holding, regardless of ownership title or legal form. Land owned by household members but rented to others should not be included in the holding area, while land not owned by household members but rented from others for agricultural production purposes should be included. 7.2.2 In determining the total area of the holding, the following types of land should be included: Land used for cultivation of crops (temporary and permanent, including cropped land under protective cover, see Annex 4, Theme 4, paragraph 25), meadows and pastures, and fallow land; Unutilized agricultural land; Forest and other wooded land; Bodies of water; Farmyards and land occupied by farm buildings; Land for which a holding does not have any rights to agricultural use, except for the products of the trees growing on it. 7.2.3 Depending on national circumstances, the total area of a holding may be very small or even zero, while still having agricultural activity. For example, some holdings without land used for agricultural production may raise livestock solely on communal land. Such holdings may be considered landless. However, care should be taken in classifying them as landless, as they may use areas or buildings (own or rented) for keeping livestock, which, according to paragraph 7.2.2, form part of the total area of the holding (farmyards and land occupied by farm buildings). 7.2.4 The land of a holding may consist of one or more parcels, located in one or more separate areas or administrative units, provided that the parcels form part of the same economic production unit and share the same means of production, such as labour, farm buildings, machinery and draught animals. The total holding area is an important stratification variable for sampling frames used in census supplementary modules and ongoing surveys. Further information on defining holding units when land is located in more than one administrative unit is provided in paragraph 4.13. Land data are often collected parcel by parcel, with the total holding area derived by summing the area of all parcels. 7.2.5 The following special cases should be noted: When an agricultural holding is operated by a household, the land area of the household’s house should be included, provided the house is located on the holding (and not, for example, in a nearby village or town) and is used mainly for residential purposes. Where shifting cultivation is present, the area of the holding should include the area under crops and the area prepared for cultivation, but not sown or planted as of the census reference day. Land abandoned before the census reference day should be excluded. Open rangeland, such as land open to communal grazing, is not considered to be part of the holding. For holdings with access to communal grazing land, their share of such land should not be included in the holding area unless a specific area has been assigned to the holding and is delimited by fencing or another form of boundary demarcation. However, such agricultural land, which does not belong directly to any holding, may be covered in the census through community-level data collection, as recommended in Chapter 8. 7.2.6 Data on area of holding must refer to a point in time, i.e. the census reference day.28 If a holder bought land before the census reference day, the area of land purchased should be included in the holding area; if land was sold before the census reference day, the area sold should be excluded. For more information, see paragraph 4.16. 7.2.7 The most common method for collecting data on parcel and total holding areas in the census of agriculture is by holder declaration. In some countries, holders may not be able to provide reliable estimates of crop areas. To address this problem, countries with additional resources may employ alternative methods in sample surveys, such as objective measurement in which the area is measured using GPS devices, including involving remote sensing (see paragraphs 5.49–5.50 and 5.67–5.69). The accuracy of crop areas could be improved if both declared areas and objective measurements could be drawn from a sample, where a correction factor may be constructed based on their correlation (for more details, see Chapter 20 of the World programme for the census of agriculture 2020. Volume 2 Operational guidelines, FAO, 2018a; as well as FAO, 2018c and David, 1978).",
     "referencePeriod": "census reference day",
     "theme": "Theme 2: Land",
     "page": 79,
@@ -250,11 +250,15 @@
       },
       {
         "type": "paragraph",
-        "text": "7.2.6 Data on area of holding must refer to a point in time, i.e. the census reference day. 28 If a holder bought land before the census reference day, the area of land purchased should be included in the holding area; if land was sold before the census reference day, the area sold should be excluded. For more information, see paragraph 4.16."
+        "text": "7.2.6 Data on area of holding must refer to a point in time, i.e. the census reference day.28 If a holder bought land before the census reference day, the area of land purchased should be included in the holding area; if land was sold before the census reference day, the area sold should be excluded. For more information, see paragraph 4.16."
       },
       {
         "type": "paragraph",
-        "text": "7.2.7 The most common method for collecting data on parcel and total holding areas in the census of agriculture is by holder declaration. In some countries, holders may not be able to provide reliable estimates of crop areas. To address this problem, countries with additional resources may employ alternative methods in sample surveys, such as objective measurement in which the area is measured using GPS devices, including involving remote sensing (see paragraphs 5.49–5.50 and 5.67–5.69). The accuracy of crop areas could be improved if both declared areas and objective measurements could be drawn from a sample, where a correction factor may be constructed based on their correlation (for more details, see Chapter 20 of the World programme for the census of agriculture 2020. Volume 2 Operational guidelines, FAO, 2018a; as well as FAO, 2018c and David, 1978)."
+        "text": "7.2.7 The most common method for collecting data on parcel and total holding areas in the census of agriculture is by holder declaration. In some countries, holders may not be able to provide reliable estimates of crop areas. To address this problem, countries with additional resources may employ alternative methods in sample surveys, such as objective measurement in which the area is measured using GPS devices, including involving remote sensing (see paragraphs 5.49–5.50 and 5.67–5.69). The accuracy of crop areas could be improved if both declared areas and objective measurements could be drawn from a sample, where a correction factor may be constructed based on their correlation (for more details, see Chapter 20 of the World programme for the census of agriculture"
+      },
+      {
+        "type": "paragraph",
+        "text": "2020. Volume 2 Operational guidelines, FAO, 2018a; as well as FAO, 2018c and David, 1978)."
       }
     ]
   },
@@ -281,11 +285,7 @@
       },
       {
         "type": "paragraph",
-        "text": "7.2.11 Land use should be distinguished from “land cover”, which describes the physical characteristics of the land, such as grassland or forest. 28 Regarding crop area, paragraph"
-      },
-      {
-        "type": "paragraph",
-        "text": "7.4.1 explains that when the same area is planted two or more times in the case of successive cropping or during two different seasons, the planted area should be counted only once."
+        "text": "7.2.11 Land use should be distinguished from “land cover”, which describes the physical characteristics of the land, such as grassland or forest. 28 Regarding crop area, paragraph 7.4.1 explains that when the same area is planted two or more times in the case of successive cropping or during two different seasons, the planted area should be counted only once."
       },
       {
         "type": "paragraph",
@@ -307,15 +307,11 @@
       },
       {
         "type": "paragraph",
-        "text": "7.2.13 Definitions of these land use classes are given in paragraphs 7.2.18–7.2.37. The area of the holding is classified according to its main land use. See paragraph"
+        "text": "7.2.13 Definitions of these land use classes are given in paragraphs 7.2.18–7.2.37. The area of the holding is classified according to its main land use. See paragraph 7.2.17 for more information about main land use."
       },
       {
         "type": "paragraph",
-        "text": "7.2.17 for more information about main land use."
-      },
-      {
-        "type": "paragraph",
-        "text": "7.2.14 For presenting agricultural census results, the nine land use classes should be grouped in a suitable way. This can be done using terms such as agricultural land, cultivated land, cropland and arable land, although there are no standard definitions for many of these terms. For example, in some countries arable land is defined as land that is potentially cultivable, while in others it is considered to be land under temporary crops or meadows. Figure 1 shows the basic and aggregate land use classes recommended by the WCA 2030. The relationship between the basic land use classes recommended by the WCA 2030 and the relevant categories or classes of the SEEA land use classification is provided in Annex 5. FIGURE 7.1 CLASSIFICATION OF LAND USE FOR THE AGRICULTURAL CENSUS LU1–3. Arable land LU1–4. Cropland LU1–5. Agricultural land LU1–6. Land used for agriculture LU1. Land under temporary crops LU2. Land under temporary meadows and pastures LU3. Land temporarily fallow LU4. Land under permanent crops LU5. Land under permanent meadows and pastures LU6. Land under farm buildings and farmyards LU7. Forest and other wooded land LU8. Area used for aquaculture (including inland and coastal waters if part of the holding) LU9. Other area not elsewhere classified BASIC LAND USE CLASSES AGGREGATE LAND USE CLASSES SOURCE: Authors’ own elaboration."
+        "text": "7.2.14 For presenting agricultural census results, the nine land use classes should be grouped in a suitable way. This can be done using terms such as agricultural land, cultivated land, cropland and arable land, although there are no standard definitions for many of these terms. For example, in some countries arable land is defined as land that is potentially cultivable, while in others it is considered to be land under temporary crops or meadows. Figure 1 shows the basic and aggregate land use classes recommended by the WCA 2030. The relationship between the basic land use classes recommended by the WCA 2030 and the relevant categories or classes of the SEEA land use classification is provided in Annex 5. FIGURE 7.1 CLASSIFICATION OF LAND USE FOR THE AGRICULTURAL CENSUS LU1–3. Arable land LU1–4. Cropland LU1–5. Agricultural land LU1–6. Land used for agriculture LU1. Land under temporary crops LU2. Land under temporary meadows and pastures LU3. Land temporarily fallow LU4. Land under permanent crops LU5. Land under permanent meadows and pastures LU6. Land under farm buildings and farmyards LU7. Forest and other wooded land LU8. Area used for aquaculture (including inland and coastal waters if part of the holding) LU9. Other area not elsewhere classified BASIC LAND USE CLASSES \tAGGREGATE LAND USE CLASSES SOURCE: Authors’ own elaboration."
       },
       {
         "type": "paragraph",
@@ -438,7 +434,7 @@
   {
     "code": "0204",
     "name": "Area of holding according to land tenure types",
-    "description": "7.2.38 Item 0204 refers to the breakdown of the total area of the holding according to specific land tenure types. A holding may have one or more tenure types corresponding to each land parcel (for the definition of a parcel, see paragraph 4.19). Land tenure refers to the arrangements or rights under which the holder operates the land making up the holding. A distinction is made between legal and non-legal ownership, as this is a key element of tenure security. There are many different systems of formal and informal land tenure worldwide, and the distinction between legal and non-legal ownership is often blurred. Some broad guidelines are provided in the following paragraphs, but it is recognized that countries should define land tenure types according to national circumstances. 7.2.39 Broadly speaking, legal ownership or legal owner-like possession refers to land rights that provide statutory security of tenure. Security of tenure has several aspects. Most importantly, ownership must be recognized by the state, with administrative structures in place to ensure that property rights are enforceable. This may be achieved through a formal land title system, but it may also include certain forms of customary land tenure arrangements in which land rights are registered or certified in some way. Typically, legal ownership means that the landowner has the right to determine how the land is used (within certain limits) and may also have the right to sell or rent out the land. It also implies that the owner may access credit using the land as collateral. The following types of tenure arrangements may be included under this heading: The holder or members of the holder’s household possess title of ownership, which gives the holder the right to determine the nature and extent of the use of the land. The land is held under conditions that enable it to be operated as if legally owned by the holder or members of the holder’s household. A common type of legal owner-like possession is where land is operated under hereditary tenure, perpetual lease or long term lease, with nominal or no rent. The land is held under a tribal or traditional form of tenure, which is legally recognized by the state. Such arrangements usually involve land being held on a tribal, village, kindred or clan basis, with land ownership being communal in character but with certain individual rights being held by virtue of membership in the social unit. Such arrangements can be formalized through the establishment of legal procedures to identify the community’s land and to manage the land rights of community members. 7.2.40 Optionally, the country may ask about the person or persons who own the land. This information is important for calculating SDG Indicator 5.a.1 (see Annex 11). 7.2.41 Non-legal ownership or non-legal owner-like possession describes a variety of informal land tenure arrangements, which do not provide security of tenure, and where circumstances could arise in which the holder may be dispossessed of the land. The following types of tenure arrangements may be included under this heading: The holder or members of the holder’s household have operated the land without interruption for a long period without any form of legal ownership, title, long term lease or payment of rent. The land is operated under a system in which a rent-free plot of tribal or other communal land is received and retained as long as it is kept under cultivation by the recipient's personal and household labour, but which cannot be sold or mortgaged. The holder is operating land owned by the state, without any legal rights. The land operated by the holder is held under a tribal or traditional form of tenure, which is not recognized by the state and is outside the realm of the law. 7.2.42 Rented land from someone else means that the holding rented or leased land from other people, usually for a limited time period. Rental arrangements can take different forms. Land may be rented for an agreed sum of money and/or produce, for a share of the produce or in exchange for services. Land may also be granted rent-free. 7.2.43 Rental arrangements may take different forms: Land rented for an agreed sum of money and/or produce is usually the result of a straightforward transaction between the owner of the land and the holder, who takes responsibility for managing and operating the land. Share of the produce, either in kind or in equivalent amount of money, covers the situation in which a share amount is agreed upon by the owner and the holder, depending on local conditions and the type of agriculture involved. Technical responsibility for management is usually exclusively with the holder, but is sometimes shared, to a limited degree, with the owner. Here, the owner may contribute tools, fertilizers or other aids, and may also share the economic risks. Exchange for services refers to arrangements in which the holder is granted the use of land in return for services. This is often in lieu of wages, for example when an agricultural labourer operates a piece of land in return for working unpaid for the landlord for a certain number of days. Another example is when a holder is granted the use of land as partial payment for services to a government body, religious organization or other institution. Other rental arrangements include land granted rent-free, perhaps under stipulated conditions such as growing certain crops. 7.2.44 There are various other types of land tenure: “Common land” is agricultural land used by a holding but not directly belonging to it, that is, land on which common rights apply. Such land is normally under the responsibility of a public authority (e.g. the state or a parish), while other persons are entitled to exercise rights of common, usually in conjunction with others. Common land consists mainly of permanent grassland, although it may also include horticultural or arable land. These areas are most often used for grazing animals. Land operated on a squatter basis – that is, private or public land operated without ownership title and without the owner's consent. Land operated under transitory tenure forms, such as trusteeship; land received by members of collective holdings for individual use; and land under inheritance proceedings. Countries may add further classes to suit local conditions. 7.2.45 When common land is used by several holdings for agricultural production, it should be allocated to the respective holdings, in the same way that rented land is not considered part of the owner’s holding but rather part of the tenant’s holding. 7.2.46 The area of common land assigned to a particular holding should be determined proportionally. This option is recommended if there is a guarantee of no double counting of the area. 7.2.47 Holdings report all the categories to describe the tenure of the land used by the holding. Possible multiple responses provided by holdings have to be clearly tabulated as one tenure or two and more in the census report.",
+    "description": "7.2.38 Item 0204 refers to the breakdown of the total area of the holding according to specific land tenure types. A holding may have one or more tenure types corresponding to each land parcel (for the definition of a parcel, see paragraph 4.19). Land tenure refers to the arrangements or rights under which the holder operates the land making up the holding. A distinction is made between legal and non-legal ownership, as this is a key element of tenure security. There are many different systems of formal and informal land tenure worldwide, and the distinction between legal and non-legal ownership is often blurred. Some broad guidelines are provided in the following paragraphs, but it is recognized that countries should define land tenure types according to national circumstances. 7.2.39 Broadly speaking, legal ownership or legal owner-like possession refers to land rights that provide statutory security of tenure. Security of tenure has several aspects. Most importantly, ownership must be recognized by the state, with administrative structures in place to ensure that property rights are enforceable. This may be achieved through a formal land title system, but it may also include certain forms of customary land tenure arrangements in which land rights are registered or certified in some way. Typically, legal ownership means that the landowner has the right to determine how the land is used (within certain limits) and may also have the right to sell or rent out the land. It also implies that the owner may access credit using the land as collateral. The following types of tenure arrangements may be included under this heading: The holder or members of the holder’s household possess title of ownership, which gives the holder the right to determine the nature and extent of the use of the land. The land is held under conditions that enable it to be operated as if legally owned by the holder or members of the holder’s household. A common type of legal owner-like possession is where land is operated under hereditary tenure, perpetual lease or long term lease, with nominal or no rent. The land is held under a tribal or traditional form of tenure, which is legally recognized by the state. Such arrangements usually involve land being held on a tribal, village, kindred or clan basis, with land ownership being communal in character but with certain individual rights being held by virtue of membership in the social unit. Such arrangements can be formalized through the establishment of legal procedures to identify the community’s land and to manage the land rights of community members. 7.2.40 Optionally, the country may ask about the person or persons who own the land. This information is important for calculating SDG indicator 5.a.1 (see Annex 11). 7.2.41 Non-legal ownership or non-legal owner-like possession describes a variety of informal land tenure arrangements, which do not provide security of tenure, and where circumstances could arise in which the holder may be dispossessed of the land. The following types of tenure arrangements may be included under this heading: The holder or members of the holder’s household have operated the land without interruption for a long period without any form of legal ownership, title, long term lease or payment of rent. The land is operated under a system in which a rent-free plot of tribal or other communal land is received and retained as long as it is kept under cultivation by the recipient's personal and household labour, but which cannot be sold or mortgaged. The holder is operating land owned by the state, without any legal rights. The land operated by the holder is held under a tribal or traditional form of tenure, which is not recognized by the state and is outside the realm of the law. 7.2.42 Rented land from someone else means that the holding rented or leased land from other people, usually for a limited time period. Rental arrangements can take different forms. Land may be rented for an agreed sum of money and/or produce, for a share of the produce or in exchange for services. Land may also be granted rent-free. 7.2.43 Rental arrangements may take different forms: Land rented for an agreed sum of money and/or produce is usually the result of a straightforward transaction between the owner of the land and the holder, who takes responsibility for managing and operating the land. Share of the produce, either in kind or in equivalent amount of money, covers the situation in which a share amount is agreed upon by the owner and the holder, depending on local conditions and the type of agriculture involved. Technical responsibility for management is usually exclusively with the holder, but is sometimes shared, to a limited degree, with the owner. Here, the owner may contribute tools, fertilizers or other aids, and may also share the economic risks. Exchange for services refers to arrangements in which the holder is granted the use of land in return for services. This is often in lieu of wages, for example when an agricultural labourer operates a piece of land in return for working unpaid for the landlord for a certain number of days. Another example is when a holder is granted the use of land as partial payment for services to a government body, religious organization or other institution. Other rental arrangements include land granted rent-free, perhaps under stipulated conditions such as growing certain crops. 7.2.44 There are various other types of land tenure: “Common land” is agricultural land used by a holding but not directly belonging to it, that is, land on which common rights apply. Such land is normally under the responsibility of a public authority (e.g. the state or a parish), while other persons are entitled to exercise rights of common, usually in conjunction with others. Common land consists mainly of permanent grassland, although it may also include horticultural or arable land. These areas are most often used for grazing animals. Land operated on a squatter basis – that is, private or public land operated without ownership title and without the owner's consent. Land operated under transitory tenure forms, such as trusteeship; land received by members of collective holdings for individual use; and land under inheritance proceedings. Countries may add further classes to suit local conditions. 7.2.45 When common land is used by several holdings for agricultural production, it should be allocated to the respective holdings, in the same way that rented land is not considered part of the owner’s holding but rather part of the tenant’s holding. 7.2.46 The area of common land assigned to a particular holding should be determined proportionally. This option is recommended if there is a guarantee of no double counting of the area. 7.2.47 Holdings report all the categories to describe the tenure of the land used by the holding. Possible multiple responses provided by holdings have to be clearly tabulated as one tenure or two and more in the census report.",
     "referencePeriod": "census reference day",
     "theme": "Theme 2: Land",
     "page": 85,
@@ -462,7 +458,7 @@
       },
       {
         "type": "paragraph",
-        "text": "7.2.40 Optionally, the country may ask about the person or persons who own the land. This information is important for calculating SDG Indicator 5.a.1 (see Annex 11)."
+        "text": "7.2.40 Optionally, the country may ask about the person or persons who own the land. This information is important for calculating SDG indicator 5.a.1 (see Annex 11)."
       },
       {
         "type": "paragraph",
@@ -554,19 +550,7 @@
       },
       {
         "type": "paragraph",
-        "text": "7.4.2 In the case of intercropping, mixed cropping or associated crops, the criterion for allocating the planted area between crops may follow the same approach described in Item 0403 (see paragraphs"
-      },
-      {
-        "type": "paragraph",
-        "text": "7.4.11 to 7.4.15). Some countries may prefer to report a crop mixture or interplanting as a single crop unit rather than as individual crops, as it represents an important production system. However, it is recommended that, where possible, the planted area of such mixtures also be subdivided into their component crops to allow international comparisons of planted areas. Data on temporary crops should be collected with respect to the census reference year to reflect crops grown in all seasons of that year. The agricultural year is generally the most appropriate reference period, as both enumerators and farmers can usually relate to it easily when reporting crop data. Crops should normally be reported according to the year in which they are planted. The approach for reporting planted area is the same as that discussed in paragraphs"
-      },
-      {
-        "type": "paragraph",
-        "text": "7.4.6 and"
-      },
-      {
-        "type": "paragraph",
-        "text": "7.4.7 for harvested area."
+        "text": "7.4.2 In the case of intercropping, mixed cropping or associated crops, the criterion for allocating the planted area between crops may follow the same approach described in Item 0403 (see paragraphs 7.4.11 to 7.4.15). Some countries may prefer to report a crop mixture or interplanting as a single crop unit rather than as individual crops, as it represents an important production system. However, it is recommended that, where possible, the planted area of such mixtures also be subdivided into their component crops to allow international comparisons of planted areas. Data on temporary crops should be collected with respect to the census reference year to reflect crops grown in all seasons of that year. The agricultural year is generally the most appropriate reference period, as both enumerators and farmers can usually relate to it easily when reporting crop data. Crops should normally be reported according to the year in which they are planted. The approach for reporting planted area is the same as that discussed in paragraphs 7.4.6 and 7.4.7 for harvested area."
       },
       {
         "type": "paragraph",
@@ -621,11 +605,7 @@
       },
       {
         "type": "paragraph",
-        "text": "7.4.13 A temporary crop grown in a compact plantation of permanent crops – a so-called associated crop – should be distinguished from a mixed crop. Normally, the area of the temporary crop is estimated by apportioning the land in a suitable manner. See paragraph"
-      },
-      {
-        "type": "paragraph",
-        "text": "7.4.20 for more information."
+        "text": "7.4.13 A temporary crop grown in a compact plantation of permanent crops – a so-called associated crop – should be distinguished from a mixed crop. Normally, the area of the temporary crop is estimated by apportioning the land in a suitable manner. See paragraph 7.4.20 for more information."
       },
       {
         "type": "paragraph",
@@ -633,11 +613,7 @@
       },
       {
         "type": "paragraph",
-        "text": "7.4.15 Countries could compare the area of crops planted (Item 0402) and the area of crops harvested (Item 0403) to assess crop loss if the census reference year is the same for both planted and harvested areas (see paragraphs"
-      },
-      {
-        "type": "paragraph",
-        "text": "7.4.6 and 7.4.7). In cases where holders cannot provide reliable estimates of crop areas, please refer to paragraph 7.2.7."
+        "text": "7.4.15 Countries could compare the area of crops planted (Item 0402) and the area of crops harvested (Item 0403) to assess crop loss if the census reference year is the same for both planted and harvested areas (see paragraphs 7.4.6 and 7.4.7). In cases where holders cannot provide reliable estimates of crop areas, please refer to paragraph 7.2.7."
       }
     ]
   },
@@ -694,7 +670,7 @@
   {
     "code": "0413",
     "name": "Use of different types of fertilizing products",
-    "description": "7.4.23 For the purposes of the agricultural census, fertilizers are mineral or organic substances, natural or manufactured, applied to soil, irrigation water or a hydroponic medium to supply plants with nutrients or to enhance plant growth. The term “fertilizer” generally refers to sources of plant nutrients containing at least 5 percent of a combination of the three primary nutrients (N, P 2O5 and K2O). Products with less than 5 percent of combined plant nutrients should be recorded under “other organic materials to enhance plant growth”. A holding may use one or more types of fertilizer. 7.4.24 Mineral fertilizers are nutrient-rich products prepared from inorganic materials through industrial processes. Manufacturing may involve mechanical enrichment, simple crushing, or more elaborate chemical transformation of one or more raw materials. Mineral fertilizers are also referred to as “chemical fertilizers”, “artificial fertilizers” or “inorganic fertilizers”. 7.4.25 Organo-mineral fertilizers are materials produced by blending or processing organic materials with mineral fertilizers to increase their nutrient content and fertilizing value. In these fertilizers, the mineral nutrients are bound and absorbed by the organic component, which helps ensure a gradual release of nutrients in the soil and reduces nutrient losses. 7.4.26 Organic fertilizers are carbon-rich products prepared from processed plant or animal material and/or unprocessed mineral materials (such as lime, rock or phosphate) that contain at least 5 percent of combined plant nutrients. They include materials of animal origin such as guano, bone meal, fish meal, leather meal and blood meal. Other organic materials, such as compost and sewage sludge, which contain less than the required nutrient content, should be classified as “other organic materials to enhance plant growth”. 7.4.27 Biofertilizers are products containing living or dormant micro-organisms, such as bacteria, including fungi, actinomycetes or algae, alone or in combination, which provide nutrients to enhance plant growth. When applied, these microbial inoculants help fix atmospheric nitrogen or solubilize and mobilize soil nutrients (FAO, 2019). 7.4.28 Animal manure is material from livestock production operations used for fertilization purposes. It has three main forms: solid or farmyard, liquid and slurry. Solid or farmyard manure is a mixture of solid excreta from domestic animals with or without bedding litter, sometimes including a small amount of urine. Liquid manure is urine from domestic animals, sometimes with a small amount of excrement and/or water. Slurry is manure in liquid form, consisting of a mixture of liquid and solid animal excreta, with or without dilution by water and/or a small amount of litter. Manures enhance soil fertility by adding organic matter and nutrients such as nitrogen, phosphorus, potassium and micronutrients. 7.4.29 Other organic materials to enhance plant growth are plant, animal or unprocessed mineral materials, other than fertilizers, applied to the soil to correct low nutrient content or other problems. They include lime, gypsum, sawdust, crop residue and synthetic soil conditioners, which may vary widely in composition. These materials may contain fertilizer elements but are primarily used to improve soil properties such as structure, porosity, water-holding capacity, aeration and temperature control. Green manure or cover crops (GMCCs) (FAO, 2011) are plants grown to provide soil cover and improve the physical, chemical and biological characteristics of soil, either sown independently or alongside crops. Compost consists of organic material of animal, plant or human origin partially decomposed through fermentation. Sewage sludge is residual organic material derived from sewage. 7.4.30 Biostimulants are products that stimulate plant growth through the synthesis of growth-promoting substances and/or plant nutrition processes independently of nutrient content. Their aim is to improve one or more of the following: plants’ nutrient use efficiency or uptake, tolerance to abiotic stress, or crop quality traits (FAO, 2019).",
+    "description": "7.4.23 For the purposes of the agricultural census, fertilizers are mineral or organic substances, natural or manufactured, applied to soil, irrigation water or a hydroponic medium to supply plants with nutrients or to enhance plant growth. The term “fertilizer” generally refers to sources of plant nutrients containing at least 5 percent of a combination of the three primary nutrients (N, P2O5 and K2O). Products with less than 5 percent of combined plant nutrients should be recorded under “other organic materials to enhance plant growth”. A holding may use one or more types of fertilizer. 7.4.24 Mineral fertilizers are nutrient-rich products prepared from inorganic materials through industrial processes. Manufacturing may involve mechanical enrichment, simple crushing, or more elaborate chemical transformation of one or more raw materials. Mineral fertilizers are also referred to as “chemical fertilizers”, “artificial fertilizers” or “inorganic fertilizers”. 7.4.25 Organo-mineral fertilizers are materials produced by blending or processing organic materials with mineral fertilizers to increase their nutrient content and fertilizing value. In these fertilizers, the mineral nutrients are bound and absorbed by the organic component, which helps ensure a gradual release of nutrients in the soil and reduces nutrient losses. 7.4.26 Organic fertilizers are carbon-rich products prepared from processed plant or animal material and/or unprocessed mineral materials (such as lime, rock or phosphate) that contain at least 5 percent of combined plant nutrients. They include materials of animal origin such as guano, bone meal, fish meal, leather meal and blood meal. Other organic materials, such as compost and sewage sludge, which contain less than the required nutrient content, should be classified as “other organic materials to enhance plant growth”. 7.4.27 Biofertilizers are products containing living or dormant micro-organisms, such as bacteria, including fungi, actinomycetes or algae, alone or in combination, which provide nutrients to enhance plant growth. When applied, these microbial inoculants help fix atmospheric nitrogen or solubilize and mobilize soil nutrients (FAO, 2019). 7.4.28 Animal manure is material from livestock production operations used for fertilization purposes. It has three main forms: solid or farmyard, liquid and slurry. Solid or farmyard manure is a mixture of solid excreta from domestic animals with or without bedding litter, sometimes including a small amount of urine. Liquid manure is urine from domestic animals, sometimes with a small amount of excrement and/or water. Slurry is manure in liquid form, consisting of a mixture of liquid and solid animal excreta, with or without dilution by water and/or a small amount of litter. Manures enhance soil fertility by adding organic matter and nutrients such as nitrogen, phosphorus, potassium and micronutrients. 7.4.29 Other organic materials to enhance plant growth are plant, animal or unprocessed mineral materials, other than fertilizers, applied to the soil to correct low nutrient content or other problems. They include lime, gypsum, sawdust, crop residue and synthetic soil conditioners, which may vary widely in composition. These materials may contain fertilizer elements but are primarily used to improve soil properties such as structure, porosity, water-holding capacity, aeration and temperature control. Green manure or cover crops (GMCCs) (FAO, 2011) are plants grown to provide soil cover and improve the physical, chemical and biological characteristics of soil, either sown independently or alongside crops. Compost consists of organic material of animal, plant or human origin partially decomposed through fermentation. Sewage sludge is residual organic material derived from sewage. 7.4.30 Biostimulants are products that stimulate plant growth through the synthesis of growth-promoting substances and/or plant nutrition processes independently of nutrient content. Their aim is to improve one or more of the following: plants’ nutrient use efficiency or uptake, tolerance to abiotic stress, or crop quality traits (FAO, 2019).",
     "referencePeriod": "census reference year",
     "theme": "Theme 4: Crops",
     "page": 90,
@@ -702,7 +678,7 @@
     "descriptionBlocks": [
       {
         "type": "paragraph",
-        "text": "7.4.23 For the purposes of the agricultural census, fertilizers are mineral or organic substances, natural or manufactured, applied to soil, irrigation water or a hydroponic medium to supply plants with nutrients or to enhance plant growth. The term “fertilizer” generally refers to sources of plant nutrients containing at least 5 percent of a combination of the three primary nutrients (N, P 2O5 and K2O). Products with less than 5 percent of combined plant nutrients should be recorded under “other organic materials to enhance plant growth”. A holding may use one or more types of fertilizer."
+        "text": "7.4.23 For the purposes of the agricultural census, fertilizers are mineral or organic substances, natural or manufactured, applied to soil, irrigation water or a hydroponic medium to supply plants with nutrients or to enhance plant growth. The term “fertilizer” generally refers to sources of plant nutrients containing at least 5 percent of a combination of the three primary nutrients (N, P2O5 and K2O). Products with less than 5 percent of combined plant nutrients should be recorded under “other organic materials to enhance plant growth”. A holding may use one or more types of fertilizer."
       },
       {
         "type": "paragraph",
@@ -745,7 +721,15 @@
     "descriptionBlocks": [
       {
         "type": "paragraph",
-        "text": "7.5.3 The livestock production system (LPS) refers to the general characteristics and practices of raising livestock on the holding. There are large variations in the scale and intensity of livestock production systems (FAO, 2009) and it is difficult for a classification system to capture all of this diversity. For the purpose of the agricultural census the following livestock systems are identified: 1. Integrated crop-livestock production systems or “mixed” LPS are those in which either 10 percent or more of the dry matter fed to animals comes from crop by-products or stubble, or 10 percent or more of the total value of production comes from non-livestock farming activities (Seré and Steinfeld, 1996), or those where 15 percent or more of the land area has to be dedicated to cropping (Teufel et al., 2010). Moreover, mixed systems are found in areas with a growing period of 60 days or more and a human density of 20 people or more per km² (see Global Livestock Environmental Assessment Model (GLEAM) in FAO, 2022b). 2. Specialized livestock production systems 2.1 Landless livestock production systems are those in which less than 10 percent of the dry matter fed to animals is farm-produced and in which annual average stocking rates are less than 10 livestock units (LSUs) per hectare of agricultural land (Seré and Steinfeld, 1996). They can be found in all agroecological zones where livestock rearing depends on external feed resources and where on-farm feed production is nil (Teufel et al., 2010). LSU is a reference unit that is used to make different species comparable and to calculate stocking densities of all different species together in a single value. In GLEAM (FAO, 2022b), the reference unit that is used to calculate LSU is based on the weight of a North American dairy cow (1.0 LSU) and takes into account the variations in weights for different cohorts (based on the calculated herd structure)."
+        "text": "7.5.3 The livestock production system (LPS) refers to the general characteristics and practices of raising livestock on the holding. There are large variations in the scale and intensity of livestock production systems (FAO, 2009) and it is difficult for a classification system to capture all of this diversity. For the purpose of the agricultural census the following livestock systems are identified:"
+      },
+      {
+        "type": "paragraph",
+        "text": "1. Integrated crop-livestock production systems or “mixed” LPS are those in which either 10 percent or more of the dry matter fed to animals comes from crop by-products or stubble, or 10 percent or more of the total value of production comes from non-livestock farming activities (Seré and Steinfeld, 1996), or those where 15 percent or more of the land area has to be dedicated to cropping (Teufel et al., 2010). Moreover, mixed systems are found in areas with a growing period of 60 days or more and a human density of 20 people or more per km² (see Global Livestock Environmental Assessment Model (GLEAM) in FAO, 2022b)."
+      },
+      {
+        "type": "paragraph",
+        "text": "2. Specialized livestock production systems 2.1 Landless livestock production systems are those in which less than 10 percent of the dry matter fed to animals is farm-produced and in which annual average stocking rates are less than 10 livestock units (LSUs) per hectare of agricultural land (Seré and Steinfeld, 1996). They can be found in all agroecological zones where livestock rearing depends on external feed resources and where on-farm feed production is nil (Teufel et al., 2010). LSU is a reference unit that is used to make different species comparable and to calculate stocking densities of all different species together in a single value. In GLEAM (FAO, 2022b), the reference unit that is used to calculate LSU is based on the weight of a North American dairy cow (1.0 LSU) and takes into account the variations in weights for different cohorts (based on the calculated herd structure)."
       },
       {
         "type": "paragraph",
@@ -947,11 +931,7 @@
       },
       {
         "type": "paragraph",
-        "text": "7.9.20 Working time data for employees should be consistent with the similar data for household members (see Annex 10). In this regard, the working time groupings/categories considered in paragraph"
-      },
-      {
-        "type": "paragraph",
-        "text": "7.9.13 should be suitable. Employees can be grouped according to the short or long duration of their implicit or explicit contracts (e.g. regular employees, seasonal, short-term and casual workers)."
+        "text": "7.9.20 Working time data for employees should be consistent with the similar data for household members (see Annex 10). In this regard, the working time groupings/categories considered in paragraph 7.9.13 should be suitable. Employees can be grouped according to the short or long duration of their implicit or explicit contracts (e.g. regular employees, seasonal, short-term and casual workers)."
       },
       {
         "type": "paragraph",
@@ -1293,11 +1273,11 @@
     "descriptionBlocks": [
       {
         "type": "paragraph",
-        "text": "11. Item 0204 “Area of holding according to land tenure types” was recommended in Chapter 6 as an essential item. However, countries may wish to collect land tenure data at a more detailed, parcel level. This item serves this purpose. It refers to the tenure type of each parcel. This information can be used in conjunction with the parcel area to estimate the area under different land tenure types. Countries wishing to get information about the efficiency of their official land registration system may go into more detail and ask whether the parcel is officially registered or not. This may not be relevant to all land tenure types. If the parcel is under land tenure type “rented from someone else” or “non-legal ownership or non-legal owner-like possession”, the respondent might not be aware of its registration status. 12. Note that a parcel must be of one tenure type (paragraph 4.19). Refer to paragraphs 7.2.38–"
+        "text": "11. Item 0204 “Area of holding according to land tenure types” was recommended in Chapter 6 as an essential item. However, countries may wish to collect land tenure data at a more detailed, parcel level. This item serves this purpose. It refers to the tenure type of each parcel. This information can be used in conjunction with the parcel area to estimate the area under different land tenure types. Countries wishing to get information about the efficiency of their official land registration system may go into more detail and ask whether the parcel is officially registered or not. This may not be relevant to all land tenure types. If the parcel is under land tenure type “rented from someone else” or “non-legal ownership or non-legal owner-like possession”, the respondent might not be aware of its registration status."
       },
       {
         "type": "paragraph",
-        "text": "7.2.47 for definitions of land tenure and a description of the different land tenure types."
+        "text": "12. Note that a parcel must be of one tenure type (paragraph 4.19). Refer to paragraphs 7.2.38–7.2.47 for definitions of land tenure and a description of the different land tenure types."
       }
     ]
   },
@@ -1312,11 +1292,7 @@
     "descriptionBlocks": [
       {
         "type": "paragraph",
-        "text": "13. This item relates to the conditions under which land is rented from others. It applies to parcels “rented from someone else” in additional Item 0209 (see above) and refers to the current rental arrangements (as of census reference day). See paragraph"
-      },
-      {
-        "type": "paragraph",
-        "text": "7.2.43 of essential Item 0204 for the description of the above four forms of rental arrangements."
+        "text": "13. This item relates to the conditions under which land is rented from others. It applies to parcels “rented from someone else” in additional Item 0209 (see above) and refers to the current rental arrangements (as of census reference day). See paragraph 7.2.43 of essential Item 0204 for the description of the above four forms of rental arrangements."
       }
     ]
   },
@@ -1369,15 +1345,7 @@
     "descriptionBlocks": [
       {
         "type": "paragraph",
-        "text": "1. The definition of irrigation is provided in paragraphs"
-      },
-      {
-        "type": "paragraph",
-        "text": "7.3.1 to"
-      },
-      {
-        "type": "paragraph",
-        "text": "7.3.3 and the item refers to both fully controlled and partially controlled irrigation methods. This item also helps to better understand cropping practices and the constraints in improving agricultural productivity. It is recommended to include this item in the core module when using a modular approach, to provide a sampling frame for the census supplementary irrigation module and for other irrigation surveys. Countries wishing to set up a list frame of holdings using irrigation may collect this item in the census by complete enumeration to support the design of specific sample surveys on this type of holdings."
+        "text": "1. The definition of irrigation is provided in paragraphs 7.3.1 to 7.3.3 and the item refers to both fully controlled and partially controlled irrigation methods. This item also helps to better understand cropping practices and the constraints in improving agricultural productivity. It is recommended to include this item in the core module when using a modular approach, to provide a sampling frame for the census supplementary irrigation module and for other irrigation surveys. Countries wishing to set up a list frame of holdings using irrigation may collect this item in the census by complete enumeration to support the design of specific sample surveys on this type of holdings."
       }
     ]
   },
@@ -1392,31 +1360,15 @@
     "descriptionBlocks": [
       {
         "type": "paragraph",
-        "text": "2. See paragraphs 7.3.1–"
+        "text": "2. See paragraphs 7.3.1–7.3.3 for the definition of irrigation and 7.3.5 for the definition of area irrigated. This item includes areas actually irrigated by both fully controlled and partially controlled irrigation. See paragraph 7.2.25 for the definition of “land under permanent crops”, paragraph 7.2.18 for the definition of “land under temporary crops”, paragraph 7.2.21 for the definition of “land under temporary meadows and pastures” and paragraph 7.2.27 for the definition of “land under permanent meadows and pastures”. Crops grown under protective cover should be included under the category \"land under farm buildings and farmyards\", as indicated in the definition."
       },
       {
         "type": "paragraph",
-        "text": "7.3.3 for the definition of irrigation and"
+        "text": "3. Note that “area irrigated” in this item refers to the physical area of land irrigated, not the total area of crops irrigated (see additional Item 0305). Thus, land irrigated for successive crops in different seasons within the reference year is only counted once in computing the area of land irrigated and is shown under multiple-irrigated crops. Land under temporary crops with single-irrigated crop refers to land with a single-irrigated crop during the reference year, or land with successive crops with irrigation being used for only one of the crops during the reference year."
       },
       {
         "type": "paragraph",
-        "text": "7.3.5 for the definition of area irrigated. This item includes areas actually irrigated by both fully controlled and partially controlled irrigation. See paragraph"
-      },
-      {
-        "type": "paragraph",
-        "text": "7.2.25 for the definition of “land under permanent crops”, paragraph"
-      },
-      {
-        "type": "paragraph",
-        "text": "7.2.18 for the definition of “land under temporary crops”, paragraph"
-      },
-      {
-        "type": "paragraph",
-        "text": "7.2.21 for the definition of “land under temporary meadows and pastures” and paragraph"
-      },
-      {
-        "type": "paragraph",
-        "text": "7.2.27 for the definition of “land under permanent meadows and pastures”. Crops grown under protective cover should be included under the category \"land under farm buildings and farmyards\", as indicated in the definition. 3. Note that “area irrigated” in this item refers to the physical area of land irrigated, not the total area of crops irrigated (see additional Item 0305). Thus, land irrigated for successive crops in different seasons within the reference year is only counted once in computing the area of land irrigated and is shown under multiple-irrigated crops. Land under temporary crops with single-irrigated crop refers to land with a single-irrigated crop during the reference year, or land with successive crops with irrigation being used for only one of the crops during the reference year. 4. This item is a holding-level item. However, for operational reasons, countries may find it easier to collect the data at the parcel level and aggregate up to the holding-level. Countries may wish to include this item in the core module if a supplementary irrigation module is not conducted."
+        "text": "4. This item is a holding-level item. However, for operational reasons, countries may find it easier to collect the data at the parcel level and aggregate up to the holding-level. Countries may wish to include this item in the core module if a supplementary irrigation module is not conducted."
       }
     ]
   },
@@ -1588,15 +1540,19 @@
     "descriptionBlocks": [
       {
         "type": "paragraph",
-        "text": "1. The information on temporary crops is limited to whether the holding grew each specific type of crop. This item is useful to provide a sampling frame for crop surveys. Area data for temporary crops are collected in Items 0402 and 0403. 2. Temporary crops are those with a growing cycle of less than one year (see paragraphs"
+        "text": "1. The information on temporary crops is limited to whether the holding grew each specific type of crop. This item is useful to provide a sampling frame for crop surveys. Area data for temporary crops are collected in Items 0402 and 0403."
       },
       {
         "type": "paragraph",
-        "text": "7.2.18 and 7.2.19). A census provides a unique opportunity to collect information on all crops grown, including minor crops. In an agricultural survey, data on minor crops are likely to be less reliable, so only the major crops should be canvassed. 3. A crop classification is shown in Annex 6 to assist in collecting and tabulating crop data. An alphabetical list of crop names is provided in Annex 7. The crop classification is not exhaustive, and not all crops listed apply to any one country. Countries should expand or abridge the crop list as appropriate, considering the importance of specific crops in each country. For a dominant crop, a country may wish to provide further detail, such as by season (for example, summer/winter or wet/dry), land type (for example, lowland/upland), or variety (for example, local/improved). Countries may also wish to disaggregate data by end use, such as whether it is intended for food, animal feed, biofuels, or other purposes. Refer to Annex 6 for more information on the principles underlying the crop classification and the issues in providing further detail. 4. Data on temporary crops are collected with respect to the census reference year to reflect crops grown in all seasons of the year. The agricultural year is usually the most suitable reference period because enumerators and farmers can usually easily relate to that period in reporting crop data. Crops are normally reported according to the year in which they are harvested (see paragraphs"
+        "text": "2. Temporary crops are those with a growing cycle of less than one year (see paragraphs 7.2.18 and 7.2.19). A census provides a unique opportunity to collect information on all crops grown, including minor crops. In an agricultural survey, data on minor crops are likely to be less reliable, so only the major crops should be canvassed."
       },
       {
         "type": "paragraph",
-        "text": "7.4.6 and 7.4.7). See paragraph 4.16 for more information on how to report crops where land is bought."
+        "text": "3. A crop classification is shown in Annex 6 to assist in collecting and tabulating crop data. An alphabetical list of crop names is provided in Annex 7. The crop classification is not exhaustive, and not all crops listed apply to any one country. Countries should expand or abridge the crop list as appropriate, considering the importance of specific crops in each country. For a dominant crop, a country may wish to provide further detail, such as by season (for example, summer/winter or wet/dry), land type (for example, lowland/upland), or variety (for example, local/improved). Countries may also wish to disaggregate data by end use, such as whether it is intended for food, animal feed, biofuels, or other purposes. Refer to Annex 6 for more information on the principles underlying the crop classification and the issues in providing further detail."
+      },
+      {
+        "type": "paragraph",
+        "text": "4. Data on temporary crops are collected with respect to the census reference year to reflect crops grown in all seasons of the year. The agricultural year is usually the most suitable reference period because enumerators and farmers can usually easily relate to that period in reporting crop data. Crops are normally reported according to the year in which they are harvested (see paragraphs 7.4.6 and 7.4.7). See paragraph 4.16 for more information on how to report crops where land is bought."
       }
     ]
   },
@@ -1619,8 +1575,12 @@
           "Food for human consumption",
           "Feed for animals",
           "Biofuels",
-          "Other uses 6. The end use concept has been introduced to help assess food supplies and the production of fodder crops."
+          "Other uses"
         ]
+      },
+      {
+        "type": "paragraph",
+        "text": "6. The end use concept has been introduced to help assess food supplies and the production of fodder crops."
       },
       {
         "type": "paragraph",
@@ -1716,8 +1676,12 @@
           "Food for human consumption",
           "Feed for animals",
           "Biofuels",
-          "Other uses 16. For the definitions of permanent crops and compact plantation, see paragraph 13 above. For information on area of permanent crops, see paragraphs 7.4.16–7.4.20. For the definition of permanent crops of productive age, see paragraph 7.4.18. The major permanent crops used to obtain biofuels are oil palm and coconut. New permanent crops can be used for biofuels as technology evolves. For help in identifying crops, refer to the crop classification in Annex 6 and the alphabetical list of crops in Annex 7."
+          "Other uses"
         ]
+      },
+      {
+        "type": "paragraph",
+        "text": "16. For the definitions of permanent crops and compact plantation, see paragraph 13 above. For information on area of permanent crops, see paragraphs 7.4.16–7.4.20. For the definition of permanent crops of productive age, see paragraph 7.4.18. The major permanent crops used to obtain biofuels are oil palm and coconut. New permanent crops can be used for biofuels as technology evolves. For help in identifying crops, refer to the crop classification in Annex 6 and the alphabetical list of crops in Annex 7."
       }
     ]
   },
@@ -1747,15 +1711,15 @@
     "descriptionBlocks": [
       {
         "type": "paragraph",
-        "text": "18. Most temporary crops are grown on land classed as having “land under temporary crops” as its main use in the land use classification (see paragraphs 7.2.14–7.2.16). However, temporary crops can also be grown on other land use types. They may be grown in association with permanent crops on land classed as “land under permanent crops” or grown on land classed as “forest and other wooded land”. Also, land mainly used for aquaculture may be cropped during part of the year. 19. To get a complete picture of temporary crops, it is necessary to find out about land used for growing temporary crops as a secondary land use. For associated crops and crops grown in forest and other wooded land, the proportion of the parcel/field/plot used for temporary crops needs to be estimated (see paragraphs"
+        "text": "18. Most temporary crops are grown on land classed as having “land under temporary crops” as its main use in the land use classification (see paragraphs 7.2.14–7.2.16). However, temporary crops can also be grown on other land use types. They may be grown in association with permanent crops on land classed as “land under permanent crops” or grown on land classed as “forest and other wooded land”. Also, land mainly used for aquaculture may be cropped during part of the year."
       },
       {
         "type": "paragraph",
-        "text": "7.4.2 and"
+        "text": "19. To get a complete picture of temporary crops, it is necessary to find out about land used for growing temporary crops as a secondary land use. For associated crops and crops grown in forest and other wooded land, the proportion of the parcel/field/plot used for temporary crops needs to be estimated (see paragraphs 7.4.2 and 7.4.10 to 7.4.14). Where a piece of land has a primary use, such as for aquaculture, which also enables it to be cropped for part of the year, the area cropped should be reported."
       },
       {
         "type": "paragraph",
-        "text": "7.4.10 to 7.4.14). Where a piece of land has a primary use, such as for aquaculture, which also enables it to be cropped for part of the year, the area cropped should be reported. 20. This item relates to land as measured in the land use classification – namely, the area on the census reference day according to its main use during the census reference year. Secondary land use relates to secondary activities on the land."
+        "text": "20. This item relates to land as measured in the land use classification – namely, the area on the census reference day according to its main use during the census reference year. Secondary land use relates to secondary activities on the land."
       }
     ]
   },
@@ -1863,8 +1827,12 @@
           "Swine/pigs",
           "Camels and camelids",
           "Poultry and birds",
-          "Other animals 2. Alternatively, countries could collect this item by indicating, out of the total number of each livestock species collected in essential Item 0502, the number under the management of a male or female household member or jointly managed by male and female household members, not only by the holder or joint holders."
+          "Other animals"
         ]
+      },
+      {
+        "type": "paragraph",
+        "text": "2. Alternatively, countries could collect this item by indicating, out of the total number of each livestock species collected in essential Item 0502, the number under the management of a male or female household member or jointly managed by male and female household members, not only by the holder or joint holders."
       }
     ]
   },
@@ -1886,8 +1854,12 @@
         "items": [
           "Locally adapted breeds, “which have been in the country for a sufficient time to be genetically adapted to one or more of traditional production systems or environments in the country.”",
           "Indigenous breeds, also termed autochthonous or native breeds, “originating from, adapted to and utilized in a particular geographical region, form a subset of the Locally adapted breeds.”",
-          "Exotic breeds, “which are maintained in a different area from the one they were developed and including breeds that are not locally adapted. Exotic breeds comprise both recently introduced breeds and continually imported breeds.” 4. Not all animals can always be classified under a specific breed as they might belong to an “undescribed” or “crossbred” population."
+          "Exotic breeds, “which are maintained in a different area from the one they were developed and including breeds that are not locally adapted. Exotic breeds comprise both recently introduced breeds and continually imported breeds.”"
         ]
+      },
+      {
+        "type": "paragraph",
+        "text": "4. Not all animals can always be classified under a specific breed as they might belong to an “undescribed” or “crossbred” population."
       }
     ]
   },
@@ -2481,7 +2453,15 @@
       },
       {
         "type": "paragraph",
-        "text": "32. The use of technology in farming practices refers to the incorporation of ICT to increase efficiency, productivity and sustainability in agricultural production. It includes the employment of advanced techniques such as precision agriculture, automatic controlled irrigation, precise animal health control, remote control for the physical security surveillance, etc. Different means are employed: drones, GIS, AI, cameras, etc. 33. “Smart farming” is a broad concept involving the automatization of the crop or livestock production cycle by means of these mechanisms listed above (FAO, 2022c). 34. “Precision agriculture” is a farm management strategy that helps farmers make decisions based on observations and measurements of crop and soil conditions, as well as microclimate, for every variable of crop farming. Precision agriculture enables centralized management of fields by processing and analysing information collected over time, across space, and from individual plots. With comprehensive control of field conditions, tailored management decisions can be made for sub-field areas, such as adjusting fertilizer application, optimizing farming schedules, and adopting suitable technologies. This approach ultimately improves production efficiency, product quality, farmers’ profits, and the sustainability of agricultural production. Precision agriculture relies on several resources (FAO, 2022c):"
+        "text": "32. The use of technology in farming practices refers to the incorporation of ICT to increase efficiency, productivity and sustainability in agricultural production. It includes the employment of advanced techniques such as precision agriculture, automatic controlled irrigation, precise animal health control, remote control for the physical security surveillance, etc. Different means are employed: drones, GIS, AI, cameras, etc."
+      },
+      {
+        "type": "paragraph",
+        "text": "33. “Smart farming” is a broad concept involving the automatization of the crop or livestock production cycle by means of these mechanisms listed above (FAO, 2022c)."
+      },
+      {
+        "type": "paragraph",
+        "text": "34. “Precision agriculture” is a farm management strategy that helps farmers make decisions based on observations and measurements of crop and soil conditions, as well as microclimate, for every variable of crop farming. Precision agriculture enables centralized management of fields by processing and analysing information collected over time, across space, and from individual plots. With comprehensive control of field conditions, tailored management decisions can be made for sub-field areas, such as adjusting fertilizer application, optimizing farming schedules, and adopting suitable technologies. This approach ultimately improves production efficiency, product quality, farmers’ profits, and the sustainability of agricultural production. Precision agriculture relies on several resources (FAO, 2022c):"
       },
       {
         "type": "bullets",
@@ -2545,8 +2525,12 @@
           "Fraction of the year with animals on pasture",
           "Common pasture grazing:",
           "Number of animals",
-          "Fraction of the year with animals on pasture 40. Common pasture refers to land not belonging directly to an agricultural holding, but on which common rights apply. In general terms, common pasture is an agricultural area owned by a public authority (state, parish, etc.) over which another person is entitled to exercise rights of common, and these rights are generally exercisable in common with others. Pastures which are rented or over which the holder enjoys rights allotted by the parish or other organization – e.g. common grazing land apportioned on an acreage basis – are not included here."
+          "Fraction of the year with animals on pasture"
         ]
+      },
+      {
+        "type": "paragraph",
+        "text": "40. Common pasture refers to land not belonging directly to an agricultural holding, but on which common rights apply. In general terms, common pasture is an agricultural area owned by a public authority (state, parish, etc.) over which another person is entitled to exercise rights of common, and these rights are generally exercisable in common with others. Pastures which are rented or over which the holder enjoys rights allotted by the parish or other organization – e.g. common grazing land apportioned on an acreage basis – are not included here."
       },
       {
         "type": "paragraph",
@@ -2566,8 +2550,12 @@
           "Up to three months",
           "From three to less than six months",
           "From six to nine months",
-          "More than nine months 44. Usually, the time with animals outside on the pasture is the same for all the holdings practicing animal grazing in a given area. Thus, an expert estimate or small sample of holdings would provide the necessary information."
+          "More than nine months"
         ]
+      },
+      {
+        "type": "paragraph",
+        "text": "44. Usually, the time with animals outside on the pasture is the same for all the holdings practicing animal grazing in a given area. Thus, an expert estimate or small sample of holdings would provide the necessary information."
       }
     ]
   },
@@ -2628,8 +2616,12 @@
           "Covered or open storage facilities",
           "For solid/ farmyard manure",
           "For liquid manure",
-          "For slurry 47. Cases may exist in which there are both covered and open storage facilities of the same type for one holding. Where feasible, information on the percentage of the capacity of the covered facilities could be asked."
+          "For slurry"
         ]
+      },
+      {
+        "type": "paragraph",
+        "text": "47. Cases may exist in which there are both covered and open storage facilities of the same type for one holding. Where feasible, information on the percentage of the capacity of the covered facilities could be asked."
       },
       {
         "type": "paragraph",
@@ -2695,8 +2687,12 @@
           "Family or friends",
           "Governments",
           "Buyers/traders",
-          "Other sources 6. In additional Item 0703, collateral is defined as assets offered as security when obtaining a loan. This means that if the borrower fails to meet the loan’s terms, the collateral can be sold, and the resulting funds used to settle the loan. In the context of the agricultural census, collateral is applied more broadly to include a guarantee provided for the acquisition of goods and services. While this guarantee typically relates to the production of agricultural goods, it may also involve assets."
+          "Other sources"
         ]
+      },
+      {
+        "type": "paragraph",
+        "text": "6. In additional Item 0703, collateral is defined as assets offered as security when obtaining a loan. This means that if the borrower fails to meet the loan’s terms, the collateral can be sold, and the resulting funds used to settle the loan. In the context of the agricultural census, collateral is applied more broadly to include a guarantee provided for the acquisition of goods and services. While this guarantee typically relates to the production of agricultural goods, it may also involve assets."
       },
       {
         "type": "paragraph",
@@ -2757,8 +2753,12 @@
           "Family or friends",
           "Governments",
           "Buyers/traders",
-          "Other sources 6. In additional Item 0703, collateral is defined as assets offered as security when obtaining a loan. This means that if the borrower fails to meet the loan’s terms, the collateral can be sold, and the resulting funds used to settle the loan. In the context of the agricultural census, collateral is applied more broadly to include a guarantee provided for the acquisition of goods and services. While this guarantee typically relates to the production of agricultural goods, it may also involve assets."
+          "Other sources"
         ]
+      },
+      {
+        "type": "paragraph",
+        "text": "6. In additional Item 0703, collateral is defined as assets offered as security when obtaining a loan. This means that if the borrower fails to meet the loan’s terms, the collateral can be sold, and the resulting funds used to settle the loan. In the context of the agricultural census, collateral is applied more broadly to include a guarantee provided for the acquisition of goods and services. While this guarantee typically relates to the production of agricultural goods, it may also involve assets."
       },
       {
         "type": "paragraph",
@@ -2819,8 +2819,12 @@
           "Family or friends",
           "Governments",
           "Buyers/traders",
-          "Other sources 6. In additional Item 0703, collateral is defined as assets offered as security when obtaining a loan. This means that if the borrower fails to meet the loan’s terms, the collateral can be sold, and the resulting funds used to settle the loan. In the context of the agricultural census, collateral is applied more broadly to include a guarantee provided for the acquisition of goods and services. While this guarantee typically relates to the production of agricultural goods, it may also involve assets."
+          "Other sources"
         ]
+      },
+      {
+        "type": "paragraph",
+        "text": "6. In additional Item 0703, collateral is defined as assets offered as security when obtaining a loan. This means that if the borrower fails to meet the loan’s terms, the collateral can be sold, and the resulting funds used to settle the loan. In the context of the agricultural census, collateral is applied more broadly to include a guarantee provided for the acquisition of goods and services. While this guarantee typically relates to the production of agricultural goods, it may also involve assets."
       },
       {
         "type": "paragraph",
@@ -2881,8 +2885,12 @@
           "Family or friends",
           "Governments",
           "Buyers/traders",
-          "Other sources 6. In additional Item 0703, collateral is defined as assets offered as security when obtaining a loan. This means that if the borrower fails to meet the loan’s terms, the collateral can be sold, and the resulting funds used to settle the loan. In the context of the agricultural census, collateral is applied more broadly to include a guarantee provided for the acquisition of goods and services. While this guarantee typically relates to the production of agricultural goods, it may also involve assets."
+          "Other sources"
         ]
+      },
+      {
+        "type": "paragraph",
+        "text": "6. In additional Item 0703, collateral is defined as assets offered as security when obtaining a loan. This means that if the borrower fails to meet the loan’s terms, the collateral can be sold, and the resulting funds used to settle the loan. In the context of the agricultural census, collateral is applied more broadly to include a guarantee provided for the acquisition of goods and services. While this guarantee typically relates to the production of agricultural goods, it may also involve assets."
       },
       {
         "type": "paragraph",
@@ -2981,8 +2989,12 @@
           "Up to 30 minutes",
           "More than 30 to 60 minutes",
           "More than 60 to 120 minutes",
-          "More than 2 hours 17. Sometimes, travelling times vary according to, for example, the wet and dry seasons. Some countries may wish to collect these data for different seasons. There may be different modes of travel, such as walking, a motor vehicle, an animal-powered vehicle, bus, bicycle, etc. The specific list of modes depends on the country's circumstances. If more than one mode of travel is available, then the most usual mode and travelling time associated with it should be reported."
+          "More than 2 hours"
         ]
+      },
+      {
+        "type": "paragraph",
+        "text": "17. Sometimes, travelling times vary according to, for example, the wet and dry seasons. Some countries may wish to collect these data for different seasons. There may be different modes of travel, such as walking, a motor vehicle, an animal-powered vehicle, bus, bicycle, etc. The specific list of modes depends on the country's circumstances. If more than one mode of travel is available, then the most usual mode and travelling time associated with it should be reported."
       },
       {
         "type": "paragraph",
@@ -3066,7 +3078,16 @@
           "Spouse of child",
           "Grandchild or great grandchild",
           "Other relative",
-          "Other unrelated person 4. Households should be divided into household composition types based on the family nucleus. The following groupings used in the population census (UN, 2025, paragraph 5.159) are usually suitable:",
+          "Other unrelated person"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "4. Households should be divided into household composition types based on the family nucleus. The following groupings used in the population census (UN, 2025, paragraph 5.159) are usually suitable:"
+      },
+      {
+        "type": "bullets",
+        "items": [
           "One-person household",
           "Nuclear household",
           "Married couple family with children",
@@ -3103,8 +3124,12 @@
           "Married",
           "Married, but separated",
           "Divorced and not remarried",
-          "Widowed and not remarried 6. Countries may wish to take local conditions into account in determining marital status categories. In some countries, customary unions such as ‘’registered partnership’’ and “consensual union” may be needed to reflect unions, which are legal and binding under the law. Other countries may need to take into account cohabitation, polygamous or polyandrous practices."
+          "Widowed and not remarried"
         ]
+      },
+      {
+        "type": "paragraph",
+        "text": "6. Countries may wish to take local conditions into account in determining marital status categories. In some countries, customary unions such as ‘’registered partnership’’ and “consensual union” may be needed to reflect unions, which are legal and binding under the law. Other countries may need to take into account cohabitation, polygamous or polyandrous practices."
       },
       {
         "type": "paragraph",
@@ -3150,8 +3175,12 @@
           "Money",
           "Farm produce",
           "Exchange of labour",
-          "Other forms of in-kind payment 2. If more than one form of payment is used on the holding, then all forms of payment practiced by holdings should be reported."
+          "Other forms of in-kind payment"
         ]
+      },
+      {
+        "type": "paragraph",
+        "text": "2. If more than one form of payment is used on the holding, then all forms of payment practiced by holdings should be reported."
       }
     ]
   },
@@ -3166,11 +3195,15 @@
     "descriptionBlocks": [
       {
         "type": "paragraph",
-        "text": "1. Area of aquaculture refers to the area under water used for aquaculture on the holding. This may be of three types: land-based; based on inland water; and based on coastal waters. The two latter types of area are parts of bodies of water, usually rented from others for use for aquacultural purposes. Such bodies of water could include parts of rivers, lakes, reservoirs, dams, canals, lagoons/estuaries, bays/coves or the open sea. The area figure should include supporting structures such as pond banks and floating structures of cages. 2. Land-based aquaculture is aquaculture practised in rice fields, ponds, tanks, raceways and other land areas on the holding. In the case of ponds, countries may need to develop criteria to distinguish between land-based and inland water aquaculture. Such criteria may include size of the pond, whether it is artificial or natural, whether cages and hapas (see paragraph 6 below) are used, etc. The area of land-based hatcheries and nurseries should be included, while the area of land-based aquaculture-related facilities, such as storage buildings, fish processing facilities, laboratories, and offices, should not be included. The split into arable and non-arable land is intended to determine what part of the land-based aquaculture is practised on land that is also used for crop production. Examples of non-arable land are saline-alkaline lands and wetlands. Refer to paragraph"
+        "text": "1. Area of aquaculture refers to the area under water used for aquaculture on the holding. This may be of three types: land-based; based on inland water; and based on coastal waters. The two latter types of area are parts of bodies of water, usually rented from others for use for aquacultural purposes. Such bodies of water could include parts of rivers, lakes, reservoirs, dams, canals, lagoons/estuaries, bays/coves or the open sea. The area figure should include supporting structures such as pond banks and floating structures of cages."
       },
       {
         "type": "paragraph",
-        "text": "7.2.37 for the definition of arable land. From the land use point of view, all land-based areas of aquaculture, except the one classified as arable land, should be classified as LU8 “area used for aquaculture” (see Figure 7.1 in Chapter 7) or more specifically to “land used for aquaculture” if a country wishes to further subdivide the class LU8 in line with the SEEA land use classification (see SEEA land use class 1.3 in Annex 5). 3. Inland waters include dams, reservoirs, lakes, and rivers. Coastal waters include lagoons, estuaries, shallow and open seas, bays, and coves, including inter-tidal mudflats. The area of aquaculture should refer to the part of the body of water that is occupied by the aquacultural facilities – for example, the total area of the pen or cage network in the water. Area of aquaculture based on inland waters and coastal waters should be classified as LU8 “area used for aquaculture” (see Figure 7.1 in Chapter 7) or more specifically to “inland waters used for aquaculture or holding facilities” and “coastal waters used for aquaculture or holding facilities”, respectively, if a country wishes to further subdivide the class LU8 in line with the SEEA land use classification (see SEEA land use classes 2.1 and 3.1 in Annex 5)."
+        "text": "2. Land-based aquaculture is aquaculture practised in rice fields, ponds, tanks, raceways and other land areas on the holding. In the case of ponds, countries may need to develop criteria to distinguish between land-based and inland water aquaculture. Such criteria may include size of the pond, whether it is artificial or natural, whether cages and hapas (see paragraph 6 below) are used, etc. The area of land-based hatcheries and nurseries should be included, while the area of land-based aquaculture-related facilities, such as storage buildings, fish processing facilities, laboratories, and offices, should not be included. The split into arable and non-arable land is intended to determine what part of the land-based aquaculture is practised on land that is also used for crop production. Examples of non-arable land are saline-alkaline lands and wetlands. Refer to paragraph 7.2.37 for the definition of arable land. From the land use point of view, all land-based areas of aquaculture, except the one classified as arable land, should be classified as LU8 “area used for aquaculture” (see Figure 7.1 in Chapter 7) or more specifically to “land used for aquaculture” if a country wishes to further subdivide the class LU8 in line with the SEEA land use classification (see SEEA land use class 1.3 in Annex 5)."
+      },
+      {
+        "type": "paragraph",
+        "text": "3. Inland waters include dams, reservoirs, lakes, and rivers. Coastal waters include lagoons, estuaries, shallow and open seas, bays, and coves, including inter-tidal mudflats. The area of aquaculture should refer to the part of the body of water that is occupied by the aquacultural facilities – for example, the total area of the pen or cage network in the water. Area of aquaculture based on inland waters and coastal waters should be classified as LU8 “area used for aquaculture” (see Figure 7.1 in Chapter 7) or more specifically to “inland waters used for aquaculture or holding facilities” and “coastal waters used for aquaculture or holding facilities”, respectively, if a country wishes to further subdivide the class LU8 in line with the SEEA land use classification (see SEEA land use classes 2.1 and 3.1 in Annex 5)."
       }
     ]
   },
@@ -3269,11 +3302,19 @@
     "descriptionBlocks": [
       {
         "type": "paragraph",
-        "text": "1. Holdings with wooded areas can be identified through Item 0203 “Area of holding according to land use types”. If some area of the holding is classified as “forest and other wooded land” (refer to paragraph 7.2.30–"
+        "text": "1. Holdings with wooded areas can be identified through Item 0203 “Area of holding according to land use types”. If some area of the holding is classified as “forest and other wooded land” (refer to paragraph 7.2.30–7.2.31 for the definition of this land use category), then the holding (an agricultural holding with the presence of woodland) contains some wooded areas. However, this may not be sufficient for identifying all holdings with wooded areas without regard to title or legal form, potentially usable for forestry activities or other purposes."
       },
       {
         "type": "paragraph",
-        "text": "7.2.31 for the definition of this land use category), then the holding (an agricultural holding with the presence of woodland) contains some wooded areas. However, this may not be sufficient for identifying all holdings with wooded areas without regard to title or legal form, potentially usable for forestry activities or other purposes. 2. First, land use classification is based on the concept of the main use of the land. Some holdings may have land that is not classified according to the land use “forest and other wooded land” but contains groups of forest trees or other wooded plants satisfying the criteria for “forest and other wooded land”. For example, “land under permanent meadows and pastures” may span over 0.5 ha and contain forest trees and other wooded plants more than five metres in height with crown cover of more than 10 percent. To identify all holdings with forest and other wooded land, data on secondary land use are needed. 3. Second, the criterion of spanning over 0.5 ha limits the capacity of the land use approach for identifying all holdings with wooded areas potentially usable for forestry activities or other purposes. In some countries, small wooded areas on holdings may play an important role in sustaining the livelihoods of the households operating them. Because of the 0.5 ha criterion, such areas might be classified as “other area” (land use class LU9 in Figure 7.1, see also paragraph 7.2.36). 4. Because of the above considerations, the concept of woodland is used for the purposes of the present theme. It refers to the area of land satisfying all criteria for either forest land or other wooded land (see paragraph 7.2.30) except the criterion of spanning over 0.5 ha. Presence of woodland refers to whether such areas are present on the land making up the agricultural holding without regard to title or legal form.38 The reference period is the census reference day. Countries wishing to set up a list frame of holdings with woodland may collect this item in the census by complete enumeration to provide a frame for census supplementary forestry module and relevant sample surveys (see paragraph 3.47 and 3.49 for the scope of a forestry module)."
+        "text": "2. First, land use classification is based on the concept of the main use of the land. Some holdings may have land that is not classified according to the land use “forest and other wooded land” but contains groups of forest trees or other wooded plants satisfying the criteria for “forest and other wooded land”. For example, “land under permanent meadows and pastures” may span over 0.5 ha and contain forest trees and other wooded plants more than five metres in height with crown cover of more than 10 percent. To identify all holdings with forest and other wooded land, data on secondary land use are needed."
+      },
+      {
+        "type": "paragraph",
+        "text": "3. Second, the criterion of spanning over 0.5 ha limits the capacity of the land use approach for identifying all holdings with wooded areas potentially usable for forestry activities or other purposes. In some countries, small wooded areas on holdings may play an important role in sustaining the livelihoods of the households operating them. Because of the 0.5 ha criterion, such areas might be classified as “other area” (land use class LU9 in Figure 7.1, see also paragraph 7.2.36)."
+      },
+      {
+        "type": "paragraph",
+        "text": "4. Because of the above considerations, the concept of woodland is used for the purposes of the present theme. It refers to the area of land satisfying all criteria for either forest land or other wooded land (see paragraph 7.2.30) except the criterion of spanning over 0.5 ha. Presence of woodland refers to whether such areas are present on the land making up the agricultural holding without regard to title or legal form.38 The reference period is the census reference day. Countries wishing to set up a list frame of holdings with woodland may collect this item in the census by complete enumeration to provide a frame for census supplementary forestry module and relevant sample surveys (see paragraph 3.47 and 3.49 for the scope of a forestry module)."
       }
     ]
   },
