@@ -197,3 +197,8 @@ number is the first extracted line of each PDF page.
   mid-page, so siblings may share a single boundary page (printed pages 181
   and 189 respectively).
 
+### B2 — Chunker rewrite (module commits)
+
+- `feat(B2): extract positioned PDF lines` — added a tested PDF extraction
+  module carrying PDF page, printed page, and top/bottom line positions while
+  leaving the working A2 chunker in place.
