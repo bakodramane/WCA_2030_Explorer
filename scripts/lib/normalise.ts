@@ -17,3 +17,11 @@ export function normaliseForMatch(text: string): string {
 export function compactKey(text: string): string {
   return normaliseForMatch(text).replace(/\s+/g, '');
 }
+
+/** Display form: original typography kept; bullet glyphs and whitespace tidied. */
+export function displayText(text: string): string {
+  return text
+    .replace(/[\u0080-\u009f\ue000-\uf8ff]/g, '\u2022')
+    .replace(/\s+/g, ' ')
+    .trim();
+}

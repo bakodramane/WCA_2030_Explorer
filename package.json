@@ -10,6 +10,8 @@
     "build-glossary": "npx tsx scripts/build-glossary.ts",
     "build-figures": "npx tsx scripts/build-figures.ts",
     "build-qa": "npx tsx scripts/build-qa.ts",
+    "validate": "npx tsx scripts/validate-data.ts",
+    "repair-qa": "npx tsx scripts/repair-qa.ts",
     "build-index": "npx tsx scripts/build-index.ts",
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

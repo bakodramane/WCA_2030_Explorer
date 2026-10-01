@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { extractPdfLines } from './pdf-lines';
-import { compactKey, normaliseForMatch } from './normalise';
+import { compactKey, displayText, normaliseForMatch } from './normalise';
 import { stripPageFurniture } from './strip-furniture';
 
 export const SOURCE_PDF = path.join(process.cwd(), 'source', 'Census-2030_EN-DTP-9.pdf');
@@ -16,6 +16,8 @@ export interface JoinedText {
 export interface SourceText {
   /** Cleaned (furniture-free) text per printed page, whitespace- and quote-normalised. */
   pages: Map<number, string>;
+  /** Page text with the PDF's original typography (for quoting). */
+  displayPages: Map<number, string>;
   /** Compact (whitespace-free) keys per printed page. */
   keys: Map<number, string>;
   /** All pages as one compact string. */
@@ -41,13 +43,16 @@ function join(nums: number[], keys: Map<number, string>, stripBullets: boolean):
 export function buildSourceText(pageText: Map<number, string>): SourceText {
   const pages = new Map<number, string>();
   const keys = new Map<number, string>();
+  const displayPages = new Map<number, string>();
   for (const [page, text] of pageText) {
+    displayPages.set(page, displayText(text));
     pages.set(page, normaliseForMatch(text));
     keys.set(page, compactKey(text));
   }
   const nums = [...pages.keys()].sort((a, b) => a - b);
   return {
     pages,
+    displayPages,
     keys,
     joined: join(nums, keys, false),
     joinedNoBullets: join(nums, keys, true),
