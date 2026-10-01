@@ -80,7 +80,7 @@ function startsSentence(display: string): boolean {
   return /^(["'“‘(•]|[A-Z0-9])/.test(display);
 }
 
-interface Located { start: number; end: number; hits: number; clusters: number; single: { start: number; end: number; hits: number } }
+interface Located { start: number; end: number; hits: number; clusters: number; parts: Array<{ start: number; end: number }>; single: { start: number; end: number; hits: number } }
 
 /**
  * Locate the best contiguous source span for an excerpt via 4-gram diagonal voting.
@@ -120,6 +120,7 @@ function locate(index: SourceIndex, words: Array<{ key: string }>): Located | nu
   for (const v of chosen) for (let k = 0; k < GRAM; k++) covered.add(v.i + k);
   let clusters = 1;
   const single = { start, end, hits: covered.size };
+  const parts = [{ start, end }];
 
   for (let round = 0; round < MAX_JOINS; round++) {
     const chosenSet = new Set(chosen);
@@ -129,9 +130,10 @@ function locate(index: SourceIndex, words: Array<{ key: string }>): Located | nu
     start = Math.min(start, ...chosen.map(v => v.p));
     end = Math.max(end, Math.max(...chosen.map(v => v.p)) + GRAM - 1);
     for (const v of chosen) for (let k = 0; k < GRAM; k++) covered.add(v.i + k);
+    parts.push({ start: Math.min(...chosen.map(v => v.p)), end: Math.max(...chosen.map(v => v.p)) + GRAM - 1 });
     clusters++;
   }
-  return { start, end, hits: covered.size, clusters, single };
+  return { start, end, hits: covered.size, clusters, parts, single };
 }
 
 /** Widen to whole sentences; an edge with no boundary within MAX_EXPANSION words is left as matched. */
@@ -189,4 +191,45 @@ export function repairExcerpt(index: SourceIndex, excerpt: string): Repair | nul
     lengthRatio: Number(lengthRatio.toFixed(2)),
     confidence: confident ? 'high' : 'low',
   };
+}
+
+
+// ── OD.3: multi-passage proposals ───────────────────────────────────────────────
+
+export interface PassageProposal {
+  passages: Array<{ text: string; page: number }>;
+  coverage: number;
+}
+
+const CAPS_WORD = /^[A-Z][A-Z\u2019'-]+[:,]?$/;
+const PARAGRAPH_NUMBER = /^\d+\.\d+(\.\d+)?$/;
+
+/** Drop a heading run (ALL-CAPS words) before a paragraph number, and a trailing heading run, so a passage starts and ends on a sentence boundary. */
+export function trimHeadings(tokens: SourceToken[]): SourceToken[] {
+  let from = 0;
+  while (from < tokens.length && CAPS_WORD.test(tokens[from].display)) from++;
+  if (from > 0 && from < tokens.length && PARAGRAPH_NUMBER.test(tokens[from].display)) tokens = tokens.slice(from);
+  let to = tokens.length;
+  while (to > 1 && CAPS_WORD.test(tokens[to - 1].display)) to--;
+  if (to < tokens.length && to > 0 && /[.?!]["'\u201d\u2019)\]]*$/.test(tokens[to - 1].display)) tokens = tokens.slice(0, to);
+  return tokens;
+}
+
+/** Each matched cluster becomes its own sentence-aligned passage (no bridging text between them). */
+export function proposePassages(index: SourceIndex, excerpt: string): PassageProposal | null {
+  const words = toWords(excerpt);
+  const found = locate(index, words);
+  if (!found) return null;
+  const spans = found.parts
+    .map(part => expandToSentences(index.tokens, part.start, part.end))
+    .sort((a, b) => a[0] - b[0]);
+  const merged: Array<[number, number]> = [];
+  for (const [from, to] of spans) {
+    const last = merged[merged.length - 1];
+    if (last && from <= last[1] + 1) last[1] = Math.max(last[1], to); else merged.push([from, to]);
+  }
+  const passages = merged.map(([from, to]) => trimHeadings(index.tokens.slice(from, to + 1)))
+    .filter(tokens => tokens.length > 0)
+    .map(tokens => ({ text: tokens.map(t => t.display).join(' '), page: tokens[0].page }));
+  return { passages, coverage: Number(Math.min(1, found.hits / words.length).toFixed(2)) };
 }

@@ -4,6 +4,7 @@
 // curated `answer` field is rendered beneath it, visually subordinate and
 // always labelled "Curated summary (not verbatim)".
 import type { Chunk, QaRow } from '../engine/types';
+import { pagesLabel, parseExcerpts } from '../engine/excerpts';
 
 function esc(s: string): string {
   return s
@@ -16,11 +17,21 @@ function esc(s: string): string {
 /** The label that must accompany any display of the paraphrased `answer`. */
 export const CURATED_SUMMARY_LABEL = 'Curated summary (not verbatim)';
 
+/** Passages in order, each with its own page, separated by an ellipsis rule (OD.3). */
+export function passagesHtml(passages: ReturnType<typeof parseExcerpts>, render: (text: string) => string): string {
+  return passages.map((p, i) => {
+    const gap = i > 0 ? '<hr class="qa-gap" aria-label="passages are not contiguous">' : '';
+    const page = passages.length > 1 ? `<span class="qa-passage-page">p. ${p.printedPage}</span>` : '';
+    return `${gap}<blockquote class="qa-excerpt">${page}<p>${render(p.text)}</p></blockquote>`;
+  }).join('');
+}
+
 /** Excerpt-first answer block for the Learn / self-test reveal panels. */
 export function qaAnswerBlockHtml(row: QaRow): string {
+  const passages = parseExcerpts(row.excerpt, row.page_number);
   return (
-    `<p class="qa-excerpt-label">WCA 2030 excerpt · Page ${esc(String(row.page_number))}</p>` +
-    `<blockquote class="qa-excerpt"><p>${esc(row.excerpt)}</p></blockquote>` +
+    `<p class="qa-excerpt-label">WCA 2030 excerpt · ${esc(pagesLabel(passages))}</p>` +
+    passagesHtml(passages, esc) +
     `<p class="qa-summary-label">${CURATED_SUMMARY_LABEL}</p>` +
     `<p class="learn-answer-text qa-summary">${esc(row.answer)}</p>` +
     `<p class="learn-citation">§ ${esc(row.section_title)}</p>`

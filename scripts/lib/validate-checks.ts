@@ -1,5 +1,6 @@
 import { findStartPages, type SourceText } from './source-text';
 import { compactKey } from './normalise';
+import { splitPages, splitPassages } from '../../src/engine/excerpts';
 
 export interface Failure {
   dataset: 'qa' | 'qa-json' | 'item' | 'glossary' | 'chunk';
@@ -28,18 +29,30 @@ export interface QaCsvRow {
   excerpt: string;
 }
 
-/** A curated excerpt must occur verbatim and start within ±1 of its stated printed page. */
+/**
+ * Every passage of a curated excerpt must occur verbatim and start within ±1 of its own stated
+ * printed page (OD.3). `page_number` lists one page per passage.
+ */
 export function checkQaRows(source: SourceText, rows: QaCsvRow[]): Failure[] {
   const failures: Failure[] = [];
   rows.forEach((row, index) => {
     const id = `row ${index + 2}: ${clip(row.question)}`;
-    const page = Number(row.page_number);
-    const hits = findStartPages(source, row.excerpt);
-    if (hits.length === 0) {
-      failures.push({ dataset: 'qa', id, check: 'excerpt-not-verbatim', page, suggestedPage: '', detail: clip(row.excerpt) });
-    } else if (!hits.some(hit => Math.abs(hit - page) <= QA_PAGE_TOLERANCE)) {
-      failures.push({ dataset: 'qa', id, check: 'page-mismatch', page, suggestedPage: nearest(hits, page), detail: `excerpt starts on p. ${hits.join(', ')}` });
+    const passages = splitPassages(row.excerpt);
+    const pages = splitPages(row.page_number);
+    const first = pages[0] ?? 0;
+    if (passages.length === 0 || (pages.length !== passages.length && !(passages.length === 1 && pages.length === 1))) {
+      failures.push({ dataset: 'qa', id, check: 'passage-page-count', page: first, suggestedPage: '', detail: `${passages.length} passage(s) but ${pages.length} page(s)` });
+      return;
     }
+    passages.forEach((passage, i) => {
+      const page = pages[i];
+      const hits = findStartPages(source, passage);
+      if (hits.length === 0) {
+        failures.push({ dataset: 'qa', id, check: 'excerpt-not-verbatim', page, suggestedPage: '', detail: `passage ${i + 1}: ${clip(passage)}` });
+      } else if (!hits.some(hit => Math.abs(hit - page) <= QA_PAGE_TOLERANCE)) {
+        failures.push({ dataset: 'qa', id, check: 'page-mismatch', page, suggestedPage: nearest(hits, page), detail: `passage ${i + 1} starts on p. ${hits.join(', ')}` });
+      }
+    });
   });
   return failures;
 }
@@ -53,7 +66,7 @@ export function checkQaJsonSync(csv: QaCsvRow[], json: QaCsvRow[]): Failure[] {
   csv.forEach((row, index) => {
     const other = json[index];
     if (row.question !== other.question || row.excerpt !== other.excerpt || String(row.page_number) !== String(other.page_number)) {
-      failures.push({ dataset: 'qa-json', id: `row ${index + 2}: ${clip(row.question)}`, check: 'stale-qa-json', page: Number(row.page_number), suggestedPage: '', detail: 'qa.json differs from data/wca-qa.csv; run npm run build-qa' });
+      failures.push({ dataset: 'qa-json', id: `row ${index + 2}: ${clip(row.question)}`, check: 'stale-qa-json', page: splitPages(row.page_number)[0] ?? 0, suggestedPage: '', detail: 'qa.json differs from data/wca-qa.csv; run npm run build-qa' });
     }
   });
   return failures;

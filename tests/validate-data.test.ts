@@ -16,7 +16,7 @@ describe('B4 — committed data is verbatim and correctly cited', () => {
     for (const r of records) {
       expect(['yes', 'no']).toContain(r.needs_owner_review);
       expect(r.method).not.toBe('unrepaired');
-      expect(r.new_page).toMatch(/^\d+$/);
+      expect(r.new_page).toMatch(/^\d+(; \d+)*$/);
     }
     expect(records.some(r => r.needs_owner_review === 'yes')).toBe(true);
   });

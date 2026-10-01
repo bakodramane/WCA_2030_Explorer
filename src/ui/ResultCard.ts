@@ -2,6 +2,8 @@ import type { RankedResult, QaResult, ItemRow, DescriptionBlock, GlossaryEntry, 
 import type { GuardrailResponse } from '../engine/guardrail';
 import { STOP_WORDS } from '../engine/stopwords';
 import { linkifyItems } from './linkify';
+import { excerptCitation, pagesLabel, parseExcerpts } from '../engine/excerpts';
+import { passagesHtml } from './qa-block';
 
 // ── Safety helpers ────────────────────────────────────────────────────────────
 
@@ -184,9 +186,8 @@ export class ResultCard {
     const pct = Math.min(score * 100, 100).toFixed(0);
 
     // A4: the citation must quote the VERBATIM excerpt, never the paraphrase.
-    const citationText =
-      `WCA 2030, ${row.section_title} (p.${row.page_number}): ` +
-      `${row.excerpt.slice(0, 80)}…`;
+    const passages = parseExcerpts(row.excerpt, row.page_number);
+    const citationText = excerptCitation(row.section_title, passages);
 
     const card = document.createElement('article');
     card.className = 'result-card result-card--verified';
@@ -194,16 +195,14 @@ export class ResultCard {
     card.innerHTML = `
       <header class="card-header">
         <span class="verified-badge">Curated question</span>
-        <span class="card-page">Page ${esc(row.page_number)}</span>
+        <span class="card-page">${esc(pagesLabel(passages))}</span>
       </header>
       <div class="card-body">
-        <p class="qa-excerpt-label">WCA 2030 excerpt (Page ${esc(String(row.page_number))})</p>
-        <blockquote class="qa-excerpt">
-          <p>${linkifyItems(highlight(row.excerpt, query))}</p>
-        </blockquote>
+        <p class="qa-excerpt-label">WCA 2030 excerpt (${esc(pagesLabel(passages))})</p>
+        ${passagesHtml(passages, text => linkifyItems(highlight(text, query)))}
         <p class="qa-summary-label">Curated summary (not verbatim)</p>
         <p class="qa-summary">${linkifyItems(highlight(row.answer, query))}</p>
-        <p class="card-source">Source: §&nbsp;${esc(row.section_title)}&nbsp;·&nbsp;p.${esc(String(row.page_number))}</p>
+        <p class="card-source">Source: §&nbsp;${esc(row.section_title)}&nbsp;·&nbsp;${esc(pagesLabel(passages).replace('Pages', 'pp.').replace('Page', 'p.'))}</p>
       </div>
       <footer class="card-footer">
         <div class="card-score" title="Match confidence based on local search.">
@@ -226,15 +225,15 @@ export class ResultCard {
     `;
 
     // Excerpt toggle for long QA excerpts on mobile
-    if (window.matchMedia('(max-width: 600px)').matches && row.excerpt.length > 350) {
-      const excerptP = card.querySelector<HTMLElement>('.qa-excerpt p')!;
-      excerptP.classList.add('qa-excerpt--truncated');
+    if (window.matchMedia('(max-width: 600px)').matches && passages.map(p => p.text).join('').length > 350) {
+      const excerptPs = [...card.querySelectorAll<HTMLElement>('.qa-excerpt p')];
+      excerptPs.forEach(p => p.classList.add('qa-excerpt--truncated'));
       const toggle = document.createElement('button');
       toggle.type = 'button';
       toggle.className = 'excerpt-toggle';
       toggle.textContent = 'Show full excerpt';
       toggle.addEventListener('click', () => {
-        const nowTruncated = excerptP.classList.toggle('qa-excerpt--truncated');
+        const nowTruncated = excerptPs.map(p => p.classList.toggle('qa-excerpt--truncated'))[0];
         toggle.textContent = nowTruncated ? 'Show full excerpt' : 'Show less';
       });
       card.querySelector('.card-body')!.appendChild(toggle);

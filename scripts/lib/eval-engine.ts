@@ -2,6 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { env } from '@xenova/transformers';
+import { parseExcerpts } from '../../src/engine/excerpts';
 import type { AnswerOutcome } from '../../src/engine/answer';
 import { RetrievalEngine } from '../../src/engine/retrieval';
 import type { Chunk, RankedResult } from '../../src/engine/types';
@@ -75,7 +76,7 @@ export function scoreOutcome(item: GoldItem, outcome: AnswerOutcome): ItemResult
     }
     case 'verified': {
       const row = outcome.qa.row;
-      const ok = pattern ? pattern.test(`${row.question} ${row.excerpt}`) : Math.abs(Number(row.page_number) - item.expectedPrintedPage!) <= 1;
+      const ok = pattern ? pattern.test(`${row.question} ${row.excerpt}`) : parseExcerpts(row.excerpt, row.page_number).some(p => Math.abs(p.printedPage - item.expectedPrintedPage!) <= 1);
       return { ...base, top1: ok, top5: ok, topCitation: ok };
     }
     case 'glossary': {
