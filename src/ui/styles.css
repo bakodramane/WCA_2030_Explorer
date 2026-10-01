@@ -1,4 +1,39 @@
-/* Google Fonts (Lora) loaded via <link> in index.html — no @import here */
+/* ── Self-hosted fonts (A5) ──────────────────────────────────────────────────
+   Lora and JetBrains Mono WOFF2 files live in public/fonts/ (SIL OFL licences
+   alongside them) and are pre-cached by the Workbox service worker, so the
+   app makes zero requests to external hosts — offline included. */
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/lora-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/lora-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/lora-400-italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono-400.woff2') format('woff2');
+}
 
 /* ── Design tokens ───────────────────────────────────────────────────── */
 :root {
