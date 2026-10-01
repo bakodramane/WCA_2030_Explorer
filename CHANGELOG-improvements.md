@@ -211,3 +211,6 @@ number is the first extracted line of each PDF page.
 - `feat(B2): assign units from the document outline` — maps units to canonical
   section titles and chapter labels, using paragraph prefixes to resolve page
   ambiguities and deriving high-priority regions solely from the outline.
+- `feat(B2): pack outline units into stable chunks` — packs consecutive units
+  within a section up to 350 words, preserves paragraph/page metadata, and uses
+  a 50-word overlap only when a single atomic unit must be split.
