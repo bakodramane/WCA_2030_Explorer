@@ -253,7 +253,7 @@ export class RetrievalEngine {
       if (!sectionMap.has(key)) sectionMap.set(key, { scored: [], pages: [] });
       const s = sectionMap.get(key)!;
       s.scored.push({ chunk: r.chunk, score: r.score });
-      s.pages.push(r.chunk.pageRef);
+      s.pages.push(r.chunk.printedPage);
     }
 
     const contentWords = this.contentWordsFromQuery(query);
@@ -264,10 +264,11 @@ export class RetrievalEngine {
       const pageStart = Math.min(...pages);
       const pageEnd   = Math.max(...pages);
 
-      // Fix 2a: skip front-matter and table-of-contents pages (≤ 10).
-      // These pages list section titles verbatim, giving them artificially high
-      // semantic similarity to any query that echoes chapter names.
-      if (pageEnd <= 10) continue;
+      // Fix 2a: skip front-matter pages (printed page ≤ 0). The A1 chunker now
+      // drops front matter and the table of contents outright, so this is a
+      // defensive guard; printed pages ≥ 1 are genuine body content and must
+      // NOT be excluded (Chapter 1 starts on printed page 2).
+      if (pageEnd <= 0) continue;
 
       // Fix 2b: skip sections whose page span suggests a chunking artefact.
       if (pageEnd - pageStart > 40) continue;
@@ -302,8 +303,8 @@ export class RetrievalEngine {
     if (scoredSections.length === 0) {
       return allResults.slice(0, topK).map(r => ({
         sectionTitle: r.chunk.sectionTitle,
-        pageStart:    r.chunk.pageRef,
-        pageEnd:      r.chunk.pageRef,
+        pageStart:    r.chunk.printedPage,
+        pageEnd:      r.chunk.printedPage,
         score:        r.score,
         topChunks:    [r],
       }));
@@ -518,7 +519,7 @@ export class RetrievalEngine {
       }
       const s = sectionMap.get(c.sectionTitle)!;
       s.count++;
-      s.pages.push(c.pageRef);
+      s.pages.push(c.printedPage);
     }
 
     return [...sectionMap.entries()]

@@ -1,6 +1,11 @@
 export interface Chunk {
   id: string;
   sectionTitle: string;
+  /** Page in the source PDF file (1-based). */
+  pdfPage: number;
+  /** Printed page as shown in the document's own running footer (= pdfPage − 14). */
+  printedPage: number;
+  /** @deprecated Alias of `printedPage`. Kept until Phase B retires it. */
   pageRef: number;
   text: string;
   priority: 'high' | 'normal';

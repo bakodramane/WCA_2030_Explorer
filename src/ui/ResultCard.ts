@@ -56,6 +56,14 @@ function scoreLabel(score: number, matchType: 'semantic' | 'lexical'): string {
     : score.toFixed(1);
 }
 
+/**
+ * Printed-page label for citations. A non-positive printed page is front
+ * matter — never display a bogus page number (A1 of the improvement brief).
+ */
+function pageLabel(printedPage: number): string {
+  return printedPage >= 1 ? String(printedPage) : 'front matter';
+}
+
 // ── Public API ────────────────────────────────────────────────────────────────
 
 export class ResultCard {
@@ -68,7 +76,7 @@ export class ResultCard {
 
     // Citation string: WCA 2030, §Section (p.N): first 80 chars…
     const citationText =
-      `WCA 2030, ${chunk.sectionTitle} (p.${chunk.pageRef}): ` +
+      `WCA 2030, ${chunk.sectionTitle} (p.${pageLabel(chunk.printedPage)}): ` +
       `${chunk.text.slice(0, 80)}…`;
 
     const card = document.createElement('article');
@@ -79,10 +87,10 @@ export class ResultCard {
         <span class="card-section" title="${esc(chunk.sectionTitle)}">
           § ${esc(chunk.sectionTitle)}
         </span>
-        <span class="card-page">Page ${chunk.pageRef}</span>
+        <span class="card-page">Page ${pageLabel(chunk.printedPage)}</span>
       </header>
       <div class="card-body">
-        <p class="card-source">Source: §&nbsp;${esc(chunk.sectionTitle)}&nbsp;·&nbsp;p.${chunk.pageRef}</p>
+        <p class="card-source">Source: §&nbsp;${esc(chunk.sectionTitle)}&nbsp;·&nbsp;p.${pageLabel(chunk.printedPage)}</p>
         <p class="card-text">${highlight(chunk.text, query)}</p>
       </div>
       <footer class="card-footer">

@@ -18,18 +18,22 @@ const MODEL      = 'Xenova/all-MiniLM-L6-v2';
 const DIM        = 384;
 const BATCH_SIZE = 32;
 
-// ── Configure transformers ────────────────────────────────────────────────────
-// cacheDir must be set before calling pipeline() so downloaded files land here.
+// ── Configure transformers ──────────────────────────────────────────────────────
+// Offline-first (§0.3 of the improvement brief): the model ships in
+// public/models/ — load it from there and never touch the network.
 
-(env as any).cacheDir = CACHE_DIR;
-(env as any).allowRemoteModels = true;
-(env as any).allowLocalModels  = true;
+(env as any).localModelPath     = path.join(ROOT, 'public', 'models');
+(env as any).allowRemoteModels  = false;
+(env as any).allowLocalModels   = true;
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface Chunk {
   id: string;
   sectionTitle: string;
+  pdfPage: number;
+  printedPage: number;
+  /** @deprecated Alias of `printedPage`. Kept until Phase B retires it. */
   pageRef: number;
   text: string;
   priority: 'high' | 'normal';
@@ -66,10 +70,17 @@ async function main(): Promise<void> {
   let chunks: Chunk[] = rawChunks;
   if (fs.existsSync(CHUNKS_OUT)) {
     const existing: Chunk[] = JSON.parse(fs.readFileSync(CHUNKS_OUT, 'utf-8'));
-    const byId = new Map(existing.map(c => [c.id, c]));
-    chunks = rawChunks.map(c => byId.get(c.id) ?? c);
+    // Resume by TEXT, not by id: chunk ids are index-based (s<N>-p<M>) and
+    // shift whenever the chunker changes (e.g. A1's front-matter exclusion),
+    // but chunk texts are verbatim and stable, so existing embeddings remain
+    // valid for any unchanged text.
+    const byText = new Map(existing.map(c => [c.text, c]));
+    chunks = rawChunks.map(c => {
+      const prev = byText.get(c.text);
+      return prev?.embedding ? { ...c, embedding: prev.embedding } : c;
+    });
     const already = chunks.filter(c => c.embedding).length;
-    console.log(`Resuming: ${already}/${chunks.length} already embedded`);
+    console.log(`Resuming: ${already}/${chunks.length} already embedded (matched by text)`);
   } else {
     console.log(`Fresh run: ${chunks.length} chunks to embed`);
   }
@@ -80,7 +91,7 @@ async function main(): Promise<void> {
   if (toEmbed.length === 0) {
     console.log('All chunks already embedded — skipping model load.');
   } else {
-    console.log(`\nLoading model: ${MODEL}  (downloading to ${CACHE_DIR} if needed)`);
+    console.log(`\nLoading model: ${MODEL}  (offline from ${PUBLIC_MODELS})`);
     const extractor = await pipeline('feature-extraction', MODEL);
     console.log('Model ready.\n');
 

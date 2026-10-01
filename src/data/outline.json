@@ -1,0 +1,209 @@
+[
+  {
+    "id": "ch1",
+    "kind": "chapter",
+    "number": 1,
+    "title": "Introduction",
+    "printedStart": 2,
+    "printedEnd": 11,
+    "parentId": "part-one"
+  },
+  {
+    "id": "ch2",
+    "kind": "chapter",
+    "number": 2,
+    "title": "Importance of the Census of Agriculture and its International Context",
+    "printedStart": 12,
+    "printedEnd": 23,
+    "parentId": "part-one"
+  },
+  {
+    "id": "ch3",
+    "kind": "chapter",
+    "number": 3,
+    "title": "Relationship to Other Censuses",
+    "printedStart": 24,
+    "printedEnd": 36,
+    "parentId": "part-one"
+  },
+  {
+    "id": "ch4",
+    "kind": "chapter",
+    "number": 4,
+    "title": "Concepts and Definitions",
+    "printedStart": 37,
+    "printedEnd": 46,
+    "parentId": "part-two"
+  },
+  {
+    "id": "ch5",
+    "kind": "chapter",
+    "number": 5,
+    "title": "Methodological Considerations",
+    "printedStart": 47,
+    "printedEnd": 62,
+    "parentId": "part-two"
+  },
+  {
+    "id": "ch6",
+    "kind": "chapter",
+    "number": 6,
+    "title": "List of Items for the Census of Agriculture",
+    "printedStart": 63,
+    "printedEnd": 73,
+    "parentId": "part-two"
+  },
+  {
+    "id": "ch7",
+    "kind": "chapter",
+    "number": 7,
+    "title": "Description of Essential Items",
+    "printedStart": 74,
+    "printedEnd": 99,
+    "parentId": "part-two"
+  },
+  {
+    "id": "ch8",
+    "kind": "chapter",
+    "number": 8,
+    "title": "Community-Level Data",
+    "printedStart": 100,
+    "printedEnd": 104,
+    "parentId": "part-two"
+  },
+  {
+    "id": "ch9",
+    "kind": "chapter",
+    "number": 9,
+    "title": "Tabulation",
+    "printedStart": 105,
+    "printedEnd": 118,
+    "parentId": "part-two"
+  },
+  {
+    "id": "ch10",
+    "kind": "chapter",
+    "number": 10,
+    "title": "Data Dissemination, Data Conflicts and Archiving",
+    "printedStart": 119,
+    "printedEnd": 126,
+    "parentId": "part-two"
+  },
+  {
+    "id": "annex1",
+    "kind": "annex",
+    "number": 1,
+    "title": "The Agricultural Census within the Framework of the System of National Accounts (SNA)",
+    "printedStart": 127,
+    "printedEnd": 129,
+    "parentId": "annexes"
+  },
+  {
+    "id": "annex2",
+    "kind": "annex",
+    "number": 2,
+    "title": "ISIC Scope of the Agricultural Census",
+    "printedStart": 130,
+    "printedEnd": 132,
+    "parentId": "annexes"
+  },
+  {
+    "id": "annex3",
+    "kind": "annex",
+    "number": 3,
+    "title": "ISIC Aquaculture",
+    "printedStart": 133,
+    "printedEnd": 133,
+    "parentId": "annexes"
+  },
+  {
+    "id": "annex4",
+    "kind": "annex",
+    "number": 4,
+    "title": "Additional Items of the WCA 2030 (by theme, Themes 1–12)",
+    "printedStart": 134,
+    "printedEnd": 172,
+    "parentId": "annexes"
+  },
+  {
+    "id": "annex5",
+    "kind": "annex",
+    "number": 5,
+    "title": "Correspondence between WCA 2030, FAO and SEEA Land Use Classes",
+    "printedStart": 173,
+    "printedEnd": 173,
+    "parentId": "annexes"
+  },
+  {
+    "id": "annex6",
+    "kind": "annex",
+    "number": 6,
+    "title": "Classification of Crops (Indicative Crop Classification — ICC)",
+    "printedStart": 174,
+    "printedEnd": 181,
+    "parentId": "annexes"
+  },
+  {
+    "id": "annex7",
+    "kind": "annex",
+    "number": 7,
+    "title": "Alphabetical List of Crops with Botanical Name and Crop Code (ICC and CPC)",
+    "printedStart": 181,
+    "printedEnd": 189,
+    "parentId": "annexes"
+  },
+  {
+    "id": "annex8",
+    "kind": "annex",
+    "number": 8,
+    "title": "Classification of Livestock",
+    "printedStart": 189,
+    "printedEnd": 189,
+    "parentId": "annexes"
+  },
+  {
+    "id": "annex9",
+    "kind": "annex",
+    "number": 9,
+    "title": "Classification of Machinery and Equipment",
+    "printedStart": 190,
+    "printedEnd": 192,
+    "parentId": "annexes"
+  },
+  {
+    "id": "annex10",
+    "kind": "annex",
+    "number": 10,
+    "title": "Overview of ILO Resolutions concerning Statistics of Work",
+    "printedStart": 193,
+    "printedEnd": 197,
+    "parentId": "annexes"
+  },
+  {
+    "id": "annex11",
+    "kind": "annex",
+    "number": 11,
+    "title": "SDG Indicators Covered Partially by Agricultural Censuses",
+    "printedStart": 198,
+    "printedEnd": 200,
+    "parentId": "annexes"
+  },
+  {
+    "id": "glossary",
+    "kind": "glossary",
+    "number": 0,
+    "title": "Glossary of Terms",
+    "printedStart": 201,
+    "printedEnd": 207,
+    "parentId": null
+  },
+  {
+    "id": "references",
+    "kind": "references",
+    "number": 0,
+    "title": "References and Further Reading",
+    "printedStart": 208,
+    "printedEnd": 216,
+    "parentId": null
+  }
+]

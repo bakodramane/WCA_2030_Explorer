@@ -1,10 +1,11 @@
 import { RetrievalEngine } from '../engine/retrieval';
 import { evaluate }         from '../engine/guardrail';
+import { deriveGroup, deriveResultGroups } from '../engine/outline';
 import { logQuery, getLog, clearLog, toCSV } from '../engine/logger';
 import { SearchBar }        from './SearchBar';
 import { ResultCard }       from './ResultCard';
 import { setKnownItemCodes } from './linkify';
-import type { ItemRow, GlossaryEntry, LearningModule, FigureTableEntry, RankedResult } from '../engine/types';
+import type { ItemRow, GlossaryEntry, LearningModule, FigureTableEntry } from '../engine/types';
 
 
 export class App {
@@ -1391,7 +1392,7 @@ export class App {
         }
         for (const r of response.results) {
           const card = ResultCard.render(r, query);
-          card.dataset.group = deriveGroup(r.chunk.sectionTitle, r.chunk.pageRef);
+          card.dataset.group = deriveGroup(r.chunk.sectionTitle, r.chunk.printedPage);
           this.resultsArea.appendChild(card);
         }
         this.resultsArea.appendChild(this.buildEncouragementNote());
@@ -1692,42 +1693,6 @@ function extractFigureTableRef(query: string): { kind: string; ref: string } | n
   const m = query.trim().match(/^(figure|table)\s+([A-Za-z]?\d+\.\d+)/i);
   if (!m) return null;
   return { kind: m[1].toLowerCase(), ref: m[2] };
-}
-
-/**
- * Map a document chunk to a coarse chapter/section group label for filter pills.
- * Priority: explicit "CHAPTER N" in section title → "ANNEX" → "GLOSSARY" →
- * page-range fallback using WCA 2030 TOC boundaries.
- */
-function deriveGroup(sectionTitle: string, pageRef: number): string {
-  const cm = sectionTitle.match(/\bCHAPTER\s+(\d+)/i);
-  if (cm) return `Chapter ${cm[1]}`;
-  if (/\bANNEX\b/i.test(sectionTitle)) return 'Annexes';
-  if (/\bGLOSSARY\b/i.test(sectionTitle)) return 'Glossary';
-
-  // Page-range fallback — boundaries from the document's own Table of Contents
-  if (pageRef <= 11)  return 'Chapter 1';
-  if (pageRef <= 23)  return 'Chapter 2';
-  if (pageRef <= 36)  return 'Chapter 3';
-  if (pageRef <= 46)  return 'Chapter 4';
-  if (pageRef <= 62)  return 'Chapter 5';
-  if (pageRef <= 73)  return 'Chapter 6';
-  if (pageRef <= 99)  return 'Chapter 7';
-  if (pageRef <= 104) return 'Chapter 8';
-  if (pageRef <= 118) return 'Chapter 9';
-  if (pageRef <= 140) return 'Chapter 10';
-  return 'Annexes';
-}
-
-/** Return unique group labels in order of first appearance across results. */
-function deriveResultGroups(results: RankedResult[]): string[] {
-  const seen = new Set<string>();
-  const ordered: string[] = [];
-  for (const r of results) {
-    const g = deriveGroup(r.chunk.sectionTitle, r.chunk.pageRef);
-    if (!seen.has(g)) { seen.add(g); ordered.push(g); }
-  }
-  return ordered;
 }
 
 function randomSample<T>(arr: T[], n: number): T[] {

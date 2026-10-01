@@ -18,7 +18,7 @@ Work through the phases below in order. **Complete and confirm each phase before
 1. **Answers are extracted text only** — never paraphrased or generated. The retrieved chunk is the answer.
 2. **No external API calls at runtime** — the app must work with zero internet access after first load.
 3. **Guardrail is mandatory** — below the confidence threshold, the app returns: *"This question could not be answered from the WCA 2030 guidelines. Sections searched: [list]."*
-4. **Every answer cites** the source chunk's section title and page number.
+4. **Every answer cites** the source chunk's section title and **printed** page number (printed page = PDF page − 14; verified for main body, annexes, and glossary).
 5. **No generative model at runtime** — do not integrate any LLM inference at query time.
 
 ---
@@ -207,21 +207,28 @@ After extraction, chunk the page array using this strategy:
   interface Chunk {
     id: string;          // e.g. "ch4-s2-p3"
     sectionTitle: string;
-    pageRef: number;     // page number from pdf-parse
+    pdfPage: number;     // page in the source PDF (1-based)
+    printedPage: number; // page as printed in the document footer (pdfPage − 14)
+    pageRef: number;     // DEPRECATED alias of printedPage — remove in Phase B
     text: string;        // verbatim extracted text
     priority: 'high' | 'normal';
   }
   ```
-- Set `priority: 'high'` for chunks whose `pageRef` falls in the four key regions (verify page ranges against your PDF copy and update the landmark table at the top of this file).
+  Front matter and the table of contents (printed page ≤ 0, i.e. PDF pages 1–14) are excluded from chunking.
+- Set `priority: 'high'` for chunks whose `pdfPage` falls in the four key regions (verify page ranges against your PDF copy and update the landmark table at the top of this file).
 
 ### Step 2c — Output & validation
 
 - Write `./src/data/chunks-raw.json`.
 - Log: total chunks, high-priority count, average chunk word count, page range covered.
 - Write unit tests in `tests/chunking.test.ts` asserting:
-  - Total chunk count is between 800 and 6 000.
+  - Total chunk count is between 350 and 1 200. (The original 800–6 000 bound
+    was a guess made before the corpus was measured: the WCA 2030 body text is
+    ~108 000 unique words, which yields roughly 430–560 chunks at 200–350 words
+    each — see §0.3 of `improvement_prompt.md`.)
   - No chunk exceeds 420 words.
-  - Every chunk has a non-empty `sectionTitle` and a positive `pageRef`.
+  - Every chunk has a non-empty `sectionTitle`, a positive `printedPage`,
+    and `printedPage === pdfPage − 14`.
   - At least 10% of chunks carry `priority: 'high'`.
 
 **Phase 2 complete when:** `npx tsx scripts/chunk.ts` exits cleanly and the assertions above pass.
@@ -270,6 +277,9 @@ Implement a `RetrievalEngine` class:
 export interface Chunk {
   id: string;
   sectionTitle: string;
+  pdfPage: number;
+  printedPage: number;
+  /** @deprecated Alias of printedPage. */
   pageRef: number;
   text: string;
   priority: 'high' | 'normal';
@@ -375,7 +385,7 @@ Each passing result renders as:
 └──────────────────────────────────────────────────────────┘
 ```
 - Highlight matched query terms in the verbatim text with `<mark style="background:#d4e8d4">`.
-- "Copy citation" copies to clipboard: `WCA 2030, §[sectionTitle] (p.[pageRef]): [first 80 chars]…`
+- "Copy citation" copies to clipboard: `WCA 2030, §[sectionTitle] (p.[printedPage]): [first 80 chars]…` (printed page = PDF page − 14)
 
 ### Guardrail (not-found) card
 When `answered: false`, render a distinct card with amber border (`#92400e`):

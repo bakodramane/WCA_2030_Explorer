@@ -19,7 +19,9 @@ function mkResult(
     chunk: {
       id:           opts.id ?? 'x',
       sectionTitle: opts.section ?? `Section ${opts.id ?? 'x'}`,
-      pageRef:      1,
+      pdfPage:      15,
+      printedPage:  1,
+      pageRef:      1, // deprecated alias of printedPage
       text:         'placeholder text',
       priority:     opts.priority ?? 'normal',
       embedding:    [],

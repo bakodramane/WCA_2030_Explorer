@@ -38,7 +38,9 @@ const MOCK_CHUNKS = [
   {
     id: 'a',
     sectionTitle: 'AGRICULTURAL HOLDINGS',
-    pageRef: 10,
+    pdfPage: 24,
+    printedPage: 10,
+    pageRef: 10, // deprecated alias of printedPage
     text: 'agricultural holdings definition scope census methodology',
     priority: 'normal' as const,
     embedding: makeEmbedding(0.8),
@@ -46,6 +48,8 @@ const MOCK_CHUNKS = [
   {
     id: 'b',
     sectionTitle: 'LAND USE',
+    pdfPage: 34,
+    printedPage: 20,
     pageRef: 20,
     text: 'land use classification arable permanent crops pasture',
     priority: 'normal' as const,
@@ -54,6 +58,8 @@ const MOCK_CHUNKS = [
   {
     id: 'c',
     sectionTitle: 'ESSENTIAL ITEMS',
+    pdfPage: 124,
+    printedPage: 110,
     pageRef: 110,
     text: 'essential items holdings agricultural census methodology scope',
     priority: 'high' as const,
@@ -76,36 +82,37 @@ const MOCK_CHUNKS = [
 //      boosted for "data census"     query: 0.44  × 1.25 = 0.55
 
 const SECTION_MOCK_CHUNKS = [
-  // FRONT MATTER: spans pp.1–5 (pageEnd=5 ≤ 10 → excluded as front matter).
-  // High embedding similarity (0.9) ensures it would dominate if not filtered.
-  { id: 'fm1', sectionTitle: 'FRONT MATTER', pageRef: 1, text: 'table of contents essential items list census', priority: 'normal' as const, embedding: makeEmbedding(0.9) },
-  { id: 'fm2', sectionTitle: 'FRONT MATTER', pageRef: 5, text: 'list of items for the census essential',        priority: 'normal' as const, embedding: makeEmbedding(0.9) },
+  // FRONT MATTER: printed pages −13…−9 (pageEnd=−9 ≤ 0 → excluded as front
+  // matter). High embedding similarity (0.9) ensures it would dominate if not
+  // filtered. (A1: pages are now PRINTED pages; front matter is ≤ 0.)
+  { id: 'fm1', sectionTitle: 'FRONT MATTER', pdfPage: 1, printedPage: -13, pageRef: -13, text: 'table of contents essential items list census', priority: 'normal' as const, embedding: makeEmbedding(0.9) },
+  { id: 'fm2', sectionTitle: 'FRONT MATTER', pdfPage: 5, printedPage:  -9, pageRef:  -9, text: 'list of items for the census essential',        priority: 'normal' as const, embedding: makeEmbedding(0.9) },
 
   // SECTION X: 3 chunks (avg=0.3). Sum would be 0.9 — used in Fix 1 test.
-  // pageRef=15 so pageEnd=15 > 10 (not excluded by front-matter guard).
-  { id: 'sx1', sectionTitle: 'SECTION X', pageRef: 15, text: 'section x chunk one agricultural holdings', priority: 'normal' as const, embedding: makeEmbedding(0.375) },
-  { id: 'sx2', sectionTitle: 'SECTION X', pageRef: 15, text: 'section x chunk two land use data',         priority: 'normal' as const, embedding: makeEmbedding(0.375) },
-  { id: 'sx3', sectionTitle: 'SECTION X', pageRef: 15, text: 'section x chunk three census methodology',  priority: 'normal' as const, embedding: makeEmbedding(0.375) },
+  // printedPage=15 so pageEnd=15 > 0 (not excluded by front-matter guard).
+  { id: 'sx1', sectionTitle: 'SECTION X', pdfPage: 29, printedPage: 15, pageRef: 15, text: 'section x chunk one agricultural holdings', priority: 'normal' as const, embedding: makeEmbedding(0.375) },
+  { id: 'sx2', sectionTitle: 'SECTION X', pdfPage: 29, printedPage: 15, pageRef: 15, text: 'section x chunk two land use data',         priority: 'normal' as const, embedding: makeEmbedding(0.375) },
+  { id: 'sx3', sectionTitle: 'SECTION X', pdfPage: 29, printedPage: 15, pageRef: 15, text: 'section x chunk three census methodology',  priority: 'normal' as const, embedding: makeEmbedding(0.375) },
 
   // SECTION Y: 1 chunk (avg=0.48 > SECTION X avg=0.3). Fix 1.
-  { id: 'sy1', sectionTitle: 'SECTION Y', pageRef: 20, text: 'section y single chunk high quality',       priority: 'normal' as const, embedding: makeEmbedding(0.6) },
+  { id: 'sy1', sectionTitle: 'SECTION Y', pdfPage: 34, printedPage: 20, pageRef: 20, text: 'section y single chunk high quality',       priority: 'normal' as const, embedding: makeEmbedding(0.6) },
 
   // SECTION Z: 2 chunks (avg=(0.4+0.24)/2=0.32). Fix 1 two-chunk test.
-  { id: 'sz1', sectionTitle: 'SECTION Z', pageRef: 30, text: 'section z first chunk items holdings',      priority: 'normal' as const, embedding: makeEmbedding(0.5) },
-  { id: 'sz2', sectionTitle: 'SECTION Z', pageRef: 31, text: 'section z second chunk data census',        priority: 'normal' as const, embedding: makeEmbedding(0.3) },
+  { id: 'sz1', sectionTitle: 'SECTION Z', pdfPage: 44, printedPage: 30, pageRef: 30, text: 'section z first chunk items holdings',      priority: 'normal' as const, embedding: makeEmbedding(0.5) },
+  { id: 'sz2', sectionTitle: 'SECTION Z', pdfPage: 45, printedPage: 31, pageRef: 31, text: 'section z second chunk data census',        priority: 'normal' as const, embedding: makeEmbedding(0.3) },
 
-  // BIG SECTION: spans pp.1–50 (span=49 > 40 → excluded by Fix 2b).
+  // BIG SECTION: spans printed pp.1–50 (span=49 > 40 → excluded by Fix 2b).
   // Individual chunk scores (0.64) are highest of any section in the set.
-  // pageEnd=50 > 10, so not caught by front-matter guard — Fix 2b excludes it.
-  { id: 'bg1', sectionTitle: 'BIG SECTION', pageRef:  1, text: 'big section start high relevance', priority: 'normal' as const, embedding: makeEmbedding(0.8) },
-  { id: 'bg2', sectionTitle: 'BIG SECTION', pageRef: 50, text: 'big section end high relevance',   priority: 'normal' as const, embedding: makeEmbedding(0.8) },
+  // pageEnd=50 > 0, so not caught by front-matter guard — Fix 2b excludes it.
+  { id: 'bg1', sectionTitle: 'BIG SECTION', pdfPage: 15, printedPage:  1, pageRef:  1, text: 'big section start high relevance', priority: 'normal' as const, embedding: makeEmbedding(0.8) },
+  { id: 'bg2', sectionTitle: 'BIG SECTION', pdfPage: 64, printedPage: 50, pageRef: 50, text: 'big section end high relevance',   priority: 'normal' as const, embedding: makeEmbedding(0.8) },
 
   // ESSENTIAL ITEMS: title matches "essential items" query → boost. Fix 3.
-  { id: 'es1', sectionTitle: 'ESSENTIAL ITEMS', pageRef: 64, text: 'essential items agricultural census methodology', priority: 'normal' as const, embedding: makeEmbedding(0.52) },
+  { id: 'es1', sectionTitle: 'ESSENTIAL ITEMS', pdfPage: 78, printedPage: 64, pageRef: 64, text: 'essential items agricultural census methodology', priority: 'normal' as const, embedding: makeEmbedding(0.52) },
 
   // OTHER DATA: title contains "data" (4 chars, not stop word) → boosted by
   // "data census" query but not by "essential items" query. Fix 3.
-  { id: 'od1', sectionTitle: 'OTHER DATA', pageRef: 70, text: 'other agricultural data collection',  priority: 'normal' as const, embedding: makeEmbedding(0.55) },
+  { id: 'od1', sectionTitle: 'OTHER DATA', pdfPage: 84, printedPage: 70, pageRef: 70, text: 'other agricultural data collection',  priority: 'normal' as const, embedding: makeEmbedding(0.55) },
 ];
 
 // ── Test suite ─────────────────────────────────────────────────────────────────
@@ -346,9 +353,10 @@ describe('RetrievalEngine — section methods', () => {
       expect(results.find(r => r.sectionTitle === 'BIG SECTION')).toBeUndefined();
     });
 
-    it('Fix 2a: sections whose pageEnd ≤ 10 are excluded as front matter', async () => {
-      // FRONT MATTER spans pp.1–5 (pageEnd=5 ≤ 10) and has the highest
-      // individual chunk scores (0.72) in the mock set — it must not appear.
+    it('Fix 2a: sections whose pageEnd ≤ 0 are excluded as front matter', async () => {
+      // FRONT MATTER spans printed pp.−13…−9 (pageEnd=−9 ≤ 0) and has the
+      // highest individual chunk scores (0.72) in the mock set — it must not
+      // appear. Body pages (printed ≥ 1) must never be caught by this guard.
       const results = await sectionEngine.sectionSearch('any query', 10);
       expect(results.find(r => r.sectionTitle === 'FRONT MATTER')).toBeUndefined();
     });
@@ -359,10 +367,10 @@ describe('RetrievalEngine — section methods', () => {
 
       beforeAll(async () => {
         const ALL_BIG = [
-          { id: 'ab1', sectionTitle: 'ALPHA', pageRef:  1, text: 'alpha start', priority: 'normal' as const, embedding: makeEmbedding(0.8) },
-          { id: 'ab2', sectionTitle: 'ALPHA', pageRef: 60, text: 'alpha end',   priority: 'normal' as const, embedding: makeEmbedding(0.7) },
-          { id: 'bb1', sectionTitle: 'BETA',  pageRef:  2, text: 'beta start',  priority: 'normal' as const, embedding: makeEmbedding(0.6) },
-          { id: 'bb2', sectionTitle: 'BETA',  pageRef: 80, text: 'beta end',    priority: 'normal' as const, embedding: makeEmbedding(0.5) },
+          { id: 'ab1', sectionTitle: 'ALPHA', pdfPage: 15, printedPage:  1, pageRef:  1, text: 'alpha start', priority: 'normal' as const, embedding: makeEmbedding(0.8) },
+          { id: 'ab2', sectionTitle: 'ALPHA', pdfPage: 74, printedPage: 60, pageRef: 60, text: 'alpha end',   priority: 'normal' as const, embedding: makeEmbedding(0.7) },
+          { id: 'bb1', sectionTitle: 'BETA',  pdfPage: 16, printedPage:  2, pageRef:  2, text: 'beta start',  priority: 'normal' as const, embedding: makeEmbedding(0.6) },
+          { id: 'bb2', sectionTitle: 'BETA',  pdfPage: 94, printedPage: 80, pageRef: 80, text: 'beta end',    priority: 'normal' as const, embedding: makeEmbedding(0.5) },
         ];
         vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
           json: () => Promise.resolve(structuredClone(ALL_BIG)),
