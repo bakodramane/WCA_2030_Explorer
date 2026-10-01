@@ -158,6 +158,32 @@ deliberately, with a changelog line.
 
 ---
 
+## Reviewing curated excerpts
+
+A curated Q&A row whose excerpt was repaired with low confidence is flagged `needs_owner_review = yes` in
+`data/wca-qa.csv` and is **withheld**: the Q&A tier never serves it, and Learn mode shows a document-search
+passage instead. To review them:
+
+1. Open `scripts/dev/review-excerpts.html` (from the file system; choose `data/wca-qa.csv`,
+   `reports/qa-excerpt-repairs.csv`, and `public/data/chunks.json` when asked, or serve the repository root
+   and open the page, which then loads them itself). It needs no network and no build.
+2. For each flagged question you see the original excerpt, the proposed excerpt, and the three best
+   alternative source passages with their § and page. Choose **Accept proposed**, **Use alternative n**,
+   **Edit** (you can only select verbatim text in source passages; typing is not possible), or **Reject**
+   (the question stays out of the Q&A tier).
+3. **Export decisions (CSV)** and save the file as `data/excerpt-decisions.csv`.
+4. Run `npx tsx scripts/apply-excerpt-decisions.ts` (add `--dry-run` to preview). It refuses any decision
+   whose passage is not verbatim or not on its stated page, sets `needs_owner_review = no` and
+   `approved_by = owner` on the rest, then rebuilds `qa.json` and the index version and re-runs
+   `validate-data`. Rejected rows get `approved_by = rejected` and stay withheld. Run `npm run build` and
+   commit `data/wca-qa.csv`, `public/data/`, and `docs/`.
+
+A multi-passage excerpt (a list answer, or a definition plus its qualification) is stored in the `excerpt`
+column as passages separated by a line holding only ` [...] `, with one page per passage in `page_number`
+(`"34; 36"`).
+
+---
+
 ## 4. Updating guidelines
 
 When a new edition of the WCA guidelines is released:
