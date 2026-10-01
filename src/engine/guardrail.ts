@@ -40,7 +40,7 @@ export const QA_THRESHOLD = 0.60;
  * refuses it again; on the 51-question probe the same 47 are answered at 0.45,
  * 0.46, and 0.47. C3 re-tunes with held-out sets.
  */
-export const ENUM_CONFIDENCE_THRESHOLD = 0.46;
+export const ENUM_CONFIDENCE_THRESHOLD = 0.51;
 
 /**
  * A3: a lexical (BM25) fallback answer is only accepted when the query is

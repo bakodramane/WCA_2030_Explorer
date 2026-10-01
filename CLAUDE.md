@@ -253,14 +253,14 @@ After extraction, use the modular B2 pipeline under `scripts/lib/`:
 
 1. Load `chunks-raw.json`.
 2. Load `Xenova/all-MiniLM-L6-v2` via `@xenova/transformers` pipeline `'feature-extraction'`.
-3. Embed each chunk's `text` in batches of 32 using `mean_pooling: true, normalize: true`. The output dimension is 384.
-4. Add `embedding: number[]` to each chunk object.
-5. Write `./src/data/chunks.json` — the complete array with embeddings.
+3. **Embed each chunk as windows (C0.4).** `all-MiniLM-L6-v2` was trained on inputs of at most 256 tokens, but chunks average ~377 tokens, so a whole-chunk embedding silently loses the tail and cost about 11 points of recall@5. `scripts/lib/windows.ts` splits each chunk into sentence-aligned windows of at most 200 tokens (a short closing sentence is repeated as overlap; tables and code lists are cut into word runs). Embed the windows in batches of 32 using `mean_pooling: true, normalize: true`. The output dimension is 384.
+4. Add `windowScheme` and `windows: { start, end, embedding: number[] }[]` to each chunk (`text.slice(start, end)` is the window). The chunk's `text` is unchanged and stays the verbatim display and citation unit.
+5. Write `./public/data/chunks.json` — the complete array with windows (compact JSON).
 6. Write `./src/data/model-meta.json`:
    ```json
    { "model": "Xenova/all-MiniLM-L6-v2", "dim": 384, "version": "wca2030-v1" }
    ```
-7. **Resumable:** if `chunks.json` already exists, skip chunks that already have embeddings — only embed new or missing ones.
+7. **Resumable:** if `chunks.json` already exists, reuse the windows of every chunk whose text and `windowScheme` are unchanged — only embed new or changed chunks.
 8. Log progress every 50 chunks. Estimated run time: 5–20 minutes.
 
 ### Copy WASM model files for offline caching
@@ -276,7 +276,7 @@ execSync('npx tsx scripts/chunk.ts',  { stdio: 'inherit' });
 execSync('npx tsx scripts/embed.ts',  { stdio: 'inherit' });
 ```
 
-**Phase 3 complete when:** `chunks.json` exists, contains `embedding` arrays of length 384, and model files are present in `public/models/`.
+**Phase 3 complete when:** `chunks.json` exists, every chunk has `windows` whose `embedding` arrays have length 384, and model files are present in `public/models/`.
 
 ---
 
@@ -297,7 +297,8 @@ export interface Chunk {
   printedPageEnd: number;
   text: string;
   priority: 'high' | 'normal';
-  embedding: number[];
+  windows?: { start: number; end: number; embedding: number[] }[]; // C0.4
+  embedding?: number[]; // legacy single vector, used only when `windows` is absent
 }
 
 export interface RankedResult {
@@ -308,13 +309,13 @@ export interface RankedResult {
 ```
 
 ### `async init(): Promise<void>`
-- Fetch and parse `./data/chunks.json`. Convert each `embedding` array to `Float32Array` for performance.
+- Fetch and parse `./data/chunks.json`. Convert every window `embedding` array to `Float32Array` for performance.
 - Load `Xenova/all-MiniLM-L6-v2` from the cached `./models/` path (set `env.localModelPath` and `env.allowRemoteModels = false` to enforce offline use).
 - Build a `minisearch` index over all chunk `text` fields (fields: `text`, `sectionTitle`).
 
 ### `async semanticSearch(query: string, topK = 5): Promise<RankedResult[]>`
 - Encode the query with `normalize: true`.
-- Compute cosine similarity using a `Float32Array` dot product loop (vectors are already normalised, so dot product equals cosine similarity).
+- Compute cosine similarity using a `Float32Array` dot product loop (vectors are already normalised, so dot product equals cosine similarity). A chunk's score is the **best of its windows**; the guardrail compares that raw score.
 - Multiply scores of `priority: 'high'` chunks by `1.15` before ranking.
 - Return the top-K results sorted by score descending.
 

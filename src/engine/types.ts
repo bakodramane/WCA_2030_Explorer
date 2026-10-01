@@ -12,6 +12,18 @@ export interface Chunk {
   printedPageEnd: number;
   text: string;
   priority: 'high' | 'normal';
+  /**
+   * C0.4: the chunk is embedded as windows of at most 200 tokens (the model was trained on
+   * 256), each a slice `text.slice(start, end)`. A chunk scores as its best window.
+   */
+  windows?: ChunkWindow[];
+  /** Legacy single whole-chunk vector; used only when `windows` is absent. */
+  embedding?: number[];
+}
+
+export interface ChunkWindow {
+  start: number;
+  end: number;
   embedding: number[];
 }
 

@@ -1,7 +1,9 @@
-import { pipeline, env } from '@xenova/transformers';
+import { env } from '@xenova/transformers';
 import fs from 'node:fs';
 import path from 'node:path';
+import { DIM, embedChunkWindows } from './lib/embed-windows';
 import { writeModelMeta } from './lib/index-version';
+import { WINDOW_SCHEME } from './lib/windows';
 
 // ── Paths ─────────────────────────────────────────────────────────────────────
 
@@ -11,12 +13,6 @@ const PUBLIC_MODELS= path.join(ROOT, 'public', 'models');
 const PUBLIC_DATA  = path.join(ROOT, 'public', 'data');
 const CHUNKS_RAW   = path.join(ROOT, 'src', 'data', 'chunks-raw.json');
 const CHUNKS_OUT   = path.join(PUBLIC_DATA, 'chunks.json');
-
-// ── Constants ─────────────────────────────────────────────────────────────────
-
-const MODEL      = 'Xenova/all-MiniLM-L6-v2';
-const DIM        = 384;
-const BATCH_SIZE = 32;
 
 // ── Configure transformers ──────────────────────────────────────────────────────
 // Offline-first (§0.3 of the improvement brief): the model ships in
@@ -39,7 +35,9 @@ interface Chunk {
   printedPageEnd: number;
   text: string;
   priority: 'high' | 'normal';
-  embedding?: number[];
+  /** C0.4: each chunk is embedded as windows of at most 200 tokens. */
+  windowScheme?: string;
+  windows?: Array<{ start: number; end: number; embedding: number[] }>;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -66,79 +64,27 @@ function listFilesRecursive(dir: string, prefix = ''): string[] {
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
-  // ── Load chunks (with resumability) ────────────────────────────────────────
   const rawChunks: Chunk[] = JSON.parse(fs.readFileSync(CHUNKS_RAW, 'utf-8'));
+  const previous: Chunk[] = fs.existsSync(CHUNKS_OUT) ? JSON.parse(fs.readFileSync(CHUNKS_OUT, 'utf-8')) : [];
+  const write = (chunks: Chunk[]): void => {
+    // Unfinished chunks are left out of checkpoints so a resumed run recomputes them.
+    fs.writeFileSync(CHUNKS_OUT, JSON.stringify(chunks.filter(c => c.windows)), 'utf-8');
+  };
 
-  let chunks: Chunk[] = rawChunks;
-  if (fs.existsSync(CHUNKS_OUT)) {
-    const existing: Chunk[] = JSON.parse(fs.readFileSync(CHUNKS_OUT, 'utf-8'));
-    // Resume by TEXT, not by id: chunk ids are index-based (s<N>-p<M>) and
-    // shift whenever the chunker changes (e.g. A1's front-matter exclusion),
-    // but chunk texts are verbatim and stable, so existing embeddings remain
-    // valid for any unchanged text.
-    const byText = new Map(existing.map(c => [c.text, c]));
-    chunks = rawChunks.map(c => {
-      const prev = byText.get(c.text);
-      return prev?.embedding ? { ...c, embedding: prev.embedding } : c;
-    });
-    const already = chunks.filter(c => c.embedding).length;
-    console.log(`Resuming: ${already}/${chunks.length} already embedded (matched by text)`);
-  } else {
-    console.log(`Fresh run: ${chunks.length} chunks to embed`);
-  }
+  // Resume by TEXT and window scheme, not by id: ids shift whenever the chunker changes,
+  // but verbatim texts are stable, so existing vectors stay valid for unchanged text.
+  console.log(`Chunks: ${rawChunks.length}; previous index: ${previous.length}; window scheme ${WINDOW_SCHEME}`);
+  const { chunks, reused, embedded, windows } = await embedChunkWindows(rawChunks, previous, write);
 
-  const toEmbed = chunks.filter(c => !c.embedding);
-
-  // ── Embed ───────────────────────────────────────────────────────────────────
-  if (toEmbed.length === 0) {
-    console.log('All chunks already embedded — skipping model load.');
-  } else {
-    console.log(`\nLoading model: ${MODEL}  (offline from ${PUBLIC_MODELS})`);
-    const extractor = await pipeline('feature-extraction', MODEL);
-    console.log('Model ready.\n');
-
-    let done     = 0;
-    const total  = toEmbed.length;
-    const tStart = Date.now();
-
-    for (let i = 0; i < total; i += BATCH_SIZE) {
-      const batch  = toEmbed.slice(i, i + BATCH_SIZE);
-      const texts  = batch.map(c => c.text);
-
-      const output = await (extractor as any)(texts, { pooling: 'mean', normalize: true });
-      // output.data is a Float32Array of length batch.length × DIM
-      const data: Float32Array = output.data;
-
-      for (let j = 0; j < batch.length; j++) {
-        batch[j].embedding = Array.from(data.slice(j * DIM, (j + 1) * DIM));
-      }
-
-      const prevDone = done;
-      done += batch.length;
-
-      // Log every time we cross a 50-chunk milestone (or on the final batch)
-      if (Math.floor(done / 50) > Math.floor(prevDone / 50) || done >= total) {
-        const elapsed = ((Date.now() - tStart) / 1000).toFixed(1);
-        const pct     = ((done / total) * 100).toFixed(1);
-        console.log(`  [${String(done).padStart(4)}/${total}]  ${pct.padStart(5)}%   ${elapsed}s elapsed`);
-
-        // Checkpoint: persist progress so a crash can be resumed
-        fs.writeFileSync(CHUNKS_OUT, JSON.stringify(chunks, null, 2), 'utf-8');
-      }
-    }
-
-    console.log('\nEmbedding complete.');
-  }
-
-  // ── Final write ─────────────────────────────────────────────────────────────
-  fs.writeFileSync(CHUNKS_OUT, JSON.stringify(chunks, null, 2), 'utf-8');
+  fs.mkdirSync(PUBLIC_DATA, { recursive: true });
+  write(chunks);
   const mb = (fs.statSync(CHUNKS_OUT).size / 1024 / 1024).toFixed(1);
 
-  // ── Verify ──────────────────────────────────────────────────────────────────
-  const sample = chunks.find(c => c.embedding);
-  if (!sample?.embedding || sample.embedding.length !== DIM) {
-    throw new Error(`Unexpected embedding dim: ${sample?.embedding?.length} (expected ${DIM})`);
+  const sample = chunks[0].windows?.[0];
+  if (!sample || sample.embedding.length !== DIM) {
+    throw new Error(`Unexpected embedding dim: ${sample?.embedding.length} (expected ${DIM})`);
   }
+  const windowCount = chunks.reduce((sum, c) => sum + (c.windows?.length ?? 0), 0);
 
   // ── model-meta.json (B5: version = content hash of the index files) ──────────
   // qa/items/glossary may be rebuilt afterwards; scripts/write-meta.ts (the last
@@ -147,7 +93,8 @@ async function main(): Promise<void> {
 
   // ── Summary ─────────────────────────────────────────────────────────────────
   console.log('\n─── Embedding Summary ─────────────────────────────────────');
-  console.log(`Total chunks embedded : ${chunks.length}`);
+  console.log(`Total chunks          : ${chunks.length} (${reused} reused, ${embedded} embedded now: ${windows} windows)`);
+  console.log(`Windows per chunk     : ${(windowCount / chunks.length).toFixed(2)} on average, ${windowCount} in total`);
   console.log(`chunks.json size      : ${mb} MB  →  ${CHUNKS_OUT}`);
   console.log(`Embedding dimension   : ${sample.embedding.length}`);
   console.log(`model-meta.json       : version=${meta.version}  ✓`);

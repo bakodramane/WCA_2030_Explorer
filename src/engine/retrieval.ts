@@ -66,8 +66,8 @@ function readQaThreshold(): number {
 
 export class RetrievalEngine {
   private chunks: Chunk[]           = [];
-  /** Parallel Float32Array per chunk — avoids repeated number[] → Float32 conversions */
-  private vecs:   Float32Array[]    = [];
+  /** Window vectors per chunk (C0.4) — avoids repeated number[] → Float32 conversions */
+  private vecs:   Float32Array[][]  = [];
   private index!: MiniSearch<IndexDoc>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private extractor: any            = null;
@@ -95,8 +95,11 @@ export class RetrievalEngine {
     const raw: Chunk[] = await res.json();
 
     this.chunks = raw;
-    // Convert each embedding array to Float32Array for fast SIMD-friendly loops
-    this.vecs = raw.map(c => new Float32Array(c.embedding));
+    // Convert every window embedding to Float32Array for fast SIMD-friendly loops.
+    // Chunks without windows (legacy data, test mocks) fall back to their single vector.
+    this.vecs = raw.map(c =>
+      (c.windows?.length ? c.windows.map(w => w.embedding) : [c.embedding ?? []]).map(e => new Float32Array(e)),
+    );
 
     // 1b. Load the curated Q&A index
     try {
@@ -192,10 +195,14 @@ export class RetrievalEngine {
     const contentWords = this.contentWordsFromQuery(query);
 
     const scored = this.chunks.map((chunk, i) => {
-      const ev = this.vecs[i];
-      let dot = 0;
-      for (let k = 0; k < DIM; k++) dot += qVec[k] * ev[k];
-      // rawScore = plain cosine (both vectors are L2-normalised). A3: the
+      // C0.4: a chunk scores as its best window (cosine of unit vectors = dot product).
+      let dot = -Infinity;
+      for (const ev of this.vecs[i]) {
+        let windowDot = 0;
+        for (let k = 0; k < DIM; k++) windowDot += qVec[k] * ev[k];
+        if (windowDot > dot) dot = windowDot;
+      }
+      // rawScore = best-window cosine (vectors are L2-normalised). A3: the
       // guardrail compares rawScore with the threshold; the boosts below only
       // affect ranking (score), never the answer/refuse decision.
       let score = dot;

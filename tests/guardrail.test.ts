@@ -185,7 +185,7 @@ describe('guardrail — evaluate()', () => {
 
   // ── 5. Enum mode threshold (Fix B) ────────────────────────────────────────────
 
-  it('enum mode: A3 raised ENUM_CONFIDENCE_THRESHOLD (0.45) above the lookup default — a 0.43 raw score answers in lookup mode but is refused in enum mode', () => {
+  it('enum mode: ENUM_CONFIDENCE_THRESHOLD is above the lookup default — a 0.43 raw score answers in lookup mode but is refused in enum mode', () => {
     // Before A3 the enum threshold (0.35 on boosted scores) was LOWER than the
     // lookup threshold; gating on the raw cosine made it the stricter gate.
     const resEnum = evaluate([mkResult(0.43, { id: 'a' })], noLexical, 'enum');
@@ -195,8 +195,8 @@ describe('guardrail — evaluate()', () => {
     expect(resLookup.answered).toBe(true);
   });
 
-  it('enum mode answers when the raw score clears the raised 0.45 threshold', () => {
-    const res = evaluate([mkResult(0.46, { id: 'a' })], noLexical, 'enum');
+  it('enum mode answers when the raw score clears ENUM_CONFIDENCE_THRESHOLD', () => {
+    const res = evaluate([mkResult(ENUM_CONFIDENCE_THRESHOLD + 0.01, { id: 'a' })], noLexical, 'enum');
     expect(res.answered).toBe(true);
   });
 
