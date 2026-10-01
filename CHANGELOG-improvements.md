@@ -208,3 +208,6 @@ number is the first extracted line of each PDF page.
 - `feat(B2): split source text into atomic units` — detects body and annex
   paragraph numbers plus glossary terms, retaining per-line page provenance and
   keeping introductory text in its own unit.
+- `feat(B2): assign units from the document outline` — maps units to canonical
+  section titles and chapter labels, using paragraph prefixes to resolve page
+  ambiguities and deriving high-priority regions solely from the outline.
