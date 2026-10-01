@@ -78,6 +78,22 @@ function readQaThreshold(): number {
 
 export class RetrievalEngine {
   private chunks: Chunk[]           = [];
+  /** E2: id → chunk, built once in init(). */
+  private chunkById: Map<string, Chunk> = new Map();
+  /** E2: each distinct query text is embedded once; the curated tier and document search share the result. */
+  private queryVectors = new Map<string, Float32Array>();
+
+  /** Embed a query text (normalised mean-pooled vector), cached per distinct text. */
+  private async embedQuery(text: string): Promise<Float32Array> {
+    const cached = this.queryVectors.get(text);
+    if (cached) return cached;
+    const out = await this.extractor(text, { pooling: 'mean', normalize: true });
+    const vector = new Float32Array(out.data as ArrayLike<number>);
+    if (this.queryVectors.size >= 64) this.queryVectors.delete(this.queryVectors.keys().next().value as string);
+    this.queryVectors.set(text, vector);
+    return vector;
+  }
+
   /** Window vectors per chunk (C0.4) — avoids repeated number[] → Float32 conversions */
   private vecs:   Float32Array[][]  = [];
   private index!: MiniSearch<IndexDoc>;
@@ -108,6 +124,7 @@ export class RetrievalEngine {
     const chunkVectors = await loadVectors('data/embeddings.f32');
 
     this.chunks = raw;
+    this.chunkById = new Map(raw.map(c => [c.id, c])); // E2: built once, not on every lexicalSearch
     // One Float32Array view per window. Vectors come from embeddings.f32 (E1: rows in chunk and window
     // order); chunks that still carry inline vectors, and legacy single-vector chunks, keep working.
     let row = 0;
@@ -214,9 +231,7 @@ export class RetrievalEngine {
    * surfaces preferentially for relevant queries.
    */
   async semanticSearch(query: string, topK = 5): Promise<RankedResult[]> {
-    const out  = await this.extractor(expandQuery(query), { pooling: 'mean', normalize: true });
-    // out.data is a Float32Array of length DIM
-    const qVec = new Float32Array(out.data as ArrayLike<number>);
+    const qVec = await this.embedQuery(expandQuery(query));
 
     // Pre-compute content words once for the exact-match boost check below.
     const contentWords = this.contentWordsFromQuery(query);
@@ -304,7 +319,7 @@ export class RetrievalEngine {
     if (gateWords.length < 2 && !vocabQuery) return [];
 
     const hits  = this.index.search(query, { prefix: true, fuzzy: 0.2 });
-    const byId  = new Map(this.chunks.map(c => [c.id, c]));
+    const byId  = this.chunkById;
 
     return hits
       .filter(r => (r.score as number) >= RetrievalEngine.MIN_LEXICAL_SCORE)
@@ -463,8 +478,7 @@ export class RetrievalEngine {
     // Use the raw query — no synonym expansion — because the stored Q&A embeddings
     // were produced from the original question text.  Expansion shifts the vector
     // away from the stored question, hurting recall for the curated tier.
-    const out  = await this.extractor(query, { pooling: 'mean', normalize: true });
-    const qVec = new Float32Array(out.data as ArrayLike<number>);
+    const qVec = await this.embedQuery(query);
 
     let bestScore = -Infinity;
     let bestIndex = -1;
