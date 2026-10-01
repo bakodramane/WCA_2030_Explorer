@@ -60,3 +60,16 @@ export function qaBand(score: number): Band {
   const strong = score >= QA_THRESHOLD + 0.10;
   return { label: strong ? 'Strong match' : 'Good match', className: strong ? 'strong' : 'good', tooltip: `Question similarity ${score.toFixed(3)} (threshold ${QA_THRESHOLD})` };
 }
+
+/** D3: link to a page of the official PDF (bundled, precached, same origin). PDF page = printed page + 14. */
+export const PDF_PAGE_OFFSET = 14;
+const BASE_URL: string = (import.meta as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? '/';
+
+export function pdfPageUrl(pdfPage: number): string {
+  return `${BASE_URL}source/Census-2030_EN-DTP-9.pdf#page=${pdfPage}`;
+}
+
+/** The "View page in PDF" anchor shared by every card type. */
+export function pdfLinkHtml(pdfPage: number): string {
+  return `<a class="pdf-link" href="${pdfPageUrl(pdfPage)}" target="_blank" rel="noopener" aria-label="View page ${pdfPage - PDF_PAGE_OFFSET} in the official PDF">View page in PDF</a>`;
+}

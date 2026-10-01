@@ -148,6 +148,13 @@ export class App {
     // Hide overlay and hand control to the search bar
     overlay.style.display = 'none';
     this.searchBar.focus();
+
+    // D3: ?q=<query> deep link runs the query on load.
+    const deepLinked = readQueryParam();
+    if (deepLinked) {
+      this.searchBar.setValue(deepLinked);
+      void this.runSearch(deepLinked);
+    }
   }
 
   // ── Random suggestion chips ──────────────────────────────────────────────
@@ -1292,6 +1299,7 @@ export class App {
       this.enterCompactMode();
     }
     this.searchBar.setLoading(true);
+    writeQueryParam(query);
     this.clearResults();
 
     try {
@@ -1629,6 +1637,20 @@ function escHtml(s: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+/** D3: the `q` query parameter of the current URL, trimmed, or null. */
+function readQueryParam(): string | null {
+  try { return new URLSearchParams(location.search).get('q')?.trim() || null; } catch { return null; }
+}
+
+/** D3: keep the URL in step with the last search (history.replaceState: no new history entries). */
+function writeQueryParam(query: string): void {
+  try {
+    const url = new URL(location.href);
+    url.searchParams.set('q', query.trim());
+    history.replaceState(null, '', url);
+  } catch { /* history unavailable */ }
 }
 
 function randomSample<T>(arr: T[], n: number): T[] {

@@ -2005,3 +2005,15 @@ body {
 .match-band--strong  { background: var(--accent); color: #fff; border-color: var(--accent); }
 .match-band--good    { background: var(--mark-bg); color: var(--accent); }
 .match-band--partial { background: #e8e2d4; color: #5c4a22; }
+
+/* ── D3: link to the PDF page ───────────────────────────────────────── */
+.pdf-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--accent);
+  text-decoration: underline;
+}

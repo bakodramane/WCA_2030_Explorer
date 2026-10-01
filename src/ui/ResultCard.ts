@@ -3,7 +3,7 @@ import type { GuardrailResponse } from '../engine/guardrail';
 import { STOP_WORDS } from '../engine/stopwords';
 import { linkifyItems } from './linkify';
 import { excerptCitation, pagesLabel, parseExcerpts } from '../engine/excerpts';
-import { citationLine, displayTitle, matchBand, pagesText, qaBand } from './citation';
+import { citationLine, displayTitle, matchBand, pagesText, pdfLinkHtml, PDF_PAGE_OFFSET, qaBand } from './citation';
 import { passagesHtml } from './qa-block';
 
 // ── Safety helpers ────────────────────────────────────────────────────────────
@@ -88,6 +88,7 @@ export class ResultCard {
       <footer class="card-footer">
         <span class="match-band match-band--${band.className}" title="${esc(band.tooltip)}">${band.label}</span>
         <span class="match-badge match-badge--${matchType}">${matchType === 'semantic' ? 'meaning' : 'keyword'}</span>
+        ${pdfLinkHtml(chunk.pdfPage)}
         <button class="copy-btn" type="button"
                 data-citation="${esc(citationText)}">
           Copy citation
@@ -157,6 +158,7 @@ export class ResultCard {
       <footer class="card-footer">
         <span class="match-band match-band--${band.className}" title="${esc(band.tooltip)}">${band.label}</span>
         <span class="match-badge match-badge--verified">curated</span>
+        ${pdfLinkHtml(passages[0].printedPage + PDF_PAGE_OFFSET)}
         <button class="copy-btn" type="button"
                 data-citation="${esc(citationText)}">
           Copy citation
@@ -278,6 +280,7 @@ export class ResultCard {
       </div>
       <footer class="card-footer">
         <span class="match-badge match-badge--item">item</span>
+        ${pdfLinkHtml(item.page + PDF_PAGE_OFFSET)}
         <button class="copy-btn" type="button"
                 data-citation="${esc(citationText)}">
           Copy citation
@@ -348,6 +351,7 @@ export class ResultCard {
       </div>
       <footer class="card-footer">
         <span class="match-badge match-badge--figure-table">${entry.kind}</span>
+        ${pdfLinkHtml(entry.page + PDF_PAGE_OFFSET)}
         <button class="copy-btn" type="button"
                 data-citation="${esc(citationText)}">
           Copy citation
