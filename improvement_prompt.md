@@ -22,16 +22,22 @@
 | C1 Gold set | ✅ Done | `a12004a` | 140 in-domain items; two held-out sets (36 each). |
 | C2 Evaluation script | ✅ Done | `1173381` | `npm run eval` → `reports/eval-latest.md`; cascade shared in `src/engine/answer.ts`. |
 | C3 Tune | ✅ Done, **one target missed** | `1173381` | Recall@5 94.3 %, top citation 83.6 %, tuning false answers 0/60. Held-out false answers 2/36 (5.6 %) on both sets, one question over the 5 % target; see the changelog and the open question. |
+| **OD Owner decisions** | **New — do first** | — | Threshold kept at 0.52; flagged excerpts withheld; multi-passage excerpts; review page; stricter item-code trigger. See OD. |
 | D, E | Not started | — | E2 is partly done (thresholds in `config.ts`, `DEFAULT_QA_THRESHOLD` removed). |
 
 **State at `1173381`:** `npx tsc --noEmit` passes; `npx vitest run` passes **249 tests in 29 files**; `docs/`
 matches `public/`. The gitignored `src/data/chunks-raw.json` in a working copy is current; if it is ever
 stale, regenerate it with `npm run ingest` or move it aside.
 
-**Next steps, in order:** D → E (E2's remaining items, E3, E4, E5). Open questions for the owner are in the
-final summary of `CHANGELOG-improvements.md`'s C section: the 0.52 vs 0.54 semantic threshold, the 55
-excerpts flagged for review, and whether the item-code lookup should require the code to be the main
-content of the query.
+**Review of `5b42e96` (by the owner's reviewer):** gates and `npm run eval` reproduce exactly (249 tests,
+recall@5 94.3 %, 0/60 tuning, 2/36 held-out on both sets). The repair log is complete (135 rows, 31 page
+corrections, 55 flagged). However, sampling the flagged rows showed that **some repairs make answers worse**,
+and they are live in the Q&A tier: "What are the 12 themes of the WCA 2030?" now cites only Themes 7–9, and
+"What is data archiving…?" keeps one sentence with a stray heading prefix ("DATA ARCHIVING 10.29 …"). The
+root cause is the one-contiguous-passage excerpt format (see OD.3).
+
+**Next steps, in order:** OD → D → E (E2's remaining items, E3, E4, E5). The three open questions from the
+C phase are now answered by the owner in OD.
 
 ---
 
@@ -529,6 +535,70 @@ Write the results to `reports/eval-latest.md` and commit it.
 
 ---
 
+### OD. Owner decisions and follow-ups *(decided 1 October 2026; do before Phase D)*
+
+The owner has answered the C-phase open questions. Treat these as settled; do not reopen them.
+
+**OD.1 Semantic threshold stays at 0.52.** Do not move it to 0.54. The four held-out leaks (cattle herd,
+tomato fertiliser, aphid pesticide, ocean salinity) are near-domain and are answered with verbatim, cited
+WCA text, so nothing is fabricated; 0.54 would cost about 3.6 points of recall@5 and would be chosen from
+held-out results. Record the decision in `src/engine/config.ts` next to the value and in README §3. Accept
+the 5.6 % held-out rate as a documented, known limitation in the Definition of done.
+
+**OD.2 Withhold flagged excerpts until the owner approves them.**
+1. The curated Q&A tier must not serve any row whose `needs_owner_review` is `yes` in
+   `reports/qa-excerpt-repairs.csv` (and has no approval recorded under OD.4). Those questions fall through to
+   document search. Implement this at build time: `build-qa.ts` writes a `servable: false` flag (or omits the
+   row from the Q&A index), and the engine skips it. Learn mode and the questions bank may still list the
+   question, but its reveal must show the document-search result, never the unapproved excerpt.
+2. Tests: no unapproved flagged row can be returned by `qaSearch`; a flagged question still gets an answer
+   from the document tier (check with 3 examples from the repair log).
+3. Run `npm run eval` and record the effect. Recall@5 may drop slightly; it must stay ≥ 90 %. If it falls
+   below, report the numbers to the owner before continuing.
+
+**OD.3 Allow multi-passage excerpts.** Some correct answers span several non-contiguous passages (list
+answers such as the 12 themes, or a definition plus its qualification). Forcing them into one passage
+truncated them.
+1. Change the excerpt format so an excerpt is an ordered list of passages, each with its own printed page:
+   `excerpts: { text: string; printedPage: number }[]`. In `data/wca-qa.csv`, encode multiple passages in
+   the `excerpt` column separated by a line containing only ` [...] `, with pages as `"34; 36"` in
+   `page_number`. Keep single-passage rows unchanged.
+2. Every passage must pass `validate-data.ts` individually: verbatim, and on its stated page (±1). Strip
+   leading heading or furniture text such as "DATA ARCHIVING" from passages; a passage starts at a sentence
+   or paragraph-number boundary.
+3. Render the passages in order inside the answer block, separated by an ellipsis rule, each with its own
+   page. Copy citation lists every page: `WCA 2030, Theme 2: Land (pp. 79, 81): "…"`.
+4. Re-repair the flagged rows that are list or multi-part answers as multi-passage excerpts. Mark them
+   `method = multi-passage` in the repair log, keep `needs_owner_review = yes` (the owner still approves
+   them), and record before and after coverage.
+
+**OD.4 Owner review tool.** Build `scripts/dev/review-excerpts.html`: a single self-contained local page,
+with no network access and no build step, that loads the repair log and the source chunks (open it from the
+file system or via `npx vite` in dev).
+- For each flagged row, show the question, the original excerpt, the proposed excerpt, and the 3 best
+  alternative source passages, each with page and § citation.
+- Actions per row: **Accept proposed**, **Use alternative n**, **Edit** (the edit is restricted to selecting
+  a span of verbatim source text; free typing is not allowed), and **Reject** (keep the question out of the
+  Q&A tier permanently).
+- **Export decisions** writes `data/excerpt-decisions.csv`.
+- Write `scripts/apply-excerpt-decisions.ts`, which applies that CSV to `data/wca-qa.csv`, sets
+  `needs_owner_review = no` and `approved_by = owner` for decided rows, reruns `validate-data.ts` and
+  `build-qa.ts`, and refuses to apply any decision that fails validation.
+- Document the workflow in README (a short "Reviewing curated excerpts" section).
+
+**OD.5 Stricter item-code lookup.** The item-card tier must fire only when the code is the main content of
+the query: a bare code (`0903`, `903`), `item 903`, `item 0903`, or a code plus at most two other words
+(`item 0903 definition`). A longer question that merely mentions a code, such as "What does WCA 2030 say
+about Item 0903?", goes through the normal cascade. Apply the same rule to figure/table lookups. Add tests
+for each case, and run `npm run eval`.
+
+**OD is complete when:** the gates pass, `npm run eval` shows recall@5 ≥ 90 % and 0/60 tuning false
+answers, no unapproved flagged excerpt is served, the review page works end to end on 3 sample rows
+(demonstrate it, then **revert those sample decisions**; only the owner makes real ones), and the
+changelog records before and after numbers.
+
+---
+
 ## Phase D — Interface refinements
 
 Keep the existing aesthetic (forest green on cream, Lora body, monospace citations,
@@ -637,8 +707,10 @@ from `data/source-outline.md`.
 
 - [ ] `npx tsc --noEmit`, `npm test`, `npm run eval`, and `npm run build` all pass on
       a clean clone after `npm ci && npm run build-index`.
-- [ ] Off-topic false-answer rate is 0 % on the tuning set (≥ 60 questions) and
-      ≤ 5 % on the held-out set (≥ 30 questions).
+- [ ] Off-topic false-answer rate is 0 % on the tuning set (≥ 60 questions). Held-out rate: ≤ 5 % was
+      the target; 5.6 % (2/36 near-domain leaks, answered with verbatim cited text) is **accepted by the
+      owner** (OD.1) and documented as a known limitation.
+- [ ] No curated excerpt flagged `needs_owner_review` is served until the owner approves it (OD.2).
 - [ ] Recall@5 is at least 90 %, or the gap is documented with causes.
 - [ ] Every citation shows a printed page that matches the PDF, verified by
       `validate-data.ts`.
