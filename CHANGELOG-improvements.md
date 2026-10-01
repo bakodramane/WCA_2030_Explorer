@@ -205,3 +205,6 @@ number is the first extracted line of each PDF page.
 - `feat(B2): strip positional page furniture` — removes front matter, printed
   page numbers, and lines repeated on five or more page edges while preserving
   repeated body content and item reference-period metadata.
+- `feat(B2): split source text into atomic units` — detects body and annex
+  paragraph numbers plus glossary terms, retaining per-line page provenance and
+  keeping introductory text in its own unit.
