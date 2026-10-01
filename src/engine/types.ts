@@ -114,7 +114,8 @@ export interface QaRow {
   confidence:    string;
   /** OD.2: false = excerpt awaits owner approval; never served by the Q&A tier. Absent = servable. */
   servable?:     boolean;
-  embedding:     number[];
+  /** Inline vector (legacy / tests); the build writes qa-embeddings.f32 instead (E1). */
+  embedding?:    number[];
 }
 
 export interface QaResult {

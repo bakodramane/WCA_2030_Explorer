@@ -11,11 +11,14 @@ async function main(): Promise<void> {
   const check = (name: string, ok: boolean, detail = ''): void => { checks.push([name, ok, detail]); };
   const sw = fs.readFileSync(path.join('docs', 'sw.js'), 'utf-8');
   check('PDF is in the precache manifest', sw.includes('source/Census-2030_EN-DTP-9.pdf'));
+  check('only the SIMD WASM build is precached (threaded builds need cross-origin isolation)', sw.includes('models/ort-wasm-simd.wasm') && !sw.includes('ort-wasm-threaded') && !sw.includes('ort-wasm-simd-threaded') && !/url:"models\/ort-wasm\.wasm"/.test(sw));
+  check('embeddings are binary files in the precache', sw.includes('data/embeddings.f32') && sw.includes('data/qa-embeddings.f32'));
 
   await withPreview(async baseUrl => {
     const context = await browser.newContext();
     const hosts = new Set<string>();
-    context.on('request', r => hosts.add(new URL(r.url()).host));
+    const wasm = new Set<string>();
+    context.on('request', r => { hosts.add(new URL(r.url()).host); if (r.url().endsWith('.wasm')) wasm.add(r.url().split('/').pop()!); });
     const errors: string[] = [];
 
     // 1. ?q= deep link runs the query on load.
@@ -49,6 +52,7 @@ async function main(): Promise<void> {
     check('offline: the PDF is served from the precache', pdfStatus === 200, String(pdfStatus));
     await context.setOffline(false);
 
+    check('the runtime loaded only ort-wasm-simd.wasm', [...wasm].join() === 'ort-wasm-simd.wasm', [...wasm].join(', '));
     check('no request left localhost', [...hosts].every(h => h.startsWith('localhost')), [...hosts].join(', '));
     check('no page errors', errors.length === 0, errors.join('; '));
     await context.close();

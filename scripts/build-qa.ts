@@ -2,12 +2,14 @@ import { pipeline, env } from '@xenova/transformers';
 import fs from 'node:fs';
 import path from 'node:path';
 import { readCsvRecords } from './lib/csv';
+import { QA_EMBEDDINGS, readEmbeddings, writeEmbeddings } from './lib/embedding-files';
 
 // ── Paths ─────────────────────────────────────────────────────────────────────
 
 const ROOT      = process.cwd();
 const CSV_IN    = path.join(ROOT, 'data', 'wca-qa.csv');
 const JSON_OUT  = path.join(ROOT, 'public', 'data', 'qa.json');
+const VEC_OUT   = path.join(ROOT, 'public', 'data', QA_EMBEDDINGS);
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -27,14 +29,19 @@ interface QaRowOut {
   excerpt: string; tags: string; confidence: string;
   /** OD.2: false while the excerpt awaits owner approval; the Q&A tier never serves such a row. */
   servable: boolean;
-  embedding: number[];
 }
 
-/** Embeddings already in qa.json, keyed by question text (the only embedded field). */
+/** Embeddings already built, keyed by question text (the only embedded field): binary file, or legacy inline vectors. */
 function existingEmbeddings(): Map<string, number[]> {
   if (!fs.existsSync(JSON_OUT)) return new Map();
   const rows = JSON.parse(fs.readFileSync(JSON_OUT, 'utf-8')) as Array<{ question: string; embedding?: number[] }>;
-  return new Map(rows.filter(r => r.embedding?.length === DIM).map(r => [r.question, r.embedding!]));
+  const binary = readEmbeddings(VEC_OUT);
+  const known = new Map<string, number[]>();
+  rows.forEach((r, i) => {
+    const vec = r.embedding?.length === DIM ? r.embedding : binary && binary.length === rows.length ? Array.from(binary[i]) : null;
+    if (vec) known.set(r.question, vec);
+  });
+  return known;
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -64,16 +71,17 @@ async function main(): Promise<void> {
     }
   }
 
+  const vectors = records.map(r => embeddings.get(r.question)!);
+  if (vectors.some(v => v.length !== DIM)) throw new Error(`Expected dim=${DIM} for every row`);
   const out: QaRowOut[] = records.map(r => ({
     question: r.question, answer: r.answer, page_number: r.page_number,
     section_title: r.section_title, excerpt: r.excerpt, tags: r.tags, confidence: r.confidence,
     servable: !(r.needs_owner_review === 'yes' && r.approved_by !== 'owner'),
-    embedding: embeddings.get(r.question)!,
   }));
-  if (out.some(r => r.embedding.length !== DIM)) throw new Error(`Expected dim=${DIM} for every row`);
 
   fs.mkdirSync(path.dirname(JSON_OUT), { recursive: true });
   fs.writeFileSync(JSON_OUT, JSON.stringify(out), 'utf-8');
+  writeEmbeddings(VEC_OUT, vectors);
   const kb = (fs.statSync(JSON_OUT).size / 1024).toFixed(0);
   console.log(`Servable rows: ${out.filter(r => r.servable).length} of ${out.length} (the rest await owner approval)`);
   console.log(`Rows written: ${out.length}  →  ${path.relative(ROOT, JSON_OUT)}  (${kb} KB)`);

@@ -2,6 +2,7 @@ import { env } from '@xenova/transformers';
 import fs from 'node:fs';
 import path from 'node:path';
 import { DIM, embedChunkWindows } from './lib/embed-windows';
+import { CHUNK_EMBEDDINGS, joinChunkEmbeddings, readEmbeddings, splitChunkEmbeddings, writeEmbeddings } from './lib/embedding-files';
 import { writeModelMeta } from './lib/index-version';
 import { WINDOW_SCHEME } from './lib/windows';
 
@@ -67,10 +68,16 @@ function listFilesRecursive(dir: string, prefix = ''): string[] {
 
 async function main(): Promise<void> {
   const rawChunks: Chunk[] = JSON.parse(fs.readFileSync(CHUNKS_RAW, 'utf-8'));
-  const previous: Chunk[] = fs.existsSync(CHUNKS_OUT) ? JSON.parse(fs.readFileSync(CHUNKS_OUT, 'utf-8')) : [];
+  // Previous index: compact chunks.json plus the binary vectors (E1); legacy inline vectors still resume.
+  const embeddingsOut = path.join(path.dirname(CHUNKS_OUT), CHUNK_EMBEDDINGS);
+  let previous: Chunk[] = fs.existsSync(CHUNKS_OUT) ? JSON.parse(fs.readFileSync(CHUNKS_OUT, 'utf-8')) : [];
+  const previousRows = readEmbeddings(embeddingsOut);
+  if (previousRows && previous.length && previous.every(c => !c.windows?.some(w => w.embedding))) previous = joinChunkEmbeddings(previous, previousRows);
   const write = (chunks: Chunk[]): void => {
     // Unfinished chunks are left out of checkpoints so a resumed run recomputes them.
-    fs.writeFileSync(CHUNKS_OUT, JSON.stringify(chunks.filter(c => c.windows)), 'utf-8');
+    const { chunks: stripped, rows } = splitChunkEmbeddings(chunks.filter(c => c.windows));
+    fs.writeFileSync(CHUNKS_OUT, JSON.stringify(stripped), 'utf-8');
+    writeEmbeddings(embeddingsOut, rows);
   };
 
   // Resume by TEXT and window scheme, not by id: ids shift whenever the chunker changes,
@@ -86,19 +93,25 @@ async function main(): Promise<void> {
   if (!sample || sample.embedding.length !== DIM) {
     throw new Error(`Unexpected embedding dim: ${sample?.embedding.length} (expected ${DIM})`);
   }
+  const embBytes = fs.statSync(embeddingsOut).size;
   const windowCount = chunks.reduce((sum, c) => sum + (c.windows?.length ?? 0), 0);
 
   // ── model-meta.json (B5: version = content hash of the index files) ──────────
   // qa/items/glossary may be rebuilt afterwards; scripts/write-meta.ts (the last
   // build-index step) re-stamps it.
   if (VARIANT) { console.log(`Variant written to ${CHUNKS_OUT}`); return; }
-  const meta = writeModelMeta(ROOT);
+  let meta: { version: string };
+  try { meta = writeModelMeta(ROOT); } catch (error) {
+    // Q&A, items, or glossary data may not exist yet on a first build; scripts/write-meta.ts stamps it last.
+    meta = { version: `(pending: ${(error as Error).message.split(':')[0]})` };
+  }
 
   // ── Summary ─────────────────────────────────────────────────────────────────
   console.log('\n─── Embedding Summary ─────────────────────────────────────');
   console.log(`Total chunks          : ${chunks.length} (${reused} reused, ${embedded} embedded now: ${windows} windows)`);
   console.log(`Windows per chunk     : ${(windowCount / chunks.length).toFixed(2)} on average, ${windowCount} in total`);
   console.log(`chunks.json size      : ${mb} MB  →  ${CHUNKS_OUT}`);
+  console.log(`${CHUNK_EMBEDDINGS} size : ${(embBytes / 1024 / 1024).toFixed(2)} MB`);
   console.log(`Embedding dimension   : ${sample.embedding.length}`);
   console.log(`model-meta.json       : version=${meta.version}  ✓`);
   console.log('───────────────────────────────────────────────────────────\n');

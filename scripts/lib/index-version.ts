@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 /** Data files whose content defines the index version (B5). */
-export const INDEX_FILES = ['chunks.json', 'qa.json', 'items.json', 'glossary.json'];
+export const INDEX_FILES = ['chunks.json', 'embeddings.f32', 'qa.json', 'qa-embeddings.f32', 'items.json', 'glossary.json'];
 const MODEL = 'Xenova/all-MiniLM-L6-v2';
 const DIM = 384;
 

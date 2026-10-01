@@ -28,7 +28,8 @@ export async function loadEngine(dataDir: string): Promise<RetrievalEngine> {
   globalThis.fetch = (async (url: unknown) => {
     const file = path.join(dataDir, path.basename(String(url)));
     if (!fs.existsSync(file)) throw new Error(`missing ${file}`);
-    return { json: async () => JSON.parse(fs.readFileSync(file, 'utf-8')) };
+    const bytes = (): ArrayBuffer => { const b = fs.readFileSync(file); return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength) as ArrayBuffer; };
+    return { json: async () => JSON.parse(fs.readFileSync(file, 'utf-8')), arrayBuffer: async () => bytes() };
   }) as unknown as typeof fetch;
   const engine = new RetrievalEngine();
   await engine.init();

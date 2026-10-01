@@ -45,6 +45,17 @@ interface IndexDoc {
   sectionTitle: string;
 }
 
+/** E1: rows of a binary Float32 embeddings file as subarray views (DIM values each), or null if absent. */
+async function loadVectors(file: string): Promise<Float32Array[] | null> {
+  try {
+    const res = await fetch(BASE_URL + file);
+    const all = new Float32Array(await res.arrayBuffer());
+    return Array.from({ length: all.length / DIM }, (_, i) => all.subarray(i * DIM, (i + 1) * DIM));
+  } catch {
+    return null;
+  }
+}
+
 // ── RetrievalEngine ───────────────────────────────────────────────────────────
 
 // ── QA threshold helper ───────────────────────────────────────────────────────
@@ -94,20 +105,26 @@ export class RetrievalEngine {
     // 1. Load the content index (fetch works in both browser and test contexts)
     const res = await fetch(BASE_URL + 'data/chunks.json');
     const raw: Chunk[] = await res.json();
+    const chunkVectors = await loadVectors('data/embeddings.f32');
 
     this.chunks = raw;
-    // Convert every window embedding to Float32Array for fast SIMD-friendly loops.
-    // Chunks without windows (legacy data, test mocks) fall back to their single vector.
-    this.vecs = raw.map(c =>
-      (c.windows?.length ? c.windows.map(w => w.embedding) : [c.embedding ?? []]).map(e => new Float32Array(e)),
-    );
+    // One Float32Array view per window. Vectors come from embeddings.f32 (E1: rows in chunk and window
+    // order); chunks that still carry inline vectors, and legacy single-vector chunks, keep working.
+    let row = 0;
+    this.vecs = raw.map(c => {
+      if (c.windows?.length) {
+        return c.windows.map(w => w.embedding ? new Float32Array(w.embedding) : chunkVectors![row++]);
+      }
+      return [new Float32Array(c.embedding ?? [])];
+    });
 
     // 1b. Load the curated Q&A index
     try {
       const qaRes = await fetch(BASE_URL + 'data/qa.json');
       const qaRaw: QaRow[] = await qaRes.json();
       this.qaItems = qaRaw;
-      this.qaVecs  = qaRaw.map(r => new Float32Array(r.embedding));
+      const qaVectors = qaRaw.some(r => !r.embedding) ? await loadVectors('data/qa-embeddings.f32') : null;
+      this.qaVecs  = qaRaw.map((r, i) => r.embedding ? new Float32Array(r.embedding) : qaVectors![i]);
     } catch {
       // qa.json absent (e.g. fresh dev env before build-qa runs) — Tier 1 silently disabled
       this.qaItems = [];

@@ -19,7 +19,8 @@ vi.stubGlobal('fetch', vi.fn(async (url: unknown) => {
   const m = String(url).match(/data\/([A-Za-z0-9._-]+)$/);
   if (!m) throw new Error(`Unexpected fetch in regression test: ${url}`);
   const file = path.join(process.cwd(), 'public', 'data', m[1]);
-  return { json: async () => JSON.parse(fs.readFileSync(file, 'utf-8')) };
+  const bytes = (): ArrayBuffer => { const b = fs.readFileSync(file); return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength) as ArrayBuffer; };
+  return { json: async () => JSON.parse(fs.readFileSync(file, 'utf-8')), arrayBuffer: async () => bytes() };
 }));
 
 const fixture = JSON.parse(

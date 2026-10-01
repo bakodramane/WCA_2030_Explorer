@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { AutoTokenizer, env } from '@xenova/transformers';
+import { joinChunkEmbeddings, readEmbeddings } from '../scripts/lib/embedding-files';
 import { WINDOW_SCHEME } from '../scripts/lib/windows';
 import type { Chunk } from '../src/engine/types';
 
@@ -14,10 +15,19 @@ describe('C0.4 — windowed chunk embeddings', () => {
   let tokens: (text: string) => number = () => 0;
 
   beforeAll(async () => {
-    chunks = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'public', 'data', 'chunks.json'), 'utf-8')) as Chunk[];
+    const stripped = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'public', 'data', 'chunks.json'), 'utf-8')) as Chunk[];
+    const rows = readEmbeddings(path.join(process.cwd(), 'public', 'data', 'embeddings.f32'))!;
+    // E1: the vectors live in embeddings.f32, one row per window in chunk order.
+    expect(rows.length).toBe(stripped.reduce((n, c) => n + (c.windows?.length ?? 0), 0));
+    chunks = joinChunkEmbeddings(stripped, rows) as Chunk[];
     const tokenizer = await AutoTokenizer.from_pretrained('Xenova/all-MiniLM-L6-v2');
     tokens = text => (tokenizer(text, { add_special_tokens: false }).input_ids.data as ArrayLike<unknown>).length;
   }, 60_000);
+
+  it('chunks.json holds no inline vectors; they are in embeddings.f32 (E1)', () => {
+    const raw = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'public', 'data', 'chunks.json'), 'utf-8')) as Chunk[];
+    expect(raw.every(c => c.windows!.every(w => w.embedding === undefined))).toBe(true);
+  });
 
   it('every chunk carries windows from the current scheme and no legacy whole-chunk vector', () => {
     for (const chunk of chunks) {

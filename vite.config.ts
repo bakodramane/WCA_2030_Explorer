@@ -23,7 +23,16 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {
-        globPatterns: ['**/*.{js,css,html,json,wasm,woff2,pdf}', '**/*.onnx'],
+        globPatterns: ['**/*.{js,css,html,json,wasm,woff2,pdf,f32}', '**/*.onnx'],
+        // E1: without cross-origin isolation (no COOP/COEP on static hosts) the runtime only ever loads
+        // ort-wasm-simd.wasm. The threaded builds are never used; the plain build is a fallback for
+        // browsers without SIMD, cached at runtime the first time it is needed.
+        globIgnores: ['models/ort-wasm-threaded.wasm', 'models/ort-wasm-simd-threaded.wasm', 'models/ort-wasm.wasm'],
+        runtimeCaching: [{
+          urlPattern: /\/models\/ort-wasm(?:-simd-threaded|-threaded)?\.wasm$/,
+          handler: 'CacheFirst',
+          options: { cacheName: 'ort-wasm-fallback', expiration: { maxEntries: 4 } },
+        }],
         maximumFileSizeToCacheInBytes: 200 * 1024 * 1024,
       },
       manifest: {
