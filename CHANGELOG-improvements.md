@@ -217,3 +217,7 @@ number is the first extracted line of each PDF page.
 - `fix(B2): keep annex codes in annexes and drop part dividers` — prevents crop
   classification codes from masquerading as chapter paragraphs and excludes
   title-only Part One/Two divider pages from answer text.
+- `wip(B2): wire the validated modular chunk pipeline` — the side-by-side
+  orchestrator produces 387 chunks; 353/387 (91.2%) are 150–350 words, the
+  maximum is 350, 153/387 (39.5%) are high priority, 95.3% carry paragraph
+  numbers, all titles come from the outline, and no running header remains.
