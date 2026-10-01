@@ -1367,6 +1367,7 @@ export class App {
         .map(s => ({
           chunk:     s.topChunks[0].chunk,
           score:     s.score,
+          rawScore:  s.rawScore, // A3: guardrail gates on this unboosted score
           matchType: 'semantic' as const,
         }));
 

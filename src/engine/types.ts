@@ -16,7 +16,12 @@ export interface Chunk {
 
 export interface RankedResult {
   chunk: Chunk;
+  /** Boosted score used for ranking (priority / exact-word boosts applied). */
   score: number;
+  /** Plain cosine similarity, unboosted. The guardrail compares THIS value
+   *  with the threshold (A3): boosts may reorder results but must never turn
+   *  a refusal into an answer. */
+  rawScore: number;
   matchType: 'semantic' | 'lexical';
 }
 
@@ -24,7 +29,11 @@ export interface SectionResult {
   sectionTitle: string;
   pageStart: number;
   pageEnd: number;
+  /** Boosted section score (avg of top-3 boosted chunk scores × title boost). */
   score: number;
+  /** Plain-cosine section score: average of the top-3 chunk rawScores,
+   *  with no priority, exact-word or title boosts (A3). */
+  rawScore: number;
   topChunks: RankedResult[];
 }
 

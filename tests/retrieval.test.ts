@@ -160,6 +160,10 @@ describe('RetrievalEngine', () => {
     expect(resA.score).toBeCloseTo(0.8 * 0.8,        5); // 0.640
     expect(resC.score).toBeCloseTo(0.8 * 0.7 * 1.15, 5); // 0.644
 
+    // A3: rawScore is the plain cosine — unboosted, even for priority chunks.
+    expect(resA.rawScore).toBeCloseTo(0.8 * 0.8, 5);
+    expect(resC.rawScore).toBeCloseTo(0.8 * 0.7, 5);
+
     // Boost must have promoted C above A
     expect(results[0].chunk.id).toBe('c');
     expect(results[1].chunk.id).toBe('a');
@@ -176,6 +180,17 @@ describe('RetrievalEngine', () => {
 
     // "agricultural holdings" appears in both chunk A and chunk C text
     expect(results.some(r => r.chunk.id === 'a')).toBe(true);
+  });
+
+  it('A3: lexicalSearch refuses queries without a corpus-characteristic domain term', () => {
+    // The mock corpus contains "agricultural" in 2/3 chunks → it is a domain
+    // term. "capital" and "france" occur nowhere → no gate word → refused
+    // outright, regardless of BM25 scores.
+    expect(engine.getDomainTerms().has('agricultural')).toBe(true);
+    expect(engine.getDomainTerms().has('capital')).toBe(false);
+
+    const results = engine.lexicalSearch('capital of France', 5);
+    expect(results).toHaveLength(0);
   });
 
   // ── Test 4: topK is respected ──────────────────────────────────────────────
@@ -290,16 +305,37 @@ describe('RetrievalEngine — section methods', () => {
       expect(top1).toHaveLength(1);
     });
 
-    it('each SectionResult has sectionTitle, pageStart, pageEnd, score, topChunks', async () => {
+    it('each SectionResult has sectionTitle, pageStart, pageEnd, score, rawScore, topChunks', async () => {
       const results = await sectionEngine.sectionSearch('essential items', 5);
       for (const r of results) {
         expect(typeof r.sectionTitle).toBe('string');
         expect(typeof r.pageStart).toBe('number');
         expect(typeof r.pageEnd).toBe('number');
         expect(typeof r.score).toBe('number');
+        expect(typeof r.rawScore).toBe('number');
         expect(Array.isArray(r.topChunks)).toBe(true);
         expect(r.topChunks.length).toBeGreaterThan(0);
       }
+    });
+
+    // A3 — unboosted section scores ─────────────────────────────────────────
+
+    it('A3: section rawScore is the plain average of the top-3 chunk cosines, score carries the boosts', async () => {
+      // ESSENTIAL ITEMS: single chunk, embedding[0]=0.52 → raw cosine 0.416.
+      // Boosted chunk score = 0.416 × 1.10 (exact word) and the section score
+      // adds the ×1.25ⁿ title boost — both strictly above rawScore.
+      const results = await sectionEngine.sectionSearch('essential items', 10);
+      const ess = results.find(r => r.sectionTitle === 'ESSENTIAL ITEMS')!;
+      expect(ess.rawScore).toBeCloseTo(0.8 * 0.52, 5);
+      expect(ess.score).toBeGreaterThan(ess.rawScore);
+      expect(ess.topChunks[0].rawScore).toBeCloseTo(0.8 * 0.52, 5);
+
+      // SECTION X under 'any query': no priority, exact-word or title boost
+      // applies, so rawScore === score === avg(0.3, 0.3, 0.3).
+      const anyQ = await sectionEngine.sectionSearch('any query', 10);
+      const x = anyQ.find(r => r.sectionTitle === 'SECTION X')!;
+      expect(x.rawScore).toBeCloseTo(0.3, 5);
+      expect(x.score).toBeCloseTo(0.3, 5);
     });
 
     // Fix 1 ──────────────────────────────────────────────────────────────────

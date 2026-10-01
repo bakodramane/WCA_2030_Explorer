@@ -25,10 +25,27 @@ export const QA_THRESHOLD = 0.60;
 
 /**
  * Hard-coded default for section-level (enumeration) queries.
- * Lower than the lookup default because section scores are averaged across
- * multiple chunks, so fewer scores reach the high end of the range.
+ *
+ * A3: this now gates on the **rawScore** (plain cosine, no priority/exact-word/
+ * title boosts), so the value had to move: with boosts masking raw similarity,
+ * 0.35 was reachable by off-topic questions (C4 — "GDP of Nigeria" style).
+ * Measured over the 60-question off-topic fixture, the highest raw cosine any
+ * off-topic question reaches is 0.442 ("most popular social media platform");
+ * 0.45 is therefore the lowest clean threshold at which ALL off-topic
+ * questions are refused. Phase C re-tunes this against the gold set.
  */
-export const ENUM_CONFIDENCE_THRESHOLD = 0.35;
+export const ENUM_CONFIDENCE_THRESHOLD = 0.45;
+
+/**
+ * A3: a lexical (BM25) fallback answer is only accepted when the query is
+ * ALSO semantically plausible — the best semantic raw cosine must reach this
+ * floor. Measured: off-topic questions that leak through BM25 all sit below
+ * 0.32 raw, while genuine keyword queries land above it. BM25 alone can score
+ * highly on incidental shared vocabulary (running headers, common words),
+ * so the raw-cosine floor is a second gate on top of MIN_LEXICAL_SCORE and
+ * the domain-term gate in RetrievalEngine.lexicalSearch().
+ */
+export const LEXICAL_SEMANTIC_FLOOR = 0.32;
 
 /**
  * Read the lookup threshold at call time.
@@ -75,11 +92,16 @@ function readEnumThreshold(): number {
 /**
  * Three-tier answer cascade:
  *
- * 1. If any semantic result has score ≥ threshold  → return those as answered.
+ * 1. If any semantic result has rawScore ≥ threshold → return those as answered.
  * 2. Otherwise call `lexicalFallback()` lazily     → if it returns ≥ 1 result,
  *    return those as answered (matchType:'lexical').
  * 3. If both fail                                  → answered:false with
  *    sectionsSearched from both attempts, combined and deduplicated.
+ *
+ * A3: the semantic pass compares the **rawScore** (plain cosine similarity),
+ * NOT the boosted ranking score. Boosts (priority ×1.15, exact-word ×1.10,
+ * title ×1.25ⁿ) may reorder results but must never turn a refusal into an
+ * answer — that was audit finding C4.
  *
  * `lexicalFallback` is invoked lazily — it is never called when semantic passes.
  */
@@ -90,14 +112,19 @@ export function evaluate(
 ): GuardrailResponse {
   const threshold = mode === 'enum' ? readEnumThreshold() : readThreshold();
 
-  // ── (1) Semantic pass ────────────────────────────────────────────────────
-  const semanticPassing = semanticResults.filter(r => r.score >= threshold);
+  // ── (1) Semantic pass — gate on the UNBOOSTED score (A3) ──────────────────
+  const semanticPassing = semanticResults.filter(r => r.rawScore >= threshold);
   if (semanticPassing.length > 0) {
     return { answered: true, results: semanticPassing };
   }
 
   // ── (2) Lexical fallback ─────────────────────────────────────────────────
-  const lexicalResults = lexicalFallback();
+  // A3: BM25 matches can fire on incidental vocabulary (running headers,
+  // generic words), so a lexical answer additionally requires the query to
+  // be semantically plausible: the best semantic raw cosine must reach
+  // LEXICAL_SEMANTIC_FLOOR. Below it, the cascade refuses outright.
+  const bestRaw = semanticResults.reduce((m, r) => Math.max(m, r.rawScore), 0);
+  const lexicalResults = bestRaw >= LEXICAL_SEMANTIC_FLOOR ? lexicalFallback() : [];
   if (lexicalResults.length > 0) {
     return { answered: true, results: lexicalResults };
   }

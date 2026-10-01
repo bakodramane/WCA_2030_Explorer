@@ -149,6 +149,28 @@ export class RetrievalEngine {
     this.index.addAll(
       raw.map(({ id, text, sectionTitle }): IndexDoc => ({ id, text, sectionTitle })),
     );
+
+    // A3: corpus-derived domain-term allow-list. Document frequency of every
+    // content term (≥5 chars, not a stop word) across chunks; terms occurring
+    // in at least ~5% of the chunks (min 2, so small test corpora still build
+    // an allow-list) form the corpus's characteristic vocabulary. This is the
+    // data-driven "not a common English word" filter: generic English words
+    // that merely occur in the corpus (e.g. "before", "final") stay below it.
+    const minDf = Math.max(2, Math.ceil(raw.length / 20));
+    const df = new Map<string, number>();
+    for (const c of raw) {
+      const terms = new Set<string>();
+      const haystack = (c.text + ' ' + c.sectionTitle).toLowerCase();
+      for (const t of haystack.split(/\W+/)) {
+        if (t.length >= 5 && !STOP_WORDS.has(t)) terms.add(t);
+      }
+      for (const t of terms) df.set(t, (df.get(t) ?? 0) + 1);
+    }
+    this.domainTerms = new Set(
+      [...df.entries()]
+        .filter(([, n]) => n >= minDf)
+        .map(([t]) => t),
+    );
   }
 
   /**
@@ -173,8 +195,12 @@ export class RetrievalEngine {
       const ev = this.vecs[i];
       let dot = 0;
       for (let k = 0; k < DIM; k++) dot += qVec[k] * ev[k];
+      // rawScore = plain cosine (both vectors are L2-normalised). A3: the
+      // guardrail compares rawScore with the threshold; the boosts below only
+      // affect ranking (score), never the answer/refuse decision.
+      let score = dot;
       // 1.15× boost for high-priority regions (Concepts, Essential Items, Glossary).
-      let score = chunk.priority === 'high' ? dot * HIGH_PRIORITY_K : dot;
+      if (chunk.priority === 'high') score *= HIGH_PRIORITY_K;
       // 1.10× exact-match boost when the chunk's verbatim text contains at least
       // one content word from the query.  Stacks with the priority boost so
       // e.g. a high-priority chunk that also mentions "holder" gets ×1.15×1.10.
@@ -184,14 +210,15 @@ export class RetrievalEngine {
       ) {
         score *= EXACT_MATCH_K;
       }
-      return { chunk, score };
+      return { chunk, score, rawScore: dot };
     });
 
     scored.sort((a, b) => b.score - a.score);
 
-    return scored.slice(0, topK).map(({ chunk, score }) => ({
+    return scored.slice(0, topK).map(({ chunk, score, rawScore }) => ({
       chunk,
       score,
+      rawScore,
       matchType: 'semantic' as const,
     }));
   }
@@ -206,19 +233,50 @@ export class RetrievalEngine {
    */
   private static readonly MIN_LEXICAL_SCORE = 8;
 
+  /** Corpus-characteristic content terms (built from document frequency in
+   *  init() — terms in ≥ ~1% of chunks, min 2; see A3). Lexical fallback
+   *  results require at least one of the query's domain terms to appear in
+   *  the matched chunk. */
+  private domainTerms: Set<string> = new Set();
+
+  /** Test hook: the corpus-derived domain-term allow-list built in init(). */
+  getDomainTerms(): Set<string> {
+    return this.domainTerms;
+  }
+
   lexicalSearch(query: string, topK = 5): RankedResult[] {
+    // A3: lexical fallback gate — the query must contain at least TWO distinct
+    // content words of 5+ characters that are corpus-characteristic domain
+    // terms, and the matched chunk must contain both. Measured on the
+    // off-topic fixture: a single shared word (even a frequent one like
+    // "population" or the running-header "world") is not evidence that a
+    // question belongs to the WCA domain; two distinct domain terms is.
+    const gateWords = query
+      .toLowerCase()
+      .split(/\W+/)
+      .filter(t => t.length >= 5 && !STOP_WORDS.has(t) && this.domainTerms.has(t));
+    if (gateWords.length < 2) return [];
+
     const hits  = this.index.search(query, { prefix: true, fuzzy: 0.2 });
     const byId  = new Map(this.chunks.map(c => [c.id, c]));
 
     return hits
       .filter(r => (r.score as number) >= RetrievalEngine.MIN_LEXICAL_SCORE)
-      .slice(0, topK)
       .filter(r => byId.has(r.id as string))
       .map(r => ({
         chunk:     byId.get(r.id as string)!,
         score:     r.score,
+        // Lexical scores are BM25, not cosine; the guardrail does not
+        // threshold-check lexical results (MIN_LEXICAL_SCORE + the gate above
+        // play that role), so rawScore mirrors the score for type completeness.
+        rawScore:  r.score,
         matchType: 'lexical' as const,
-      }));
+      }))
+      .filter(r => {
+        const text = r.chunk.text.toLowerCase();
+        return gateWords.every(w => text.includes(w));
+      })
+      .slice(0, topK);
   }
 
   /**
@@ -244,7 +302,7 @@ export class RetrievalEngine {
     // Group chunk results by sectionTitle, preserving descending-score order
     // within each group (since allResults is already sorted descending).
     const sectionMap = new Map<string, {
-      scored: Array<{ chunk: Chunk; score: number }>;
+      scored: Array<{ chunk: Chunk; score: number; rawScore: number }>;
       pages:  number[];
     }>();
 
@@ -252,7 +310,7 @@ export class RetrievalEngine {
       const key = r.chunk.sectionTitle;
       if (!sectionMap.has(key)) sectionMap.set(key, { scored: [], pages: [] });
       const s = sectionMap.get(key)!;
-      s.scored.push({ chunk: r.chunk, score: r.score });
+      s.scored.push({ chunk: r.chunk, score: r.score, rawScore: r.rawScore });
       s.pages.push(r.chunk.printedPage);
     }
 
@@ -277,6 +335,10 @@ export class RetrievalEngine {
       const top3     = scored.slice(0, 3);
       // Fix 1: average of top-3 (not sum) so section size cannot inflate score.
       const avgScore = top3.reduce((sum, c) => sum + c.score, 0) / top3.length;
+      // A3: plain-cosine section score — average of the top-3 rawScores with
+      // no priority, exact-word or title boosts. The guardrail compares THIS
+      // value; the boosted score above only ranks sections.
+      const rawScore = top3.reduce((sum, c) => sum + c.rawScore, 0) / top3.length;
 
       // Fix 3: compound title boost — multiply by 1.25 for each content word
       // from the query that appears in the section title.  A title matching
@@ -290,9 +352,11 @@ export class RetrievalEngine {
         pageStart,
         pageEnd,
         score,
+        rawScore,
         topChunks: top3.map(c => ({
           chunk:     c.chunk,
           score:     c.score,
+          rawScore:  c.rawScore,
           matchType: 'semantic' as const,
         })),
       });
@@ -306,6 +370,7 @@ export class RetrievalEngine {
         pageStart:    r.chunk.printedPage,
         pageEnd:      r.chunk.printedPage,
         score:        r.score,
+        rawScore:     r.rawScore,
         topChunks:    [r],
       }));
     }
