@@ -648,7 +648,7 @@ export class App {
             `<span class="learn-module-count">${done}/${total}</span>` +
           `</div>` +
           `<p class="learn-module-desc">${escHtml(mod.description)}</p>` +
-          `<div class="learn-prog-track" role="progressbar" aria-valuenow="${done}" aria-valuemax="${total}">` +
+          `<div class="learn-prog-track" role="progressbar" aria-label="${escHtml(mod.title)} progress" aria-valuemin="0" aria-valuenow="${done}" aria-valuemax="${total}">` +
             `<div class="learn-prog-fill" style="width:${pct.toFixed(1)}%"></div>` +
           `</div>`;
 
@@ -687,6 +687,8 @@ export class App {
       const stepTrack = document.createElement('div');
       stepTrack.className = 'learn-step-track';
       stepTrack.setAttribute('role', 'progressbar');
+      stepTrack.setAttribute('aria-label', 'Question progress');
+      stepTrack.setAttribute('aria-valuemin', '0');
       stepTrack.setAttribute('aria-valuenow', String(idx + 1));
       stepTrack.setAttribute('aria-valuemax', String(total));
       const stepFill = document.createElement('div');

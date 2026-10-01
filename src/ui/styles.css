@@ -41,7 +41,7 @@
   --surface:   #ffffff;
   --ink:       #1a1a1a;
   --accent:    #1a3a2a;
-  --muted:     #6b7280;
+  --muted:     #555e6b;  /* D4: 5.8:1 on --bg (was #6b7280, 4.26:1) */
   --warn:      #92400e;
   --warn-bg:   #fffbeb;
   --border:    #d1c9b8;
@@ -1457,7 +1457,7 @@ body {
   margin-left: auto;
   margin-right: 0.5rem;
 }
-.test-tally-known  { color: #16a34a; font-weight: 700; }
+.test-tally-known  { color: #166534; font-weight: 700; }
 .test-tally-review { color: var(--warn); font-weight: 700; }
 .test-tally-total  { color: var(--muted); }
 .test-tally-sep    { color: var(--muted); }
@@ -2016,4 +2016,40 @@ body {
   font-size: 0.72rem;
   color: var(--accent);
   text-decoration: underline;
+}
+
+/* ── D4: touch targets, footer wrapping ─────────────────────────────── */
+.app-footer { flex-wrap: wrap; }
+.log-controls { display: inline-flex; flex-wrap: wrap; gap: 0.25rem 0.5rem; }
+
+.copy-btn,
+.footer-link,
+.log-export-btn,
+.log-clear-btn,
+.intro-toggle,
+.modal-close,
+.learn-reset-btn,
+.not-found-action-btn,
+.excerpt-toggle,
+.modal-show-more {
+  min-height: 44px;
+  min-width: 44px;
+}
+.footer-link, .intro-toggle, .learn-reset-btn { display: inline-flex; align-items: center; }
+.modal-filter-input { min-height: 44px; }
+.log-export-btn, .log-clear-btn { display: inline-flex; align-items: center; justify-content: center; }
+.modal-close { display: inline-flex; align-items: center; justify-content: center; }
+
+.chip { min-height: 44px; }
+
+/* D4: on phones the filter pills form one row that scrolls sideways instead of wrapping into many lines. */
+@media (max-width: 600px) {
+  .filter-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    padding-bottom: 0.8rem;
+  }
+  .filter-pill { flex: 0 0 auto; min-height: 44px; scroll-snap-align: start; }
 }
