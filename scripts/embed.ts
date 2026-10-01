@@ -11,8 +11,10 @@ const ROOT         = process.cwd();
 const CACHE_DIR    = path.join(ROOT, '.cache');
 const PUBLIC_MODELS= path.join(ROOT, 'public', 'models');
 const PUBLIC_DATA  = path.join(ROOT, 'public', 'data');
-const CHUNKS_RAW   = path.join(ROOT, 'src', 'data', 'chunks-raw.json');
-const CHUNKS_OUT   = path.join(PUBLIC_DATA, 'chunks.json');
+// WCA_CHUNKS_RAW / WCA_CHUNKS_OUT embed an experimental variant (scripts/eval.ts) and leave the shipped files alone.
+const VARIANT      = !!process.env.WCA_CHUNKS_OUT;
+const CHUNKS_RAW   = process.env.WCA_CHUNKS_RAW ?? path.join(ROOT, 'src', 'data', 'chunks-raw.json');
+const CHUNKS_OUT   = process.env.WCA_CHUNKS_OUT ?? path.join(PUBLIC_DATA, 'chunks.json');
 
 // ── Configure transformers ──────────────────────────────────────────────────────
 // Offline-first (§0.3 of the improvement brief): the model ships in
@@ -76,7 +78,7 @@ async function main(): Promise<void> {
   console.log(`Chunks: ${rawChunks.length}; previous index: ${previous.length}; window scheme ${WINDOW_SCHEME}`);
   const { chunks, reused, embedded, windows } = await embedChunkWindows(rawChunks, previous, write);
 
-  fs.mkdirSync(PUBLIC_DATA, { recursive: true });
+  fs.mkdirSync(path.dirname(CHUNKS_OUT), { recursive: true });
   write(chunks);
   const mb = (fs.statSync(CHUNKS_OUT).size / 1024 / 1024).toFixed(1);
 
@@ -89,6 +91,7 @@ async function main(): Promise<void> {
   // ── model-meta.json (B5: version = content hash of the index files) ──────────
   // qa/items/glossary may be rebuilt afterwards; scripts/write-meta.ts (the last
   // build-index step) re-stamps it.
+  if (VARIANT) { console.log(`Variant written to ${CHUNKS_OUT}`); return; }
   const meta = writeModelMeta(ROOT);
 
   // ── Summary ─────────────────────────────────────────────────────────────────

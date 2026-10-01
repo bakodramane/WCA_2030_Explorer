@@ -284,6 +284,13 @@ execSync('npx tsx scripts/embed.ts',  { stdio: 'inherit' });
 
 Implement a `RetrievalEngine` class:
 
+> **C-phase update.** The answer cascade (exact lookups → curated Q&A → document search → guardrail) lives in
+> `src/engine/answer.ts` and is shared by the UI and `scripts/eval.ts`. Document search ranks chunks by the raw
+> cosine of their best 200-token window (at most two per section), a result must mention every named entity in
+> the question (`src/engine/entities.ts`), and terse queries made only of domain vocabulary
+> (`src/engine/vocabulary.ts`) may be answered by the BM25 fallback. All thresholds are in `src/engine/config.ts`
+> with the measurements behind them; `npm run eval` regenerates `reports/eval-latest.md`.
+
 ### Types (`src/engine/types.ts`)
 ```ts
 export interface Chunk {
@@ -331,7 +338,7 @@ Write unit tests in `tests/retrieval.test.ts` with mock embeddings verifying: co
 ## Phase 5 — Guardrail (`src/engine/guardrail.ts`)
 
 ```ts
-export const CONFIDENCE_THRESHOLD = 0.42; // tune after manual testing
+export const CONFIDENCE_THRESHOLD = 0.42; // see src/engine/config.ts for the tuned cascade thresholds (C3)
 
 export interface GuardrailResponse {
   answered: boolean;

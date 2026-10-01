@@ -6,7 +6,7 @@ import {
   type ChunkOutlineEntry,
 } from './lib/assign-section';
 import { buildHeadingMatcher } from './lib/headings';
-import { packUnits } from './lib/pack';
+import { DEFAULT_PACK, packUnits } from './lib/pack';
 import { extractPdfLines } from './lib/pdf-lines';
 import { stripPageFurniture } from './lib/strip-furniture';
 import { splitIntoUnits } from './lib/units';
@@ -17,7 +17,12 @@ function wordCount(text: string): number {
 
 async function main(): Promise<void> {
   const pdfPath = path.join(process.cwd(), 'source', 'Census-2030_EN-DTP-9.pdf');
-  const outPath = path.join(process.cwd(), 'src', 'data', 'chunks-raw.json');
+  // WCA_MAX_WORDS / WCA_MIN_TARGET_WORDS / WCA_CHUNKS_RAW build experimental variants (see scripts/eval.ts).
+  const outPath = process.env.WCA_CHUNKS_RAW ?? path.join(process.cwd(), 'src', 'data', 'chunks-raw.json');
+  const pack = {
+    maxWords: Number(process.env.WCA_MAX_WORDS ?? DEFAULT_PACK.maxWords),
+    minTargetWords: Number(process.env.WCA_MIN_TARGET_WORDS ?? DEFAULT_PACK.minTargetWords),
+  };
   const outline = OUTLINE_JSON as ChunkOutlineEntry[];
   const glossary = outline.find(entry => entry.kind === 'glossary');
   if (!glossary) throw new Error('Glossary range is missing from outline.json');
@@ -31,7 +36,7 @@ async function main(): Promise<void> {
   });
   // B2.1: the References list (authors, places, titles) would match off-topic queries; keep it out of the index.
   const assigned = assignUnitsToSections(units, outline).filter(unit => unit.chapterLabel !== 'References');
-  const chunks = packUnits(assigned);
+  const chunks = packUnits(assigned, pack);
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, `${JSON.stringify(chunks, null, 2)}\n`, 'utf-8');

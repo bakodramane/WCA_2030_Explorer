@@ -83,49 +83,73 @@ npm run dev
 ### Running tests
 
 ```bash
-npm test
-# 20 tests across 3 files — chunking, retrieval, guardrail
+npm test          # unit, data, and regression tests (loads the real offline model)
+npm run eval      # full-cascade evaluation → reports/eval-latest.md (see §3)
 ```
 
 ---
 
 ## 3. Threshold tuning
 
-The confidence threshold controls how selective the semantic search is before
-falling back to keyword search or returning a not-found response.
+All thresholds live in `src/engine/config.ts`, each with the measurement that justifies it. They are
+chosen with `npm run eval`, which runs the real answer cascade (`src/engine/answer.ts`, the same code the
+UI runs) over `tests/fixtures/` and writes `reports/eval-latest.md`.
 
-**Default value:** `0.42`
+| Threshold | Value | Meaning | localStorage override |
+|---|---|---|---|
+| `ENUM_CONFIDENCE_THRESHOLD` | **0.52** | Document search: minimum raw cosine of a chunk's best 200-token window. | `wca_enum_threshold` |
+| `QA_THRESHOLD` | **0.80** | Curated Q&A: minimum question-to-question cosine. | `wca_qa_threshold` |
+| `LEXICAL_SEMANTIC_FLOOR` | **0.38** | A keyword (BM25) answer also needs this semantic score, unless the query is only domain vocabulary. | — |
+| `CONFIDENCE_THRESHOLD` | 0.42 | Lookup mode (not used by the main cascade). | `wca_threshold` |
+
+**Method.** Thresholds are chosen on the *tuning* off-topic set (`off-topic.json`, 60 questions) and the
+*gold* in-domain set (`gold.json`, 140 questions: 80 reworded curated questions, 40 new questions written
+from the PDF, 20 short domain queries): zero false answers on the tuning set, then the highest gold
+recall@5. The two held-out sets (`off-topic-heldout.json`, `off-topic-heldout2.json`, 36 questions each, 10
+near-domain traps in each) are reported and never tuned against. The sweeps in `reports/eval-latest.md`
+justify each value:
+
+- **Semantic threshold 0.52** is the lowest value that refuses all 60 tuning questions (the highest-scoring
+  one reaches 0.505). Recall@5 of the document tier alone is 87.9 % at 0.52 against 90.0 % at 0.30.
+- **Q&A threshold 0.80:** at the former 0.60 a related but different curated row answered 27 of the 40 new
+  questions with the wrong excerpt (recall@5 70 %); 0.80 gives the best gold recall@5 of the sweep.
+- **Lexical floor 0.38** is the middle of the 0.34–0.42 plateau (0.30 lets one tuning question through).
+
+**Results** (full cascade): gold recall@5 **94.3 %** (reworded 96.3 %, new 90.0 %, short 95.0 %), recall@1
+83.6 %, top citation correct for 83.6 % of answers; tuning false answers **0/60**; held-out false answers
+2/36 on each held-out set (5.6 %), near-domain traps 2/10 and 1/10. The remaining false answers are real
+topic overlaps (the aquaculture passage on water salinity matches "Which ocean is the saltiest?"; the
+pesticide definition matches "What pesticide kills aphids on beans?"), which an embedding threshold cannot
+separate from in-domain questions. At 0.54 the same cascade reaches 90.7 % recall@5 with 1/36 held-out
+leaks on both sets.
 
 **Live tuning via DevTools** (no rebuild needed):
 
 ```js
-// Lower the threshold to surface more borderline results
-localStorage.setItem('wca_threshold', '0.38')
-
-// Raise it to be more selective
-localStorage.setItem('wca_threshold', '0.60')
-
-// Restore default
-localStorage.removeItem('wca_threshold')
+localStorage.setItem('wca_enum_threshold', '0.56')   // stricter document search
+localStorage.setItem('wca_qa_threshold', '0.85')     // stricter curated matches
+localStorage.removeItem('wca_enum_threshold')        // restore the default
 ```
 
-Then reload the page — the new threshold takes effect on the next query.
+Reload the page; the new value applies to the next query.
+
+**Re-tuning after a data change.** Run `npm run eval`, read the three sweep tables, move the value in
+`config.ts`, and re-run. `tests/eval-regression.test.ts` fails if gold recall@5 falls more than 3 points below
+`tests/fixtures/eval-baseline.json` or if a tuning off-topic question is answered; update the baseline
+deliberately, with a changelog line.
 
 ### How the cascade works
 
-1. **Semantic search** — if the top cosine-similarity score (with 1.15× boost for
-   high-priority chunks) meets the threshold, those results are returned.
-2. **Lexical fallback** — if semantic fails, MiniSearch BM25 search runs.
-   Only results scoring ≥ 8 BM25 points are accepted (prevents false positives
-   from incidental word overlap on off-topic queries).
-3. **Not-found response** — if both fail, the guardrail card is shown with a
-   deduplicated list of sections searched.
-
-> **Note:** raising the threshold for an on-topic query (e.g. `'0.99'` for
-> "agricultural holding") will cause the semantic pass to fail but the lexical
-> fallback will still answer it, since "agricultural" and "holding" score ≫ 8 in
-> BM25. To force the not-found card, the query must also fail the keyword search —
-> for example "What is the capital of France?" fails both at any threshold.
+1. **Exact lookups** — an item code (`0903`), a glossary term, or a figure/table reference.
+2. **Curated Q&A** — the closest curated question, if its cosine reaches `QA_THRESHOLD` *and* the row mentions
+   every named entity in the question.
+3. **Document search** — chunks ranked by the raw cosine of their best 200-token window (at most two per
+   section). A chunk answers when its score reaches `ENUM_CONFIDENCE_THRESHOLD` and it mentions every named
+   entity in the question ("Nigeria", "Kenya": entity grounding, `src/engine/entities.ts`).
+4. **Lexical fallback** — MiniSearch BM25 (≥ 8 points) for queries made of domain vocabulary (glossary terms,
+   outline titles, item names, curated questions) or at least two corpus-characteristic terms, subject to
+   `LEXICAL_SEMANTIC_FLOOR`.
+5. **Not-found** — the guardrail card, with the sections searched.
 
 ---
 

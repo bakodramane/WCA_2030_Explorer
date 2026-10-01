@@ -3,19 +3,20 @@ import { pipeline, env } from '@xenova/transformers';
 import type { Chunk, RankedResult, SectionResult, SectionDebugEntry, QaRow, QaResult, ItemRow, GlossaryEntry, LearningModule, FigureTableEntry } from './types';
 import { STOP_WORDS } from './stopwords';
 import { expandQuery } from './query';
+import { OUTLINE } from './outline';
+import { QA_THRESHOLD } from './config';
+import { buildVocabulary, contentWords, isDomainVocabularyQuery, stemWord } from './vocabulary';
 
-// Keep in sync with guardrail.QA_THRESHOLD — duplicated here to avoid a
-// module-load-order issue that makes the export undefined in the vitest environment
-// when retrieval.ts's vi.mock('@xenova/transformers') is hoisted.
-const DEFAULT_QA_THRESHOLD = 0.60;
+// `import.meta.env` is injected by Vite; it is absent when scripts run under tsx (npm run eval).
+const BASE_URL: string = (import.meta as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? '/';
 
 // ── Offline-first configuration ───────────────────────────────────────────────
 // Set before any pipeline() call so the browser loads everything from the
 // service-worker-cached models/ path and never reaches the network.
-// import.meta.env.BASE_URL is injected by Vite at build time (e.g.
+// BASE_URL is injected by Vite at build time (e.g.
 // '/WCA_2030_Explorer/' on GitHub Pages, '/' in local dev) so the paths
 // resolve correctly regardless of the deployment subdirectory.
-(env as Record<string, unknown>).localModelPath    = import.meta.env.BASE_URL + 'models/';
+(env as Record<string, unknown>).localModelPath    = BASE_URL + 'models/';
 (env as Record<string, unknown>).allowRemoteModels = false;
 
 // Override the ONNX Runtime WASM file path. The library defaults to the
@@ -23,7 +24,7 @@ const DEFAULT_QA_THRESHOLD = 0.60;
 try {
   const backends = (env as any).backends;
   if (backends?.onnx?.wasm) {
-    backends.onnx.wasm.wasmPaths = import.meta.env.BASE_URL + 'models/';
+    backends.onnx.wasm.wasmPaths = BASE_URL + 'models/';
   }
 } catch { /* env.backends not present in test mock — safe to ignore */ }
 
@@ -59,7 +60,7 @@ function readQaThreshold(): number {
       if (Number.isFinite(v) && v > 0 && v < 1) return v;
     }
   } catch { /* no localStorage in Node test env */ }
-  return DEFAULT_QA_THRESHOLD;
+  return QA_THRESHOLD;
 }
 
 // ── RetrievalEngine ───────────────────────────────────────────────────────────
@@ -91,7 +92,7 @@ export class RetrievalEngine {
    */
   async init(): Promise<void> {
     // 1. Load the content index (fetch works in both browser and test contexts)
-    const res = await fetch(import.meta.env.BASE_URL + 'data/chunks.json');
+    const res = await fetch(BASE_URL + 'data/chunks.json');
     const raw: Chunk[] = await res.json();
 
     this.chunks = raw;
@@ -103,7 +104,7 @@ export class RetrievalEngine {
 
     // 1b. Load the curated Q&A index
     try {
-      const qaRes = await fetch(import.meta.env.BASE_URL + 'data/qa.json');
+      const qaRes = await fetch(BASE_URL + 'data/qa.json');
       const qaRaw: QaRow[] = await qaRes.json();
       this.qaItems = qaRaw;
       this.qaVecs  = qaRaw.map(r => new Float32Array(r.embedding));
@@ -115,7 +116,7 @@ export class RetrievalEngine {
 
     // 1c. Load the item catalogue
     try {
-      const itemsRes = await fetch(import.meta.env.BASE_URL + 'data/items.json');
+      const itemsRes = await fetch(BASE_URL + 'data/items.json');
       this.items = await itemsRes.json();
     } catch {
       this.items = [];
@@ -123,7 +124,7 @@ export class RetrievalEngine {
 
     // 1d. Load the glossary
     try {
-      const glossaryRes = await fetch(import.meta.env.BASE_URL + 'data/glossary.json');
+      const glossaryRes = await fetch(BASE_URL + 'data/glossary.json');
       this.glossary = await glossaryRes.json();
     } catch {
       this.glossary = [];
@@ -131,7 +132,7 @@ export class RetrievalEngine {
 
     // 1e. Load the figures and tables index
     try {
-      const ftRes = await fetch(import.meta.env.BASE_URL + 'data/figures-tables.json');
+      const ftRes = await fetch(BASE_URL + 'data/figures-tables.json');
       this.figuresTables = await ftRes.json();
     } catch {
       this.figuresTables = [];
@@ -174,6 +175,15 @@ export class RetrievalEngine {
         .filter(([, n]) => n >= minDf)
         .map(([t]) => t),
     );
+
+    // C0.2: vocabulary of the document's own terms: glossary terms, outline titles, item names,
+    // and the curated questions (expert-written domain language).
+    this.vocabulary = buildVocabulary([
+      ...this.glossary.map(g => g.term),
+      ...OUTLINE.map(e => e.title),
+      ...this.items.map(i => i.name),
+      ...this.qaItems.map(q => q.question),
+    ]);
   }
 
   /**
@@ -246,6 +256,14 @@ export class RetrievalEngine {
    *  the matched chunk. */
   private domainTerms: Set<string> = new Set();
 
+  /** C0.2: stems of every word in glossary terms, outline titles, and item names. */
+  private vocabulary: Set<string> = new Set();
+
+  /** True when every content word of the query is domain vocabulary (see vocabulary.ts). */
+  isVocabularyQuery(query: string): boolean {
+    return isDomainVocabularyQuery(query, this.vocabulary);
+  }
+
   /** Test hook: the corpus-derived domain-term allow-list built in init(). */
   getDomainTerms(): Set<string> {
     return this.domainTerms;
@@ -258,11 +276,15 @@ export class RetrievalEngine {
     // off-topic fixture: a single shared word (even a frequent one like
     // "population" or the running-header "world") is not evidence that a
     // question belongs to the WCA domain; two distinct domain terms is.
-    const gateWords = query
+    const termWords = query
       .toLowerCase()
       .split(/\W+/)
       .filter(t => t.length >= 5 && !STOP_WORDS.has(t) && this.domainTerms.has(t));
-    if (gateWords.length < 2) return [];
+    // C0.2: a terse query made only of domain vocabulary also passes; the matched chunk
+    // must contain every one of its words (compared by stem).
+    const vocabQuery = termWords.length < 2 && this.isVocabularyQuery(query);
+    const gateWords = vocabQuery ? contentWords(query).map(stemWord) : termWords;
+    if (gateWords.length < 2 && !vocabQuery) return [];
 
     const hits  = this.index.search(query, { prefix: true, fuzzy: 0.2 });
     const byId  = new Map(this.chunks.map(c => [c.id, c]));
@@ -402,14 +424,23 @@ export class RetrievalEngine {
    *
    * Embeds the query and computes cosine similarity (dot product of normalised
    * vectors) against every pre-embedded question in qa.json.  Returns the
-   * best-matching row only if its score meets or exceeds QA_THRESHOLD (default
-   * 0.60, tunable via localStorage 'wca_qa_threshold').
+   * best-matching row only if its score meets or exceeds QA_THRESHOLD (config.ts,
+   * tunable via localStorage 'wca_qa_threshold').
    *
    * Returns null when:
    *   • qa.json was not loaded (graceful degradation)
    *   • no match meets the threshold
    */
   async qaSearch(query: string): Promise<QaResult | null> {
+    const best = await this.qaBest(query);
+    return best && best.score >= readQaThreshold() ? best : null;
+  }
+
+  /**
+   * The closest curated question and its cosine similarity, with no threshold applied
+   * (the eval sweeps the threshold). Null when qa.json was not loaded.
+   */
+  async qaBest(query: string): Promise<QaResult | null> {
     if (this.qaItems.length === 0) return null;
 
     // Use the raw query — no synonym expansion — because the stored Q&A embeddings
@@ -427,10 +458,7 @@ export class RetrievalEngine {
       for (let k = 0; k < DIM; k++) dot += qVec[k] * ev[k];
       if (dot > bestScore) { bestScore = dot; bestIndex = i; }
     }
-
-    const threshold = readQaThreshold();
-    if (bestIndex < 0 || bestScore < threshold) return null;
-    return { row: this.qaItems[bestIndex], score: bestScore };
+    return bestIndex < 0 ? null : { row: this.qaItems[bestIndex], score: bestScore };
   }
 
   /** Returns all question strings from the curated Q&A bank, in load order. */

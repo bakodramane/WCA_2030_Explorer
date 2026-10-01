@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { evaluate, CONFIDENCE_THRESHOLD, ENUM_CONFIDENCE_THRESHOLD } from '../src/engine/guardrail';
+import { evaluate, CONFIDENCE_THRESHOLD, ENUM_CONFIDENCE_THRESHOLD, LEXICAL_SEMANTIC_FLOOR, QA_THRESHOLD } from '../src/engine/guardrail';
 import type { RankedResult } from '../src/engine/types';
 
 // QA threshold constants — hardcoded here to avoid a vitest module-init ordering
 // issue that arises because retrieval.test.ts hoists a vi.mock for @xenova/transformers,
 // which can leave guardrail.ts's newer exports undefined in the same test run.
-// The source of truth remains guardrail.QA_THRESHOLD = 0.60.
-const QA_THRESHOLD_VALUE    = 0.60;
-const QA_THRESHOLD_EXPECTED = 0.60; // keep in sync with guardrail.QA_THRESHOLD
+// The source of truth is src/engine/config.ts.
+const QA_THRESHOLD_VALUE    = QA_THRESHOLD;
+const QA_THRESHOLD_EXPECTED = QA_THRESHOLD;
 
 // ── Helper ─────────────────────────────────────────────────────────────────────
 
@@ -81,10 +81,10 @@ describe('guardrail — evaluate()', () => {
   // ── 2. Semantic fails — lexical saves ────────────────────────────────────────
 
   it('falls back to lexical and returns answered:true when semantic score is below threshold', () => {
-    // A3: semantic raws 0.34/0.33 are below the 0.42 lookup threshold, so the
-    // semantic tier fails — but they clear the 0.32 LEXICAL_SEMANTIC_FLOOR,
-    // so the lexical fallback is allowed to answer.
-    const sem = [mkResult(0.34, { id: 'a' }), mkResult(0.33, { id: 'b' })];
+    // A3: semantic raws just above the LEXICAL_SEMANTIC_FLOOR are below the 0.42 lookup
+    // threshold, so the semantic tier fails — but they clear the floor, so the lexical
+    // fallback is allowed to answer.
+    const sem = [mkResult(LEXICAL_SEMANTIC_FLOOR + 0.02, { id: 'a' }), mkResult(LEXICAL_SEMANTIC_FLOOR + 0.01, { id: 'b' })];
     const lexResult = mkResult(12.5, { id: 'lex1', section: 'Lexical Hit', matchType: 'lexical' });
     const lexFallback = vi.fn(() => [lexResult]);
 
@@ -103,10 +103,10 @@ describe('guardrail — evaluate()', () => {
     evaluate([mkResult(0.9, { id: 'a' })], lexFallback);
     expect(lexFallback).not.toHaveBeenCalled();
 
-    // Semantic fails at 0.1 raw (but ≥ the 0.32 lexical floor), so the
+    // Semantic fails at 0.1 raw (but ≥ the lexical floor), so the
     // fallback is invoked. A3: below the floor the fallback is never called.
     const lexFallback2 = vi.fn(() => [mkResult(5, { matchType: 'lexical' })]);
-    evaluate([mkResult(0.35, { id: 'b' })], lexFallback2);
+    evaluate([mkResult(LEXICAL_SEMANTIC_FLOOR + 0.01, { id: 'b' })], lexFallback2);
     expect(lexFallback2).toHaveBeenCalledOnce();
 
     const lexFallback3 = vi.fn(() => [mkResult(5, { matchType: 'lexical' })]);
@@ -284,11 +284,11 @@ describe('guardrail — evaluate()', () => {
 // CONFIDENCE_THRESHOLD (0.42) and ENUM_CONFIDENCE_THRESHOLD (0.35).
 
 describe('QA tier gate', () => {
-  it('QA_THRESHOLD (0.60) is higher than CONFIDENCE_THRESHOLD to avoid false Q&A hits', () => {
+  it('QA_THRESHOLD is higher than CONFIDENCE_THRESHOLD to avoid false Q&A hits', () => {
     expect(QA_THRESHOLD_VALUE).toBeGreaterThan(CONFIDENCE_THRESHOLD);
   });
 
-  it('QA_THRESHOLD (0.60) is higher than ENUM_CONFIDENCE_THRESHOLD', () => {
+  it('QA_THRESHOLD is higher than ENUM_CONFIDENCE_THRESHOLD', () => {
     expect(QA_THRESHOLD_VALUE).toBeGreaterThan(ENUM_CONFIDENCE_THRESHOLD);
   });
 

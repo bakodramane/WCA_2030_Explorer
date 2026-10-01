@@ -1,5 +1,5 @@
 import { RetrievalEngine } from '../engine/retrieval';
-import { evaluate }         from '../engine/guardrail';
+import { answerQuery } from '../engine/answer';
 import { deriveGroup, deriveResultGroups } from '../engine/outline';
 import { logQuery, getLog, clearLog, toCSV } from '../engine/logger';
 import { SearchBar }        from './SearchBar';
@@ -1290,123 +1290,56 @@ export class App {
     this.clearResults();
 
     try {
-      // ── Tier 0: exact item-code lookup ─────────────────────────────────────
-      const itemCode = extractItemCode(query);
-      if (itemCode) {
-        const item = this.engine.lookupItem(itemCode);
-        if (item) {
-          logQuery({
-            timestamp: new Date().toISOString(),
-            query,
-            tier:    'item',
-            score:   1,
-            matched: `${item.code} ${item.name}`,
-          });
-          this.showItemCard(item);
-          this.refreshLogControls();
-          return;
+      // The cascade itself lives in src/engine/answer.ts (shared with the eval script).
+      const outcome = await answerQuery(this.engine, query);
+      const now = (): string => new Date().toISOString();
+
+      switch (outcome.tier) {
+        case 'item':
+          logQuery({ timestamp: now(), query, tier: 'item', score: 1, matched: `${outcome.item.code} ${outcome.item.name}` });
+          this.showItemCard(outcome.item);
+          break;
+
+        case 'glossary':
+          logQuery({ timestamp: now(), query, tier: 'glossary', score: 1, matched: outcome.entry.term });
+          this.resultsArea.appendChild(ResultCard.renderGlossary(outcome.entry));
+          break;
+
+        case 'figure-table':
+          logQuery({ timestamp: now(), query, tier: 'figure-table', score: 1, matched: `${outcome.entry.kind} ${outcome.entry.ref}` });
+          this.resultsArea.appendChild(ResultCard.renderFigureTable(outcome.entry));
+          break;
+
+        case 'verified':
+          logQuery({ timestamp: now(), query, tier: 'verified', score: outcome.qa.score, matched: outcome.qa.row.question });
+          this.resultsArea.appendChild(ResultCard.renderQA(outcome.qa, query));
+          break;
+
+        case 'document': {
+          const best = outcome.results[0];
+          logQuery({ timestamp: now(), query, tier: 'document', score: best.score, matched: best.chunk.sectionTitle });
+          const groups = deriveResultGroups(outcome.results);
+          if (groups.length > 1) {
+            this.resultsArea.appendChild(this.buildFilterBar(groups));
+          }
+          for (const r of outcome.results) {
+            const card = ResultCard.render(r, query);
+            card.dataset.group = r.chunk.chapterLabel || deriveGroup(r.chunk.sectionTitle, r.chunk.printedPage);
+            this.resultsArea.appendChild(card);
+          }
+          this.resultsArea.appendChild(this.buildEncouragementNote());
+          break;
         }
-      }
 
-      // ── Tier 0b: glossary exact-match ─────────────────────────────────────
-      const glossaryEntry = this.engine.lookupTerm(query.trim());
-      if (glossaryEntry) {
-        logQuery({
-          timestamp: new Date().toISOString(),
-          query,
-          tier:    'glossary',
-          score:   1,
-          matched: glossaryEntry.term,
-        });
-        this.resultsArea.appendChild(ResultCard.renderGlossary(glossaryEntry));
-        this.refreshLogControls();
-        return;
-      }
-
-      // ── Tier 0c: figure/table lookup ───────────────────────────────────────
-      const ftRef = extractFigureTableRef(query);
-      if (ftRef) {
-        const ftEntry = this.engine.lookupFigureTable(ftRef.kind, ftRef.ref);
-        if (ftEntry) {
-          logQuery({
-            timestamp: new Date().toISOString(),
-            query,
-            tier:    'figure-table',
-            score:   1,
-            matched: `${ftEntry.kind} ${ftEntry.ref}`,
-          });
-          this.resultsArea.appendChild(ResultCard.renderFigureTable(ftEntry));
-          this.refreshLogControls();
-          return;
-        }
-      }
-
-      // ── Tier 1: curated Q&A match ──────────────────────────────────────────
-      const qaResult = await this.engine.qaSearch(query);
-      if (qaResult) {
-        logQuery({
-          timestamp: new Date().toISOString(),
-          query,
-          tier:    'verified',
-          score:   qaResult.score,
-          matched: qaResult.row.question,
-        });
-        this.resultsArea.appendChild(ResultCard.renderQA(qaResult, query));
-        this.refreshLogControls();
-        return;
-      }
-
-      // ── Tier 2: document search ────────────────────────────────────────────
-      const sectionResults = await this.engine.sectionSearch(query, 10);
-      const semanticResults = sectionResults
-        .filter(s => s.topChunks.length > 0)
-        .map(s => ({
-          chunk:     s.topChunks[0].chunk,
-          score:     s.score,
-          rawScore:  s.rawScore, // A3: guardrail gates on this unboosted score
-          matchType: 'semantic' as const,
-        }));
-
-      // ── Tier 3: guardrail ───────────────────────────────────────────────────
-      const response = evaluate(
-        semanticResults,
-        () => this.engine.lexicalSearch(query, 10),
-        'enum',
-      );
-
-      if (response.answered && response.results) {
-        const best = response.results[0];
-        logQuery({
-          timestamp: new Date().toISOString(),
-          query,
-          tier:    'document',
-          score:   best.score,
-          matched: best.chunk.sectionTitle,
-        });
-        const groups = deriveResultGroups(response.results);
-        if (groups.length > 1) {
-          this.resultsArea.appendChild(this.buildFilterBar(groups));
-        }
-        for (const r of response.results) {
-          const card = ResultCard.render(r, query);
-          card.dataset.group = r.chunk.chapterLabel || deriveGroup(r.chunk.sectionTitle, r.chunk.printedPage);
-          this.resultsArea.appendChild(card);
-        }
-        this.resultsArea.appendChild(this.buildEncouragementNote());
-      } else {
-        logQuery({
-          timestamp: new Date().toISOString(),
-          query,
-          tier:    'not-found',
-          score:   0,
-          matched: '',
-        });
-        this.resultsArea.appendChild(ResultCard.renderNotFound(response, {
-          onGlossary: () => this.openGlossaryModal(),
-          onQaBank:   () => this.openQaModal(),
-          onClear:    () => { this.searchBar.setValue(''); this.clearResults(); },
-        }));
-        this.resultsArea.appendChild(this.buildEncouragementNote());
+        case 'not-found':
+          logQuery({ timestamp: now(), query, tier: 'not-found', score: 0, matched: '' });
+          this.resultsArea.appendChild(ResultCard.renderNotFound(outcome.guardrail, {
+            onGlossary: () => this.openGlossaryModal(),
+            onQaBank:   () => this.openQaModal(),
+            onClear:    () => { this.searchBar.setValue(''); this.clearResults(); },
+          }));
+          this.resultsArea.appendChild(this.buildEncouragementNote());
+          break;
       }
       this.refreshLogControls();
 
@@ -1665,32 +1598,6 @@ function escHtml(s: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
-}
-
-/**
- * Extract a normalised 4-digit item code from a query string.
- * Accepts: "item 115", "item 0115", "0115", "115" → "0115".
- * Returns null if no 3-to-4-digit number is found or if the number is out of
- * the valid 4-digit range (0001–9999).
- */
-function extractItemCode(query: string): string | null {
-  const clean = query.trim().replace(/^item\s+/i, '').trim();
-  const m = clean.match(/\b(\d{3,4})\b/);
-  if (!m) return null;
-  const n = parseInt(m[1], 10);
-  if (!n || n > 9999) return null;
-  return String(n).padStart(4, '0');
-}
-
-/**
- * Extract a figure/table kind and ref from a query like "Table 9.1", "Figure A10.1".
- * Accepts optional trailing text so "Figure 6.1 decision tree" still matches.
- * Returns null if the query doesn't start with figure|table followed by a valid ref.
- */
-function extractFigureTableRef(query: string): { kind: string; ref: string } | null {
-  const m = query.trim().match(/^(figure|table)\s+([A-Za-z]?\d+\.\d+)/i);
-  if (!m) return null;
-  return { kind: m[1].toLowerCase(), ref: m[2] };
 }
 
 function randomSample<T>(arr: T[], n: number): T[] {

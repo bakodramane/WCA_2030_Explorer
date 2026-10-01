@@ -1,3 +1,4 @@
+import { CONFIDENCE_THRESHOLD, ENUM_CONFIDENCE_THRESHOLD, LEXICAL_SEMANTIC_FLOOR } from './config';
 import type { RankedResult } from './types';
 
 // ── Public types ──────────────────────────────────────────────────────────────
@@ -9,49 +10,9 @@ export interface GuardrailResponse {
   sectionsSearched?: string[];
 }
 
-// ── Threshold ─────────────────────────────────────────────────────────────────
-
-/** Hard-coded default for chunk-level (lookup) queries. */
-export const CONFIDENCE_THRESHOLD = 0.42;
-
-/**
- * Default threshold for Tier-1 curated Q&A matches.
- * Higher than CONFIDENCE_THRESHOLD because question-to-question cosine
- * similarity is tighter than question-to-chunk, so a higher bar avoids
- * false Q&A hits on loosely related queries.
- * Override live: localStorage.setItem('wca_qa_threshold', '0.55')
- */
-export const QA_THRESHOLD = 0.60;
-
-/**
- * Hard-coded default for section-level (enumeration) queries.
- *
- * A3: this now gates on the **rawScore** (plain cosine, no priority/exact-word/
- * title boosts), so the value had to move: with boosts masking raw similarity,
- * 0.35 was reachable by off-topic questions (C4 — "GDP of Nigeria" style).
- * Measured over the 60-question off-topic fixture, the highest raw cosine any
- * off-topic question reaches is 0.442 ("most popular social media platform");
- * 0.45 is therefore the lowest clean threshold at which ALL off-topic
- * questions are refused. Phase C re-tunes this against the gold set.
- *
- * B2.1: splitting the text by heading isolated the genuine paragraph on
- * promoting statistics through social media (¶10.20ff.), which now scores 0.455
- * against "most popular social media platform". 0.46 is the smallest value that
- * refuses it again; on the 51-question probe the same 47 are answered at 0.45,
- * 0.46, and 0.47. C3 re-tunes with held-out sets.
- */
-export const ENUM_CONFIDENCE_THRESHOLD = 0.51;
-
-/**
- * A3: a lexical (BM25) fallback answer is only accepted when the query is
- * ALSO semantically plausible — the best semantic raw cosine must reach this
- * floor. Measured: off-topic questions that leak through BM25 all sit below
- * 0.32 raw, while genuine keyword queries land above it. BM25 alone can score
- * highly on incidental shared vocabulary (running headers, common words),
- * so the raw-cosine floor is a second gate on top of MIN_LEXICAL_SCORE and
- * the domain-term gate in RetrievalEngine.lexicalSearch().
- */
-export const LEXICAL_SEMANTIC_FLOOR = 0.32;
+// ── Thresholds ────────────────────────────────────────────────────────────────
+// Defined, with the measurements behind them, in config.ts; re-exported here for existing imports.
+export { CONFIDENCE_THRESHOLD, ENUM_CONFIDENCE_THRESHOLD, LEXICAL_SEMANTIC_FLOOR, QA_THRESHOLD } from './config';
 
 /**
  * Read the lookup threshold at call time.
@@ -111,15 +72,30 @@ function readEnumThreshold(): number {
  *
  * `lexicalFallback` is invoked lazily — it is never called when semantic passes.
  */
+export interface EvaluateOptions {
+  /** Override the semantic raw-score threshold (used by the eval's threshold sweep). */
+  threshold?: number;
+  /**
+   * Override LEXICAL_SEMANTIC_FLOOR. A query made only of domain vocabulary (C0.2) is
+   * itself strong evidence of relevance, so the caller may pass 0 for it.
+   */
+  lexicalFloor?: number;
+  /** Extra condition a result must meet to count as an answer (entity grounding, C3). */
+  accept?: (result: RankedResult) => boolean;
+}
+
 export function evaluate(
   semanticResults: RankedResult[],
   lexicalFallback: () => RankedResult[],
   mode: 'lookup' | 'enum' = 'lookup',
+  options: EvaluateOptions = {},
 ): GuardrailResponse {
-  const threshold = mode === 'enum' ? readEnumThreshold() : readThreshold();
+  const threshold = options.threshold ?? (mode === 'enum' ? readEnumThreshold() : readThreshold());
+  const lexicalFloor = options.lexicalFloor ?? LEXICAL_SEMANTIC_FLOOR;
 
   // ── (1) Semantic pass — gate on the UNBOOSTED score (A3) ──────────────────
-  const semanticPassing = semanticResults.filter(r => r.rawScore >= threshold);
+  const accept = options.accept ?? (() => true);
+  const semanticPassing = semanticResults.filter(r => r.rawScore >= threshold && accept(r));
   if (semanticPassing.length > 0) {
     return { answered: true, results: semanticPassing };
   }
@@ -130,7 +106,7 @@ export function evaluate(
   // be semantically plausible: the best semantic raw cosine must reach
   // LEXICAL_SEMANTIC_FLOOR. Below it, the cascade refuses outright.
   const bestRaw = semanticResults.reduce((m, r) => Math.max(m, r.rawScore), 0);
-  const lexicalResults = bestRaw >= LEXICAL_SEMANTIC_FLOOR ? lexicalFallback() : [];
+  const lexicalResults = (bestRaw >= lexicalFloor ? lexicalFallback() : []).filter(accept);
   if (lexicalResults.length > 0) {
     return { answered: true, results: lexicalResults };
   }

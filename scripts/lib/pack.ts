@@ -25,11 +25,18 @@ interface ChunkDraft {
   paragraphs: string[];
 }
 
-const MAX_WORDS = 350;
-const MIN_TARGET_WORDS = 150;
 const MIN_UNIT_WORDS = 5;
 const OVERLAP_WORDS = 50;
-const SPLIT_STEP = MAX_WORDS - OVERLAP_WORDS;
+
+export interface PackOptions {
+  /** Upper bound of a chunk in words; a longer unit is split with OVERLAP_WORDS of overlap. */
+  maxWords: number;
+  /** A chunk shorter than this counts as "short" when the packer minimises short chunks. */
+  minTargetWords: number;
+}
+
+/** Shipped sizing: 200–350 words. The eval script also builds 120–180-word variants (C2). */
+export const DEFAULT_PACK: PackOptions = { maxWords: 350, minTargetWords: 150 };
 
 function wordsForUnit(unit: AssignedUnit): SourceWord[] {
   return unit.lines.flatMap(line =>
@@ -53,7 +60,7 @@ function uniqueParagraphs(units: readonly AssignedUnit[]): string[] {
   return paragraphs;
 }
 
-function optimallyPack(units: readonly AssignedUnit[]): ChunkDraft[] {
+function optimallyPack(units: readonly AssignedUnit[], { maxWords, minTargetWords }: PackOptions): ChunkDraft[] {
   if (units.length === 0) return [];
   const wordSets = units.map(wordsForUnit);
   const best: Array<{ short: number; chunks: number; end: number }> =
@@ -64,8 +71,8 @@ function optimallyPack(units: readonly AssignedUnit[]): ChunkDraft[] {
     let count = 0;
     for (let end = start; end < units.length; end++) {
       count += wordSets[end].length;
-      if (count > MAX_WORDS) break;
-      const short = (count < MIN_TARGET_WORDS ? 1 : 0) + best[end + 1].short;
+      if (count > maxWords) break;
+      const short = (count < minTargetWords ? 1 : 0) + best[end + 1].short;
       const chunks = 1 + best[end + 1].chunks;
       if (short < best[start].short || (short === best[start].short && chunks < best[start].chunks)) {
         best[start] = { short, chunks, end: end + 1 };
@@ -88,7 +95,9 @@ function optimallyPack(units: readonly AssignedUnit[]): ChunkDraft[] {
   return drafts;
 }
 
-function draftsForRun(units: readonly AssignedUnit[]): ChunkDraft[] {
+function draftsForRun(units: readonly AssignedUnit[], options: PackOptions): ChunkDraft[] {
+  const { maxWords } = options;
+  const splitStep = maxWords - OVERLAP_WORDS;
   const drafts: ChunkDraft[] = [];
   let pending: AssignedUnit[] = [];
 
@@ -96,23 +105,23 @@ function draftsForRun(units: readonly AssignedUnit[]): ChunkDraft[] {
     // Short units (headings, code-table rows) stay in the stream so chunk text is
     // a contiguous quote of the source; only a run too small to answer anything
     // on its own (a lone heading fragment) is discarded.
-    drafts.push(...optimallyPack(pending).filter(draft => draft.words.length >= MIN_UNIT_WORDS));
+    drafts.push(...optimallyPack(pending, options).filter(draft => draft.words.length >= MIN_UNIT_WORDS));
     pending = [];
   };
 
   for (const unit of units) {
     const words = wordsForUnit(unit);
 
-    if (words.length > MAX_WORDS) {
+    if (words.length > maxWords) {
       flush();
-      for (let start = 0; start < words.length; start += SPLIT_STEP) {
-        const slice = words.slice(start, start + MAX_WORDS);
+      for (let start = 0; start < words.length; start += splitStep) {
+        const slice = words.slice(start, start + maxWords);
         drafts.push({
           unit,
           words: slice,
           paragraphs: unit.paragraphNumber ? [unit.paragraphNumber] : [],
         });
-        if (start + MAX_WORDS >= words.length) break;
+        if (start + maxWords >= words.length) break;
       }
       continue;
     }
@@ -143,7 +152,7 @@ function toChunk(draft: ChunkDraft, sequence: number): RawChunk {
 }
 
 /** Pack consecutive units without crossing section boundaries. */
-export function packUnits(units: readonly AssignedUnit[]): RawChunk[] {
+export function packUnits(units: readonly AssignedUnit[], options: PackOptions = DEFAULT_PACK): RawChunk[] {
   const chunks: RawChunk[] = [];
   const sequenceBySection = new Map<string, number>();
 
@@ -151,7 +160,7 @@ export function packUnits(units: readonly AssignedUnit[]): RawChunk[] {
     let end = start + 1;
     while (end < units.length && units[end].sectionId === units[start].sectionId) end++;
 
-    for (const draft of draftsForRun(units.slice(start, end))) {
+    for (const draft of draftsForRun(units.slice(start, end), options)) {
       const sequence = (sequenceBySection.get(draft.unit.sectionId) ?? 0) + 1;
       sequenceBySection.set(draft.unit.sectionId, sequence);
       chunks.push(toChunk(draft, sequence));
