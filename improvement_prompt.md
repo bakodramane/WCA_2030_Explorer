@@ -6,6 +6,30 @@
 
 ---
 
+## Progress status (updated 1 October 2026, after review of the first agent's work)
+
+| Task | Status | Commit | Notes |
+|---|---|---|---|
+| A1 Printed pages | ✅ Done | `4d95cb1` | Front matter excluded; 876 → 831 chunks. |
+| A2 Per-chunk pages | ✅ Done | `3747397` | `printedPageEnd` stored; `pp. X–Y` ranges shown. |
+| A3 Guardrail on raw scores | ✅ Done, **needs follow-up** | `d00d54d` | 0/60 off-topic answered. See C0 for the recall cost. |
+| A4 Verbatim Q&A answers | ✅ Done | `619c544` | `happy-dom` added as a dev dependency (accepted). |
+| A5 Self-hosted fonts | ✅ Done | `a2ac31a` | No `googleapis` under `docs/`. |
+| A6 Word-boundary highlight | ✅ Done | `aca024a` | Also fixed a double-escape bug. |
+| B1 Outline | ✅ Done, **changelog entry missing** | `7c82043` | 125 entries; printed pp. 1–216 covered. |
+| B2 Chunker rewrite | ⛔ **Interrupted** | — | The agent deleted `scripts/chunk.ts` locally and ran out of budget while writing the replacement. **Nothing from B2 was committed.** See B0. |
+| B3–E5 | Not started | — | |
+
+**Verified by review on `claude/awesome-meitner-8pm5np` @ `7c82043`:** `npx tsc --noEmit`
+passes; `npx vitest run` passes **159 tests in 10 files**; `docs/data/chunks.json` is
+in sync with `public/data/chunks.json`. The live data still carries the corrupt
+section titles (C3), as expected until B2 lands.
+
+**Start with B0, then B2.** Phases C–E follow as written, with the review findings
+added to C0 below.
+
+---
+
 ## 0. Context and ground rules
 
 ### 0.1 What the app is
@@ -35,9 +59,21 @@ Secondary issues are listed in each phase below.
 
 ### 0.3 Facts already established (do not re-derive)
 
-- **Page offset:** printed page = PDF page − 14 throughout the main body. Verify the
-  offset holds for the annexes and glossary by sampling 5 pages before relying on it;
-  if it varies, derive printed page numbers from the running page footer text instead.
+- **Page offset (verified in A1):** printed page = PDF page − 14 everywhere, including
+  annexes and glossary (sampled PDF 103→89, 148→134, 190→176, 215→201, 222→208). The
+  printed number is the first extracted line of each PDF page.
+- **Running headers (measured before B2):** 23 lines repeat on 5 or more body pages.
+  They are the true running headers (`WORLD PROGRAMME FOR THE CENSUS OF AGRICULTURE
+  2030` ×105, `ANNEXES` ×38, the `CHAPTER n: …` titles, `AND ITS INTERNATIONAL
+  CONTEXT`, `ALPHABETICAL LIST OF CROPS … (Continued)`) **and real content**:
+  `Reference period: census reference year` ×27, `Essential item. Reference period:
+  census reference day` ×9, crop-table column headers, `SOURCE: Authors' own
+  elaboration.` ×16, `Essential items`, `For the holdings`, and ` Other`. **A pure
+  frequency filter would delete each item's reference-period line**, which is verbatim
+  guidance. See B2 step 2.
+- **Current thresholds (set in A3; re-tune in C3):** `ENUM_CONFIDENCE_THRESHOLD` = 0.45
+  on raw cosine, `QA_THRESHOLD` = 0.60, and `LEXICAL_SEMANTIC_FLOOR` = 0.32. The
+  lexical fallback requires at least 2 corpus-derived domain terms of 5+ characters.
 - **The PDF has no bookmark outline** (`PDFParse#getInfo().outline` is empty). Section
   structure must come from `data/source-outline.md` (hand-built, printed page numbers,
   179 lines) plus the numbered-paragraph pattern in body text (`4.24`, `7.2.13`,
@@ -48,10 +84,11 @@ Secondary issues are listed in each phase below.
   `350–1200` and record the reason in `CLAUDE.md`.
 - **Baseline retrieval quality:** using each sampled curated question as a query
   against chunk embeddings, the correct page (±1) is in the top 5 for **87 / 101**
-  (86 %). Use this as the number to beat.
-- Current state: `npx tsc --noEmit` passes; `npx vitest run` passes 66 tests, but
-  `tests/chunking.test.ts` fails on a clean checkout because it reads the gitignored
-  `src/data/chunks-raw.json`.
+  (86 %). This measures **raw chunk ranking**. Through the full document-tier cascade
+  (section search + guardrail, Q&A tier bypassed) after Phase A, the correct page is
+  in the top 5 for only **33 / 51** (65 %), even though 47 / 51 are answered. Both
+  numbers are the ones to beat; see C0.
+- Current state: see the progress table at the top.
 - The embedding model is available offline at `public/models/Xenova/all-MiniLM-L6-v2/`.
   In Node, set `env.localModelPath = path.join(process.cwd(), 'public', 'models')` and
   `env.allowRemoteModels = false` to use it without network access.
@@ -80,6 +117,17 @@ Secondary issues are listed in each phase below.
   scripts — never hand-edit generated JSON.
 - If a task proves impossible as specified, stop that task, document why in
   `CHANGELOG-improvements.md`, and continue with the next independent task.
+- **Protect against running out of budget.** The previous agent stopped mid-file
+  and left the tree broken. Therefore:
+  - Never delete a working file before its replacement exists. Write the new
+    version alongside it (e.g. `scripts/chunk.new.ts`), switch over, then delete.
+  - Split large rewrites into modules of under 200 lines each, and commit after each
+    module that compiles and has a test.
+  - Commit and push at least every 45 minutes of work, even mid-task. Use a
+    `wip(B2): …` message and keep the build green (gate unused code behind the old
+    entry point if necessary).
+  - Add a one-line entry to `CHANGELOG-improvements.md` with every commit, not only
+    at the end of a phase.
 
 ### 0.6 Ask the owner before doing any of these
 
@@ -91,7 +139,10 @@ Secondary issues are listed in each phase below.
 
 ---
 
-## Phase A — Restore citation trust
+## Phase A — Restore citation trust ✅ COMPLETE
+
+> Kept for reference. Do not redo these tasks. Their tests must keep passing through
+> every later phase, especially after B2 regenerates `chunks.json`.
 
 **Goal:** every number and label the user sees is correct, and off-topic questions
 are refused.
@@ -184,7 +235,24 @@ are refused.
 **Goal:** correct section titles, paragraph-level citations, and chunk sizes as
 specified.
 
-### B1. Machine-readable outline
+### B0. Recover the working tree and close B1 *(do first)*
+
+1. Run `git status` and `git fetch origin`. The previous agent deleted
+   `scripts/chunk.ts` locally (PowerShell `Remove-Item`) and may have left a partial
+   new file. The committed version at `7c82043` is the working A2 chunker.
+   - If `scripts/chunk.ts` is missing or partial, rename any partial file to
+     `scripts/chunk.partial.ts` for reference, then restore the committed file with
+     `git checkout -- scripts/chunk.ts`.
+   - Confirm that `npx tsc --noEmit` and `npx vitest run` pass (159 tests) before you
+     change anything.
+2. Add the missing **B1 entry** to `CHANGELOG-improvements.md`, taken from the `7c82043`
+   commit message: 125 entries (10 chapters, 90 sections, 12 themes, 11 annexes,
+   glossary, references); the ToC corrections made to `source-outline.md`; and the
+   resolution of open question 5 (Annexes 6/7 and 7/8 start mid-page, so a single
+   shared boundary page is allowed).
+3. Commit as `docs(B0): …`.
+
+### B1. Machine-readable outline ✅ DONE (`7c82043`)
 
 - Write `scripts/outline.ts`, which parses `data/source-outline.md` into
   `src/data/outline.json`: an ordered list of `{ id, kind: 'chapter'|'section'|'annex'|'glossary'|'theme', number, title, printedStart, printedEnd, parentId }`.
@@ -195,12 +263,30 @@ specified.
 
 ### B2. Rewrite the chunker
 
-Rewrite `scripts/chunk.ts`:
+**Build it as small modules, not one file** (see the budget rules in §0.5). Suggested
+layout, each with its own unit test and its own commit:
+
+| Module | Responsibility |
+|---|---|
+| `scripts/lib/pdf-lines.ts` | Extract lines with `pdfPage`, `printedPage`, and position on page (line index from top and from bottom). |
+| `scripts/lib/strip-furniture.ts` | Remove running headers, footers, and page numbers (step 2). |
+| `scripts/lib/units.ts` | Split the cleaned line stream into paragraph units (step 3). |
+| `scripts/lib/assign-section.ts` | Map units to outline entries (step 4). |
+| `scripts/lib/pack.ts` | Pack units into chunks (step 5). |
+| `scripts/chunk.ts` | Thin orchestrator: wire the modules together, print stats, and write `chunks-raw.json`. Replace the old file only once the new pipeline produces valid output. |
+
+Steps:
 
 1. Extract per-page lines (keep using `pdf-parse` v2 `getText()`), and record the
    PDF page for each line.
 2. **Drop** front matter and the table of contents (everything before printed page 1),
-   plus running headers and footers (keep the existing frequency filter).
+   plus page **furniture**. Use **position as well as frequency**: drop a line only
+   if it repeats on 5 or more pages **and** sits within the first 3 or last 2 lines of
+   those pages, or if it is the page-number line. Never drop lines that start with
+   `Reference period:` or `Essential item.`, because they are item metadata (§0.3).
+   Add a test asserting that the text for item 0101 still contains its reference
+   period line, and that no chunk contains `WORLD PROGRAMME FOR THE CENSUS OF
+   AGRICULTURE 2030`.
 3. Detect **numbered paragraphs** (`^\d+\.\d+(\.\d+)?\s`, `^A\d+\.\d+\s` for annexes,
    and glossary entries) as atomic units. Text before the first numbered paragraph
    of a section is its own unit.
@@ -237,6 +323,17 @@ Rewrite `scripts/chunk.ts`:
      test against `public/data/chunks.json` instead of failing.
 9. Display paragraph citations in the UI: `§7.2.13 · Theme 2: Land · p. 81`.
    Copy citation format: `WCA 2030, §7.2.13, Theme 2: Land (p. 81): "first 80 chars…"`.
+10. **Regenerate and re-verify:**
+    - Run `npm run embed` (the existing resumable logic will re-embed every chunk,
+      because the IDs change).
+    - Remove the deprecated `pageRef` alias.
+    - Run the full suite. The A1–A6 tests and `tests/guardrail-regression.test.ts`
+      must still pass on the new data. If an off-topic question now leaks, fix the
+      cause; do not raise the threshold without recording the measurement.
+    - Rebuild with `npm run build` so `docs/` matches `public/`.
+    - Record before → after in the changelog: chunk count, word-count distribution,
+      number of distinct section titles (was 137, with corrupt entries), and the
+      share of chunks with a paragraph number.
 
 ### B3. Reproducible data for every runtime file
 
@@ -279,6 +376,32 @@ passes. Never weaken the check. Expect about 54 excerpts to need attention.
 
 ## Phase C — Measure, then tune
 
+### C0. Review findings to resolve in this phase
+
+The review of Phase A measured three problems. Phase C must fix or explain each one,
+with numbers in the changelog.
+
+1. **Document-tier page accuracy fell to 65 %.** For 51 curated questions with the
+   Q&A tier bypassed, 47 are answered, but the correct page (±1) is in the top 5 for
+   only 33. Raw chunk ranking scores 86 %. The likely cause is that `sectionSearch`
+   returns one chunk per section, ranked by a title-boosted average, so the best
+   individual chunk is often dropped. In C2, evaluate an alternative: rank chunks
+   directly, then cap results at 2 per section for diversity. Keep whichever scores
+   higher on the gold set.
+2. **Single-term domain queries are refused.** "intercropping" (raw 0.346) and
+   "modular approach" (raw 0.347, rescued only by the Q&A tier) fail because the
+   lexical fallback requires two domain terms. Fix: a single query term may pass the
+   lexical gate if it appears in a glossary term, an outline title, or an item name.
+   Build that vocabulary at index time from `glossary.json`, `outline.json`, and
+   `items.json`. Add 20 one- or two-word domain queries to the gold set (e.g.
+   "fallow", "intercropping", "holder", "crop residue", "land tenure").
+3. **Thresholds are fitted to the test fixture.** 0.45 was chosen as the lowest value
+   that refuses every question in `off-topic.json`, and the same file is the
+   regression test, so its 0 % false-answer rate overstates real performance. Split
+   off-topic questions into a **tuning** set and a **held-out** set (at least 30
+   each, written independently). Tune only on the tuning set, and report the
+   held-out false-answer rate separately.
+
 ### C1. Gold set
 
 - Create `tests/fixtures/gold.json` with at least 120 in-domain questions:
@@ -286,9 +409,12 @@ passes. Never weaken the check. Expect about 54 excerpts to need attention.
     stored questions (otherwise the Q&A tier trivially matches);
   - 40 new questions written from Chapters 4–9 and Annexes 4–7, each with
     `expectedParagraphs` and `expectedPrintedPage`.
-- Reuse `tests/fixtures/off-topic.json` (A3) and extend it to at least 60 entries,
-  including 10 *near-domain* traps (e.g. "What was Nigeria's 2020 maize yield?",
-  "Who chairs the FAO Council?").
+- Keep `tests/fixtures/off-topic.json` (60 questions from A3) as the **tuning** set.
+  Write a separate `tests/fixtures/off-topic-heldout.json` with at least 30 new
+  questions, including 10 *near-domain* traps (e.g. "What was Nigeria's 2020 maize
+  yield?", "Who chairs the FAO Council?"). Write it **before** looking at any scores,
+  and never tune against it (C0.3).
+- Add the 20 short domain queries from C0.2 to the in-domain set.
 
 ### C2. Evaluation script
 
@@ -298,7 +424,10 @@ as the UI does (factor that cascade out of `App.ts` into
 
 - Recall@1 and recall@5 (matching paragraph, or printed page ±1).
 - Correct-citation rate of the top result.
-- False-answer rate on off-topic and on near-domain traps.
+- False-answer rate on the tuning set, the held-out set, and the near-domain
+  traps, reported separately.
+- The C0.1 comparison: section-grouped ranking against chunk ranking with
+  per-section diversity.
 - The tier that answered each question.
 - A threshold sweep table (raw cosine 0.30–0.60, step 0.02) with recall and
   false-answer rate.
@@ -307,10 +436,12 @@ Write the results to `reports/eval-latest.md` and commit it.
 
 ### C3. Tune
 
-- Choose thresholds that give **0 % false answers on off-topic questions**, at most
-  10 % on near-domain traps, and maximum recall@5 subject to those limits. Record
+- Choose thresholds on the **tuning** set that give 0 % false answers, at most 10 %
+  on near-domain traps, and maximum recall@5 subject to those limits. Then report the
+  **held-out** false-answer rate; if it exceeds 5 %, investigate before accepting. Record
   the chosen values and the sweep that justifies them in `README.md` §3.
-- **Targets:** recall@5 ≥ 90 % (baseline 86 %), top-result citation correct ≥ 80 %.
+- **Targets:** recall@5 ≥ 90 % through the full cascade (baselines: 86 % raw chunk
+  ranking, 65 % document tier after Phase A), and top-result citation correct ≥ 80 %.
   If you miss them, document the gap and the likely causes. Do not distort the
   gold set to meet them.
 - Add a CI-friendly test that fails if recall@5 drops more than 3 points or the
@@ -426,7 +557,8 @@ from `data/source-outline.md`.
 
 - [ ] `npx tsc --noEmit`, `npm test`, `npm run eval`, and `npm run build` all pass on
       a clean clone after `npm ci && npm run build-index`.
-- [ ] Off-topic false-answer rate is 0 % across at least 60 questions.
+- [ ] Off-topic false-answer rate is 0 % on the tuning set (≥ 60 questions) and
+      ≤ 5 % on the held-out set (≥ 30 questions).
 - [ ] Recall@5 is at least 90 %, or the gap is documented with causes.
 - [ ] Every citation shows a printed page that matches the PDF, verified by
       `validate-data.ts`.
