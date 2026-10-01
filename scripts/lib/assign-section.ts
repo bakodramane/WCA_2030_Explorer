@@ -8,6 +8,8 @@ export interface ChunkOutlineEntry {
   printedStart: number;
   printedEnd: number;
   parentId: string | null;
+  /** Paragraph range covered by a section, e.g. "2.8–2.10". */
+  paragraphs?: string;
 }
 
 export interface AssignedUnit extends SourceUnit {

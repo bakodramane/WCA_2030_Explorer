@@ -18,55 +18,55 @@
 
 *Printed page 1 is the "PART ONE" divider page; the chapter text starts on p. 2. Page 1 is assigned to Chapter 1 so every printed page maps to exactly one outline entry.*
 
-- What is a census of agriculture? (p. 2)
-- Background to the World Programme for the Census of Agriculture (p. 2)
-- Objectives of the census of agriculture (p. 4)
-- The census and the programme of agricultural surveys (p. 5)
-- Main features of the WCA 2030 (p. 6)
-- Statistical unit, concepts, content, and classifications in the WCA 2030 (p. 8)
-- Themes and items omitted (p. 9)
+- What is a census of agriculture? (p. 2) paragraphs: 1.1–1.1
+- Background to the World Programme for the Census of Agriculture (p. 2) paragraphs: 1.2–1.11
+- Objectives of the census of agriculture (p. 4) paragraphs: 1.12–1.14
+- The census and the programme of agricultural surveys (p. 5) paragraphs: 1.15–1.21
+- Main features of the WCA 2030 (p. 6) paragraphs: 1.22–1.30
+- Statistical unit, concepts, content, and classifications in the WCA 2030 (p. 8) paragraphs: 1.31–1.34
+- Themes and items omitted (p. 9) paragraphs: 1.35–1.35
 
 ### Chapter 2: Importance of the Census of Agriculture and its International Context (pp. 12–23)
-- Introduction (p. 12)
+- Introduction (p. 12) paragraphs: 2.1–2.4
 - Stakeholders' needs (p. 13)
-- Agricultural planning, policymaking and policy monitoring (p. 13)
-- Research, investment and business decisions (p. 13)
-- Food security (p. 14)
-- Work in agriculture (p. 14)
-- Agriculture and the environment (p. 15)
-- The role of gender in agriculture (p. 16)
-- Baseline data for monitoring and evaluation (p. 16)
+- Agricultural planning, policymaking and policy monitoring (p. 13) paragraphs: 2.5–2.5
+- Research, investment and business decisions (p. 13) paragraphs: 2.6–2.7
+- Food security (p. 14) paragraphs: 2.8–2.10
+- Work in agriculture (p. 14) paragraphs: 2.11–2.15
+- Agriculture and the environment (p. 15) paragraphs: 2.16–2.20
+- The role of gender in agriculture (p. 16) paragraphs: 2.21–2.24
+- Baseline data for monitoring and evaluation (p. 16) paragraphs: 2.25–2.26
 - Statistical needs (p. 17)
-- Source of structural data, including data for economic agricultural accounts and national accounts (p. 17)
-- Holding-level data (p. 17)
-- Advantage over the reporting system (p. 17)
-- Benchmarking data for agricultural statistics (p. 18)
-- Frames for agricultural statistics surveys (p. 18)
-- The statistical farm register (p. 19)
-- Data on structure of agriculture in the small administrative units (p. 20)
-- Data on rare events (p. 20)
-- Integrating census data with geospatial data (p. 20)
-- Using census data for Small Area Estimation (p. 21)
+- Source of structural data, including data for economic agricultural accounts and national accounts (p. 17) paragraphs: 2.27–2.27
+- Holding-level data (p. 17) paragraphs: 2.28–2.29
+- Advantage over the reporting system (p. 17) paragraphs: 2.30–2.31
+- Benchmarking data for agricultural statistics (p. 18) paragraphs: 2.32–2.36
+- Frames for agricultural statistics surveys (p. 18) paragraphs: 2.37–2.41
+- The statistical farm register (p. 19) paragraphs: 2.42–2.45
+- Data on structure of agriculture in the small administrative units (p. 20) paragraphs: 2.46–2.48
+- Data on rare events (p. 20) paragraphs: 2.49–2.51
+- Integrating census data with geospatial data (p. 20) paragraphs: 2.52–2.53
+- Using census data for Small Area Estimation (p. 21) paragraphs: 2.54–2.55
 - Relevant international initiatives (p. 21)
-- Global Strategy to Improve Agricultural and Rural Statistics (p. 21)
-- The 50x2030 Initiative to close the agricultural data gap (p. 22)
-- The Cape Town Global Action Plan for Sustainable Development Data (p. 22)
-- The 2030 Agenda and the Sustainable Development Goals (p. 23)
+- Global Strategy to Improve Agricultural and Rural Statistics (p. 21) paragraphs: 2.56–2.59
+- The 50x2030 Initiative to close the agricultural data gap (p. 22) paragraphs: 2.60–2.62
+- The Cape Town Global Action Plan for Sustainable Development Data (p. 22) paragraphs: 2.63–2.65
+- The 2030 Agenda and the Sustainable Development Goals (p. 23) paragraphs: 2.66–2.70
 
 ### Chapter 3: Relationship to Other Censuses (pp. 24–36)
-- Introduction (p. 24)
-- Relationship with the population and housing census (p. 24)
-- Agriculture in the household sector (p. 25)
-- Statistical units in the agricultural and population censuses (p. 25)
-- Options for coordinating the agricultural and the population and housing censuses (p. 25)
-- The two censuses as a joint operation (p. 29)
-- Combining the census of agriculture with the census of aquaculture (p. 30)
-- Scope of the aquacultural census (p. 30)
-- Statistical unit for the aquacultural census (p. 30)
-- Methodology for a census of agriculture and aquaculture (p. 31)
-- Relationship with economic census (p. 32)
-- Forestry module (p. 33)
-- Fishing module (p. 34)
+- Introduction (p. 24) paragraphs: 3.1–3.1
+- Relationship with the population and housing census (p. 24) paragraphs: 3.2–3.4
+- Agriculture in the household sector (p. 25) paragraphs: 3.5–3.5
+- Statistical units in the agricultural and population censuses (p. 25) paragraphs: 3.6–3.8
+- Options for coordinating the agricultural and the population and housing censuses (p. 25) paragraphs: 3.9–3.27
+- The two censuses as a joint operation (p. 29) paragraphs: 3.28–3.29
+- Combining the census of agriculture with the census of aquaculture (p. 30) paragraphs: 3.30–3.30
+- Scope of the aquacultural census (p. 30) paragraphs: 3.31–3.32
+- Statistical unit for the aquacultural census (p. 30) paragraphs: 3.33–3.35
+- Methodology for a census of agriculture and aquaculture (p. 31) paragraphs: 3.36–3.44
+- Relationship with economic census (p. 32) paragraphs: 3.45–3.46
+- Forestry module (p. 33) paragraphs: 3.47–3.49
+- Fishing module (p. 34) paragraphs: 3.50–3.51
 
 ---
 
@@ -156,25 +156,25 @@
 
 ### Chapter 8: Community-Level Data (pp. 100–104)
 - Methodological considerations (p. 101)
-- Defining a community as a statistical unit (p. 101)
-- Data collection methods (p. 101)
-- Community-level items: geography, socioeconomic conditions, infrastructure and services, development programmes (pp. 102–104)
+- Defining a community as a statistical unit (p. 101) paragraphs: 8.8–8.11
+- Data collection methods (p. 101) paragraphs: 8.12–8.15
+- Community-level items: geography, socioeconomic conditions, infrastructure and services, development programmes (pp. 102–104) paragraphs: 8.16–8.32
 
 ### Chapter 9: Tabulation (pp. 105–118)
-- Essential items to be tabulated in standard reports (p. 107)
-- Main classification variables (p. 111)
-- Working time on the holding (p. 114)
-- Cross-tabulations (p. 114)
-- Data confidentiality and data disclosure control (p. 115)
-- Community-level data tabulations (pp. 116–118)
-- Aquaculture tabulations (p. 118)
+- Essential items to be tabulated in standard reports (p. 107) paragraphs: 9.9–9.11
+- Main classification variables (p. 111) paragraphs: 9.12–9.23
+- Working time on the holding (p. 114) paragraphs: 9.24–9.25
+- Cross-tabulations (p. 114) paragraphs: 9.26–9.31
+- Data confidentiality and data disclosure control (p. 115) paragraphs: 9.32–9.33
+- Community-level data tabulations (pp. 116–118) paragraphs: 9.34–9.39
+- Aquaculture tabulations (p. 118) paragraphs: 9.40–9.42
 
 ### Chapter 10: Data Dissemination, Data Conflicts and Archiving (pp. 119–126)
-- Dissemination of aggregate results (p. 120)
-- Safe access to census microdata (p. 121)
-- Promoting statistics through contemporary media and tools (p. 123)
-- Data conflicts (p. 123)
-- Data archiving (p. 124)
+- Dissemination of aggregate results (p. 120) paragraphs: 10.6–10.13
+- Safe access to census microdata (p. 121) paragraphs: 10.14–10.19
+- Promoting statistics through contemporary media and tools (p. 123) paragraphs: 10.20–10.23
+- Data conflicts (p. 123) paragraphs: 10.24–10.28
+- Data archiving (p. 124) paragraphs: 10.29–10.31
 
 ---
 
@@ -193,6 +193,25 @@
 | Annex 9 | Classification of Machinery and Equipment | 190–192 |
 | Annex 10 | Overview of ILO Resolutions concerning Statistics of Work | 193–197 |
 | Annex 11 | SDG Indicators Covered Partially by Agricultural Censuses | 198–200 |
+
+### Annex 4: themes (pp. 134–172)
+
+*The PDF's table of contents lists only "Annex 4 … 134"; these ranges come from the `THEME n:` headings on the annex pages. Consecutive themes share the page on which the next heading appears (printed pp. 136, 139, 142, 146, 149, 158, 162, 164, 166, 169).*
+
+| Theme | Title | Printed pp |
+|-------|-------|------------|
+| Theme 1 | Identification and general characteristics | 134–136 |
+| Theme 2 | Land | 136–139 |
+| Theme 3 | Irrigation | 139–142 |
+| Theme 4 | Crops | 142–146 |
+| Theme 5 | Livestock | 146–149 |
+| Theme 6 | Agricultural practices | 149–158 |
+| Theme 7 | Services for agriculture | 158–162 |
+| Theme 8 | Demographic and social characteristics | 162–164 |
+| Theme 9 | Work on the holding | 164 |
+| Theme 10 | Aquaculture | 164–166 |
+| Theme 11 | Forestry | 166–169 |
+| Theme 12 | Fishing | 169–172 |
 
 ---
 

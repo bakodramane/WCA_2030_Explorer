@@ -27,10 +27,12 @@ function expectOrderedSiblings(label: string, siblings: OutlineEntry[]): void {
 }
 
 describe('B1 — machine-readable outline', () => {
-  it('has 10 chapters, 11 annexes, 12 themes, a glossary, and references', () => {
+  it('has 10 chapters, 11 annexes, 24 themes (12 in Chapter 7, 12 in Annex 4), a glossary, and references', () => {
     expect(byKind('chapter')).toHaveLength(10);
     expect(byKind('annex')).toHaveLength(11);
-    expect(byKind('theme')).toHaveLength(12);
+    expect(byKind('theme')).toHaveLength(24);
+    expect(byKind('theme').filter(t => t.parentId === 'ch7')).toHaveLength(12);
+    expect(byKind('theme').filter(t => t.parentId === 'annex4')).toHaveLength(12);
     expect(byKind('glossary')).toHaveLength(1);
     expect(byKind('references')).toHaveLength(1);
     expect(byKind('section').length).toBeGreaterThan(50);
@@ -66,8 +68,8 @@ describe('B1 — machine-readable outline', () => {
     }
   });
 
-  it('every section/theme parent references an existing chapter', () => {
-    const chapterIds = new Set(byKind('chapter').map(c => c.id));
+  it('every section/theme parent references an existing chapter or annex', () => {
+    const chapterIds = new Set([...byKind('chapter'), ...byKind('annex')].map(c => c.id));
     for (const e of OUTLINE) {
       if (e.kind === 'section' || e.kind === 'theme') {
         expect(chapterIds.has(e.parentId!), `${e.id} parent`).toBe(true);

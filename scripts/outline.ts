@@ -14,6 +14,8 @@ interface OutlineEntry {
   printedStart: number;
   printedEnd: number;
   parentId: string | null;
+  /** Paragraph range covered by a section, e.g. "2.8–2.10" (read from the Markdown hint). */
+  paragraphs?: string;
 }
 
 function slug(title: string): string {
@@ -73,13 +75,16 @@ function parseTopLevel(md: string, entries: OutlineEntry[]): void {
   }
 }
 
+/** Bullet sections given as a single "(p. N)" — their end is the next sibling's start (see extendBulletEnds). */
+const singlePageBullets = new Set<string>();
+
 function parseSections(md: string, entries: OutlineEntry[]): void {
   // Sections and themes, walked in document order under each chapter.
   // Two shapes occur inside "### Chapter N:" blocks:
   //   bullet lists:  "- Stakeholders' needs (p. 13)" / "… (pp. 17–21)"
   //   tables:       "| 4.3–4.5 | The Agricultural Holding … | 37–39 |"
   //                 "| Theme 2 | Land (total area, …) | 79–86 |"
-  const bulletRe = /^- (.+?) \(pp?\. (\d+)(?:–(\d+))?\)\s*$/;
+  const bulletRe = /^- (.+?) \(pp?\. (\d+)(?:–(\d+))?\)(?: paragraphs: (\d+\.\d+–\d+\.\d+))?\s*$/;
   const rowRe    = /^\| ([^|]+?) \| ([^|]+?) \| (\d+)(?:–(\d+))? \|\s*$/;
   const numCellRe   = /^(\d+(?:\.\d+)?)(?:–(\d+(?:\.\d+)?))?$/;
   const themeCellRe = /^Theme (\d+)$/;
@@ -101,7 +106,9 @@ function parseSections(md: string, entries: OutlineEntry[]): void {
         printedStart: parseInt(bm[2], 10),
         printedEnd: bm[3] ? parseInt(bm[3], 10) : parseInt(bm[2], 10),
         parentId: currentChapter,
+        ...(bm[4] ? { paragraphs: bm[4] } : {}),
       });
+      if (!bm[3]) singlePageBullets.add(entries[entries.length - 1].id);
       continue;
     }
 
@@ -144,10 +151,42 @@ function parseSections(md: string, entries: OutlineEntry[]): void {
   }
 }
 
+/** Themes of Annex 4 ("### Annex 4: themes" table), titled "Annex 4 · Theme n: …". */
+function parseAnnexThemes(md: string, entries: OutlineEntry[]): void {
+  const block = md.match(/^### Annex 4: themes[\s\S]*?(?=^---|^### |^## )/m)?.[0] ?? '';
+  const rowRe = /^\| Theme (\d+) \| (.+?) \| (\d+)(?:–(\d+))? \|\s*$/gm;
+  for (const m of block.matchAll(rowRe)) {
+    const start = parseInt(m[3], 10);
+    entries.push({
+      id: `annex4-theme${m[1]}`,
+      kind: 'theme',
+      number: parseInt(m[1], 10),
+      title: `Annex 4 · Theme ${m[1]}: ${m[2].trim()}`,
+      printedStart: start,
+      printedEnd: m[4] ? parseInt(m[4], 10) : start,
+      parentId: 'annex4',
+    });
+  }
+}
+
+/** A bullet section's page ends where the next sibling begins (the heading may share that page). */
+function extendBulletEnds(entries: OutlineEntry[]): void {
+  for (const entry of entries) {
+    if (!singlePageBullets.has(entry.id)) continue;
+    const siblings = entries.filter(e => e.parentId === entry.parentId && (e.kind === 'section' || e.kind === 'theme'));
+    const next = siblings[siblings.indexOf(entry) + 1];
+    const chapter = entries.find(e => e.id === entry.parentId)!;
+    entry.printedEnd = Math.max(entry.printedStart, next ? next.printedStart : chapter.printedEnd);
+  }
+}
+
 function parseOutline(md: string): OutlineEntry[] {
   const entries: OutlineEntry[] = [];
+  singlePageBullets.clear();
   parseTopLevel(md, entries);
   parseSections(md, entries);
+  parseAnnexThemes(md, entries);
+  extendBulletEnds(entries);
   return entries;
 }
 
@@ -182,9 +221,11 @@ function validate(entries: OutlineEntry[]): void {
   }
   if (!entries.some(e => e.kind === 'glossary'))  throw new Error('Glossary entry not found');
   if (!entries.some(e => e.kind === 'references')) throw new Error('References entry not found');
-  const themes = entries.filter(e => e.kind === 'theme');
-  if (themes.length !== 12) {
-    throw new Error(`Expected 12 themes under Chapter 7, found ${themes.length}`);
+  for (const parent of ['ch7', 'annex4']) {
+    const themes = entries.filter(e => e.kind === 'theme' && e.parentId === parent);
+    if (themes.length !== 12) {
+      throw new Error(`Expected 12 themes under ${parent}, found ${themes.length}`);
+    }
   }
 
   // Top-level (chapters, annexes, glossary, references) must cover printed
@@ -214,8 +255,8 @@ function validate(entries: OutlineEntry[]): void {
     checkOrderedSiblings(`sections of ${parent}`, siblings);
   }
 
-  // Section/theme parent ids must reference existing chapters.
-  const chapterIds = new Set(chapters.map(c => c.id));
+  // Section/theme parent ids must reference existing chapters or annexes.
+  const chapterIds = new Set([...chapters, ...annexes].map(c => c.id));
   for (const e of entries) {
     if ((e.kind === 'section' || e.kind === 'theme') && !chapterIds.has(e.parentId!)) {
       throw new Error(`${e.id} has unknown parent ${e.parentId}`);

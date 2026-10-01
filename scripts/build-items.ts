@@ -18,7 +18,7 @@ const SHARED_DESCRIPTION_ANCHOR = new Map<string, string>([
   ...['0801', '0802'].map(code => [code, '0802'] as const),
 ]);
 function themeLabels(): Map<number, string> {
-  const entries = OUTLINE_JSON.filter(entry => entry.kind === 'theme');
+  const entries = OUTLINE_JSON.filter(entry => entry.kind === 'theme' && entry.parentId === 'ch7');
   return new Map(entries.map(entry => {
     const short = entry.title.replace(/^Theme \d+:\s*/, '').replace(/\s*\(.*/, '');
     return [entry.number, `Theme ${entry.number}: ${short.charAt(0)}${short.slice(1).toLowerCase()}`];
