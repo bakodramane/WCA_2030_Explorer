@@ -12,6 +12,7 @@
     "build-qa": "npx tsx scripts/build-qa.ts",
     "validate": "npx tsx scripts/validate-data.ts",
     "repair-qa": "npx tsx scripts/repair-qa.ts",
+    "write-meta": "npx tsx scripts/write-meta.ts",
     "build-index": "npx tsx scripts/build-index.ts",
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

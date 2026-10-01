@@ -8,6 +8,7 @@ const steps = [
   'scripts/build-glossary.ts',
   'scripts/build-figures.ts',
   'scripts/build-qa.ts',
+  'scripts/write-meta.ts',
   'scripts/validate-data.ts',
 ];
 

@@ -1,6 +1,7 @@
 import { pipeline, env } from '@xenova/transformers';
 import fs from 'node:fs';
 import path from 'node:path';
+import { writeModelMeta } from './lib/index-version';
 
 // ── Paths ─────────────────────────────────────────────────────────────────────
 
@@ -10,7 +11,6 @@ const PUBLIC_MODELS= path.join(ROOT, 'public', 'models');
 const PUBLIC_DATA  = path.join(ROOT, 'public', 'data');
 const CHUNKS_RAW   = path.join(ROOT, 'src', 'data', 'chunks-raw.json');
 const CHUNKS_OUT   = path.join(PUBLIC_DATA, 'chunks.json');
-const META_OUT     = path.join(ROOT, 'src', 'data', 'model-meta.json');
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -140,9 +140,10 @@ async function main(): Promise<void> {
     throw new Error(`Unexpected embedding dim: ${sample?.embedding?.length} (expected ${DIM})`);
   }
 
-  // ── model-meta.json ─────────────────────────────────────────────────────────
-  const meta = { model: MODEL, dim: DIM, version: 'wca2030-v1' };
-  fs.writeFileSync(META_OUT, JSON.stringify(meta, null, 2), 'utf-8');
+  // ── model-meta.json (B5: version = content hash of the index files) ──────────
+  // qa/items/glossary may be rebuilt afterwards; scripts/write-meta.ts (the last
+  // build-index step) re-stamps it.
+  const meta = writeModelMeta(ROOT);
 
   // ── Summary ─────────────────────────────────────────────────────────────────
   console.log('\n─── Embedding Summary ─────────────────────────────────────');

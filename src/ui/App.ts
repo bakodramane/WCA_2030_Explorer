@@ -6,6 +6,8 @@ import { SearchBar }        from './SearchBar';
 import { ResultCard }       from './ResultCard';
 import { setKnownItemCodes } from './linkify';
 import { qaAnswerBlockHtml } from './qa-block';
+import { showUpdateBanner } from './update-banner';
+import { runVersionHandshake } from '../engine/index-version';
 import type { ItemRow, GlossaryEntry, LearningModule, FigureTableEntry } from '../engine/types';
 
 
@@ -132,6 +134,7 @@ export class App {
       await this.engine.init();
       setKnownItemCodes(new Set(this.engine.getItems().map(i => i.code)));
       refreshStatus(); // update dot from 'Preparing' to ready/pending
+      void this.checkIndexVersion(root);
     } catch (err) {
       const box = overlay.querySelector('.loading-box')!;
       box.className = 'loading-box loading-error';
@@ -1629,26 +1632,27 @@ export class App {
     return refresh;
   }
 
+  // ── Index version handshake (B5) ─────────────────────────────────────────
+
+  private async checkIndexVersion(root: HTMLElement): Promise<void> {
+    const check = await runVersionHandshake({
+      baseUrl:  import.meta.env.BASE_URL,
+      fetchFn:  fetch.bind(globalThis),
+      storage:  localStorage,
+      caches:   typeof caches === 'undefined' ? undefined : caches,
+    });
+    if (check?.status === 'changed') showUpdateBanner(root);
+  }
+
   // ── Service-worker update banner ─────────────────────────────────────────
 
   private initSWUpdateBanner(root: HTMLElement): void {
     if (!navigator.serviceWorker) return;
 
+    // The first install also fires controllerchange (clients.claim); that is not an update.
+    const hadController = !!navigator.serviceWorker.controller;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (root.querySelector('.sw-banner')) return;
-
-      const banner = document.createElement('div');
-      banner.className = 'sw-banner';
-      banner.innerHTML = `
-        <span>Guidelines index updated. Reload to apply.</span>
-        <button type="button" id="sw-reload-btn">Reload</button>
-        <button type="button" id="sw-dismiss-btn">✕</button>`;
-      root.appendChild(banner);
-
-      banner.querySelector('#sw-reload-btn')!
-        .addEventListener('click', () => location.reload());
-      banner.querySelector('#sw-dismiss-btn')!
-        .addEventListener('click', () => banner.remove());
+      if (hadController) showUpdateBanner(root);
     });
   }
 }

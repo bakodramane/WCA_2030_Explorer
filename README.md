@@ -142,10 +142,12 @@ When a new edition of the WCA guidelines is released:
    npm run build-index
    ```
    This writes the updated `public/data/chunks.json` directly — no copy step needed.
-4. Bump the `version` field in `src/data/model-meta.json`:
-   ```json
-   { "model": "Xenova/all-MiniLM-L6-v2", "dim": 384, "version": "wca2030-v2" }
-   ```
+4. The `version` in `model-meta.json` is now stamped automatically by `npm run build-index`
+   (last data step, `scripts/write-meta.ts`): `wca2030-` plus the first 12 hex characters of a
+   SHA-256 over `chunks.json`, `qa.json`, `items.json`, and `glossary.json`. Do not edit it by hand.
+   On startup the app compares it with `localStorage.wca_index_version`; when they differ it drops
+   stale runtime caches of the data files, stores the new version, and shows the
+   *"Guidelines index updated. Reload to apply."* banner.
 6. Rebuild and redeploy:
    ```bash
    npm run build

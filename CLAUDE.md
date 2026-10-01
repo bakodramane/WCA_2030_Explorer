@@ -423,7 +423,7 @@ When `answered: false`, render a distinct card with amber border (`#92400e`):
    - All JS/CSS/HTML bundles.
    - `data/chunks.json`.
    - All files under `public/models/` (WASM + ONNX model files).
-2. In `App.ts`, on service worker activation, compare `model-meta.json`'s `version` field against `localStorage.getItem('wca_index_version')`. If they differ, clear stale caches and reload `chunks.json`.
+2. On startup the app (`src/engine/index-version.ts`) fetches `data/model-meta.json` and compares its `version` — a content hash of `chunks.json`, `qa.json`, `items.json`, and `glossary.json`, written by `scripts/write-meta.ts` — with `localStorage.getItem('wca_index_version')`. If they differ it clears stale runtime caches of the data files (never the Workbox precache), stores the new version, and shows the update banner.
 3. Set `env.allowRemoteModels = false` in the retrieval engine to guarantee the model is never fetched from the internet at runtime.
 
 **Phase 7 complete when:** after `npm run build && npm run preview`, you can install the app as a PWA, disable your network connection entirely, and all queries still work.
@@ -479,7 +479,7 @@ Run these after every build:
 1. **Purpose & constraints** — what the app answers and what it refuses.
 2. **Build instructions** — the three-step sequence above, including Windows-specific notes (run in Git Bash or PowerShell; avoid CMD for `npx tsx`).
 3. **Threshold tuning** — open browser DevTools console, run `localStorage.setItem('wca_threshold', '0.38')` and reload to test lower/higher values.
-4. **Updating guidelines** — when a new WCA version is released, replace the PDF in `./source/`, re-run `npm run build-index`, rebuild, and redeploy. Bump `version` in `model-meta.json`.
+4. **Updating guidelines** — when a new WCA version is released, replace the PDF in `./source/`, re-run `npm run build-index`, rebuild, and redeploy. The `version` in `model-meta.json` is regenerated automatically as a content hash.
 5. **Distribution options**:
    - **Hosted PWA** — deploy `dist/` to Netlify, GitHub Pages, or any static host; share the URL.
    - **Air-gapped use** — zip `dist/` and serve locally with `npx serve dist` (Node must be installed on the target machine).
