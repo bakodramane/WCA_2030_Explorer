@@ -5,6 +5,7 @@ import { logQuery, getLog, clearLog, toCSV } from '../engine/logger';
 import { SearchBar }        from './SearchBar';
 import { ResultCard }       from './ResultCard';
 import { setKnownItemCodes } from './linkify';
+import { qaAnswerBlockHtml } from './qa-block';
 import type { ItemRow, GlossaryEntry, LearningModule, FigureTableEntry } from '../engine/types';
 
 
@@ -47,7 +48,7 @@ export class App {
       <header class="app-header">
         <h1 class="app-title">WCA 2030 Explorer</h1>
         <p class="app-subtitle">Find official WCA 2030 guidance with page-cited excerpts.</p>
-        <p class="trust-strip">Official WCA 2030 source · Verbatim excerpts only · Page citations · Works offline · No tracking</p>
+        <p class="trust-strip">Official WCA 2030 source · Answers are verbatim excerpts · Curated summaries are clearly labelled · Page citations · Works offline · No tracking</p>
       </header>
       <main class="app-main" id="wca-results" aria-live="polite" aria-label="Search results"></main>
       <footer class="app-footer">
@@ -463,11 +464,7 @@ export class App {
       const answerBlock = document.createElement('div');
       answerBlock.className = 'learn-answer-block';
       answerBlock.hidden = true;
-      answerBlock.innerHTML =
-        `<p class="learn-answer-text">${escHtml(row.answer)}</p>` +
-        `<p class="qa-excerpt-label">WCA 2030 excerpt · Page ${escHtml(String(row.page_number))}</p>` +
-        `<blockquote class="qa-excerpt"><p>${escHtml(row.excerpt)}</p></blockquote>` +
-        `<p class="learn-citation">§ ${escHtml(row.section_title)}</p>`;
+      answerBlock.innerHTML = qaAnswerBlockHtml(row);
 
       // Mark buttons (appear after reveal)
       const markRow = document.createElement('div');
@@ -695,11 +692,7 @@ export class App {
       const answerBlock = document.createElement('div');
       answerBlock.className = 'learn-answer-block';
       answerBlock.hidden = true;
-      answerBlock.innerHTML =
-        `<p class="learn-answer-text">${escHtml(row.answer)}</p>` +
-        `<p class="qa-excerpt-label">WCA 2030 excerpt · Page ${escHtml(String(row.page_number))}</p>` +
-        `<blockquote class="qa-excerpt"><p>${escHtml(row.excerpt)}</p></blockquote>` +
-        `<p class="learn-citation">§ ${escHtml(row.section_title)}</p>`;
+      answerBlock.innerHTML = qaAnswerBlockHtml(row);
 
       showBtn.addEventListener('click', () => {
         answerBlock.hidden = false;

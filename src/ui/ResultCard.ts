@@ -148,14 +148,15 @@ export class ResultCard {
   }
 
   /**
-   * Tier-1 verified-answer card.
+   * Tier-1 curated-question card (A4).
    *
    * Layout:
-   *   VERIFIED ANSWER badge (forest green)
-   *   answer text (prominent)
-   *   excerpt in a blockquote
+   *   "Curated question" badge (forest green)
+   *   VERBATIM excerpt as the primary answer (blockquote)
+   *   paraphrased curated summary beneath it, subordinate, labelled
+   *     "Curated summary (not verbatim)"
    *   section_title + page_number citation
-   *   Copy citation button
+   *   Copy citation button (citation text uses the excerpt only)
    *
    * Never shown without its excerpt and page citation.
    */
@@ -163,6 +164,7 @@ export class ResultCard {
     const { row, score } = result;
     const pct = Math.min(score * 100, 100).toFixed(0);
 
+    // A4: the citation must quote the VERBATIM excerpt, never the paraphrase.
     const citationText =
       `WCA 2030, ${row.section_title} (p.${row.page_number}): ` +
       `${row.excerpt.slice(0, 80)}…`;
@@ -172,15 +174,16 @@ export class ResultCard {
 
     card.innerHTML = `
       <header class="card-header">
-        <span class="verified-badge">ANSWER</span>
+        <span class="verified-badge">Curated question</span>
         <span class="card-page">Page ${esc(row.page_number)}</span>
       </header>
       <div class="card-body">
-        <p class="qa-answer">${linkifyItems(highlight(esc(row.answer), query))}</p>
         <p class="qa-excerpt-label">WCA 2030 excerpt (Page ${esc(String(row.page_number))})</p>
         <blockquote class="qa-excerpt">
           <p>${linkifyItems(highlight(esc(row.excerpt), query))}</p>
         </blockquote>
+        <p class="qa-summary-label">Curated summary (not verbatim)</p>
+        <p class="qa-summary">${linkifyItems(highlight(esc(row.answer), query))}</p>
         <p class="card-source">Source: §&nbsp;${esc(row.section_title)}&nbsp;·&nbsp;p.${esc(String(row.page_number))}</p>
       </div>
       <footer class="card-footer">
@@ -195,7 +198,7 @@ export class ResultCard {
           </div>
           <span class="score-label">${pct}%</span>
         </div>
-        <span class="match-badge match-badge--verified">verified</span>
+        <span class="match-badge match-badge--verified">curated</span>
         <button class="copy-btn" type="button"
                 data-citation="${esc(citationText)}">
           Copy citation

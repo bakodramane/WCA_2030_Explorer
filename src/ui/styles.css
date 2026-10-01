@@ -368,7 +368,7 @@ body {
 }
 
 .card-text mark,
-.qa-answer mark,
+.qa-summary mark,
 .qa-excerpt p mark {
   background: var(--mark-bg);
   color: var(--ink);
@@ -451,12 +451,31 @@ body {
   border-radius: 3px;
 }
 
-.qa-answer {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--ink);
+.qa-summary-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0.8rem 0 0.2rem;
+}
+
+.qa-summary {
+  font-size: 0.85rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--muted);
   margin: 0 0 0.75rem;
-  line-height: 1.55;
+  line-height: 1.5;
+}
+
+/* A4: the paraphrased curated summary is always visually subordinate to the
+   verbatim excerpt — inside result cards and inside Learn / self-test blocks. */
+.learn-answer-text.qa-summary {
+  font-size: 0.85rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--muted);
 }
 
 .qa-excerpt-label {
