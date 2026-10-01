@@ -6,27 +6,29 @@
 
 ---
 
-## Progress status (updated 1 October 2026, after review of the first agent's work)
+## Progress status (updated 1 October 2026, after review of the second agent's work)
 
 | Task | Status | Commit | Notes |
 |---|---|---|---|
-| A1 Printed pages | ✅ Done | `4d95cb1` | Front matter excluded; 876 → 831 chunks. |
-| A2 Per-chunk pages | ✅ Done | `3747397` | `printedPageEnd` stored; `pp. X–Y` ranges shown. |
-| A3 Guardrail on raw scores | ✅ Done, **needs follow-up** | `d00d54d` | 0/60 off-topic answered. See C0 for the recall cost. |
-| A4 Verbatim Q&A answers | ✅ Done | `619c544` | `happy-dom` added as a dev dependency (accepted). |
-| A5 Self-hosted fonts | ✅ Done | `a2ac31a` | No `googleapis` under `docs/`. |
-| A6 Word-boundary highlight | ✅ Done | `aca024a` | Also fixed a double-escape bug. |
-| B1 Outline | ✅ Done, **changelog entry missing** | `7c82043` | 125 entries; printed pp. 1–216 covered. |
-| B2 Chunker rewrite | ⛔ **Interrupted** | — | The agent deleted `scripts/chunk.ts` locally and ran out of budget while writing the replacement. **Nothing from B2 was committed.** See B0. |
-| B3–E5 | Not started | — | |
+| A1–A6 | ✅ Done | `4d95cb1`…`aca024a` | See the Phase A changelog. |
+| B0 Recovery | ✅ Done | `ef52fa4` | B1 changelog entry added. |
+| B1 Outline | ✅ Done | `7c82043` | 125 entries. |
+| B2 Chunker rewrite | ✅ Done, **with follow-ups B2.1 and C0.4** | `b4da090`…`c05a475` | 831 → 400 chunks, 65 canonical titles, 80 % carry paragraph numbers, no running headers. |
+| B3 Data builders | ✅ Done | `cfb9b36` | Items, glossary, and figures rebuilt from the PDF; differences documented. |
+| B4 Validation | ⚠️ **Done but NOT committed** | — | The agent reported that `validate-data.ts` passes after 137 excerpt replacements and 4 page-only corrections in `data/wca-qa.csv`, plus a resumable `build-qa.ts`. None of it reached GitHub. See B4-R. |
+| B5 Version handshake | Not started | — | |
+| B2.1 Section granularity | **New** | — | See below. |
+| C–E | Not started | — | C0 now lists five findings. |
 
-**Verified by review on `claude/awesome-meitner-8pm5np` @ `7c82043`:** `npx tsc --noEmit`
-passes; `npx vitest run` passes **159 tests in 10 files**; `docs/data/chunks.json` is
-in sync with `public/data/chunks.json`. The live data still carries the corrupt
-section titles (C3), as expected until B2 lands.
+**Verified by review on `claude/awesome-meitner-8pm5np` @ `cfb9b36`:** `npx tsc --noEmit`
+passes; `npx vitest run` passes **179 tests in 17 files**; every `docs/data/*.json`
+is byte-identical to `public/data/`.
 
-**Start with B0, then B2.** Phases C–E follow as written, with the review findings
-added to C0 below.
+**Local-environment trap:** an old, gitignored `src/data/chunks-raw.json` left over
+from earlier runs makes tests prefer stale data, giving 5 false failures. Move it
+aside (or regenerate it with `npm run ingest`) before trusting a red test run.
+
+**Next steps, in order:** B4-R → B2.1 → B5 → C0 → C1–C3 → D → E.
 
 ---
 
@@ -86,8 +88,15 @@ Secondary issues are listed in each phase below.
   against chunk embeddings, the correct page (±1) is in the top 5 for **87 / 101**
   (86 %). This measures **raw chunk ranking**. Through the full document-tier cascade
   (section search + guardrail, Q&A tier bypassed) after Phase A, the correct page is
-  in the top 5 for only **33 / 51** (65 %), even though 47 / 51 are answered. Both
-  numbers are the ones to beat; see C0.
+  in the top 5 for only **33 / 51** (65 %), even though 47 / 51 are answered.
+  **After B2** (400 larger chunks): raw ranking **38 / 51 (75 %)** and document tier
+  **30 / 51 (59 %)**. The cause is in C0.4. Targets remain ≥ 90 % (C3).
+- **Short-query probe set** (used in C0.2/C0.5): fallow, aquaculture, land tenure,
+  reference period livestock, irrigation methods, holder, sex of holder, machinery
+  ownership, crop residue, intercropping, modular approach, community-level data,
+  tabulation, census frame, threshold for small holdings. After B2, the document
+  tier refuses fallow, holder, sex of holder, intercropping, and tabulation (the
+  Q&A tier still rescues three of them in the UI).
 - Current state: see the progress table at the top.
 - The embedding model is available offline at `public/models/Xenova/all-MiniLM-L6-v2/`.
   In Node, set `env.localModelPath = path.join(process.cwd(), 'public', 'models')` and
@@ -362,6 +371,46 @@ Produce `reports/qa-validation.csv` listing every failing row. **Fix the data**
 (correct the page or re-extract the excerpt verbatim in `wca-qa.csv`) until it
 passes. Never weaken the check. Expect about 54 excerpts to need attention.
 
+### B4-R. Recover or redo B4 *(do first)*
+
+1. **If you are the agent that did B4** and your workspace still has the
+   uncommitted changes: run `git status` and review the diff. Run the gates, then
+   commit as `feat(B4): …` and push **before anything else**. The commit should
+   include `scripts/validate-data.ts`, the corrected `data/wca-qa.csv`, the resumable
+   `build-qa.ts`, the regenerated `public/data/qa.json` and its `docs/` copy,
+   `reports/qa-validation.csv`, the `build-index` wiring, and the changelog entry.
+2. **Otherwise**, redo B4 from scratch as specified below. Expect about 137 failing
+   excerpts (paraphrased, prefixed with page furniture, or stitched together from
+   non-contiguous text) and about 4 page-only errors.
+3. In either case, the changelog must list **every** replaced excerpt (question, old
+   page, new page, match method) in `reports/qa-excerpt-repairs.csv`. For
+   repairs matched with low confidence, keep a `needs_owner_review` column set to
+   `yes`, so the owner can check them. Replacing a curated excerpt changes what users
+   see as the answer.
+4. `build-qa.ts` must reuse existing embeddings when a question's text is unchanged,
+   and must never try to download the model (set `allowRemoteModels = false`).
+
+### B2.1. Section granularity *(new, after B4-R)*
+
+Review measurements of the B2 output:
+- 121 of 400 chunks carry only a **chapter-level** title, and only 37 of the 90 outline
+  sections are used.
+- All 70 Annex 4 chunks share one title, although Annex 4 is organised in 12 themes.
+- 8 chunks come from the References list, which can match off-topic queries
+  through author and place names.
+
+Tasks:
+1. Assign units to the most specific outline entry. Where `source-outline.md` lacks
+   the paragraph ranges needed (e.g. "Stakeholders' needs" = ¶2.3–2.9), add a
+   `paragraphs: "2.3–2.9"` hint to the Markdown and teach `scripts/outline.ts` to read it.
+   Check every hint against the PDF.
+2. Add the 12 Annex 4 themes to the outline (the PDF ToC lists them), so that annex
+   chunks read e.g. "Annex 4 · Theme 5: Livestock".
+3. Exclude References chunks from search results (keep them out of the index, or
+   flag them `searchable: false`).
+4. **Target:** at least 75 % of chunks carry a section- or theme-level title. Record
+   the before and after figures in the changelog.
+
 ### B5. Version handshake (Phase 7 step 2 of `CLAUDE.md`, not yet implemented)
 
 - Have `embed.ts` set `model-meta.json`'s `version` to a content hash of
@@ -378,7 +427,7 @@ passes. Never weaken the check. Expect about 54 excerpts to need attention.
 
 ### C0. Review findings to resolve in this phase
 
-The review of Phase A measured three problems. Phase C must fix or explain each one,
+Reviews after Phase A and B2 measured five problems. Phase C must fix or explain each one,
 with numbers in the changelog.
 
 1. **Document-tier page accuracy fell to 65 %.** For 51 curated questions with the
@@ -401,6 +450,34 @@ with numbers in the changelog.
    off-topic questions into a **tuning** set and a **held-out** set (at least 30
    each, written independently). Tune only on the tuning set, and report the
    held-out false-answer rate separately.
+
+4. **Chunks exceed the embedding model's input window (found after B2).**
+   `all-MiniLM-L6-v2` was trained on inputs of at most 256 tokens, and Transformers.js
+   cuts input off at 512. The B2 chunks average **377 tokens**: 322 of 400 exceed 256,
+   and 24 exceed 512 (maximum 1 261, in the crop-code tables), so their tails are
+   never embedded. Measured effect, on the same 51-question sample:
+   - raw chunk ranking (correct page in the top 5) fell from about 86 % to **75 %**
+     (38/51);
+   - the document tier fell from 65 % to **59 %** (30 / 51; 48 answered);
+   - single-term queries got worse: "fallow" now has a raw score of **0.194**, and
+     "holder" (0.399), "tabulation" (0.423), and "sex of holder" (0.412) are refused
+     by the document tier.
+
+   **Fix (preferred):** keep the 200–350-word chunks for *display*, but embed each
+   chunk as several **windows of at most 200 tokens**, aligned to paragraph units
+   where possible. Store a `windows` array (or a parallel embeddings file with a
+   chunk index), score each chunk by its **best** window, and keep the guardrail on
+   that raw score. Measure in C2 against (a) the current single embedding and
+   (b) smaller display chunks of 120–180 words. Adopt the option with the best
+   recall@5 that keeps 0 % false answers on the tuning set. Update `embed.ts`,
+   `retrieval.ts`, the tests, and `CLAUDE.md` together.
+5. **Measure after every index change.** B2 shipped without a retrieval
+   measurement. From now on, every task that changes `chunks.json` or the
+   retrieval code must record recall@5, document-tier page accuracy, and the
+   off-topic false-answer rate in the changelog. Until C2's `npm run eval` exists,
+   use a minimal script (`scripts/dev/probe.ts`) that runs these 51 questions (every
+   8th row of `qa.json`, Q&A tier bypassed) and the 15 short queries listed in
+   §0.3.
 
 ### C1. Gold set
 
