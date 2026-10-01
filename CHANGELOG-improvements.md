@@ -175,4 +175,25 @@ number is the first extracted line of each PDF page.
    `source-outline.md`; the generator allows it and logs it — B1 to confirm
    against the PDF ToC.
 
+---
+
+## Phase B — Rebuild the index from document structure
+
+### B0 — Recover the working tree and close B1 (`docs(B0)`)
+
+- Confirmed the committed A2 `scripts/chunk.ts` is complete; no partial B2
+  replacement was present. The clean baseline passes `npx tsc --noEmit` and
+  **159 tests in 10 files**.
+
+### B1 — Machine-readable outline (`feat(B1)` 7c82043)
+
+- Added **125 outline entries**: 10 chapters, 90 sections, 12 Chapter 7 themes,
+  11 annexes, the glossary, and references, with ordered printed-page ranges
+  and parent IDs.
+- Corrected `data/source-outline.md` against the PDF table of contents: restored
+  missing Chapter 2/3 sections, extended Chapter 1 to the Part One divider on
+  printed page 1, and fixed the Chapter 5 table overlap.
+- Resolved Phase A open question 5: Annexes 6/7 and 7/8 genuinely start
+  mid-page, so siblings may share a single boundary page (printed pages 181
+  and 189 respectively).
 
