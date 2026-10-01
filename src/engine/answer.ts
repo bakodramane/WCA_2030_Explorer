@@ -36,19 +36,37 @@ export interface AnswerOptions {
   qaLookup?: (query: string) => Promise<QaResult | null>;
 }
 
-/** Normalised 4-digit item code from "item 115", "item 0115", "0115", "115" → "0115"; else null. */
-export function extractItemCode(query: string): string | null {
-  const clean = query.trim().replace(/^item\s+/i, '').trim();
-  const m = clean.match(/\b(\d{3,4})\b/);
-  if (!m) return null;
-  const n = parseInt(m[1], 10);
-  if (!n || n > 9999) return null;
-  return String(n).padStart(4, '0');
+/** Words of a query with surrounding punctuation removed ("Item 0903?" → ["Item", "0903"]). */
+function queryWords(query: string): string[] {
+  return query.trim().split(/\s+/).map(w => w.replace(/^[^\w]+|[^\w]+$/g, '')).filter(Boolean);
 }
 
-/** Figure/table kind and ref from "Table 9.1" or "Figure A10.1 decision tree"; else null. */
+/** OD.5: a lookup fires only when the code is the main content of the query: the code plus at most two other words. */
+const MAX_WORDS_WITH_CODE = 3;
+
+/**
+ * Normalised 4-digit item code, only when the code is the main content of the query: `0903`, `903`,
+ * `item 903`, `item 0903`, or a code plus at most two other words (`item 0903 definition`).
+ * A longer question that merely mentions a code ("What does WCA 2030 say about Item 0903?") returns null
+ * and goes through the normal cascade.
+ */
+export function extractItemCode(query: string): string | null {
+  const words = queryWords(query);
+  if (words.length === 0 || words.length > MAX_WORDS_WITH_CODE) return null;
+  const codes = words.filter(w => /^\d{3,4}$/.test(w));
+  if (codes.length !== 1) return null;
+  const n = parseInt(codes[0], 10);
+  return n > 0 ? String(n).padStart(4, '0') : null;
+}
+
+/**
+ * Figure/table kind and ref from "Table 9.1" or "Figure A10.1 decision tree": the query must start with
+ * the kind and a reference and carry at most two further words (OD.5).
+ */
 export function extractFigureTableRef(query: string): { kind: string; ref: string } | null {
-  const m = query.trim().match(/^(figure|table)\s+([A-Za-z]?\d+\.\d+)/i);
+  const words = queryWords(query.replace(/(\d)\.(\d)/g, '$1_$2'));
+  if (words.length < 2 || words.length > 2 + 2) return null;
+  const m = `${words[0]} ${words[1].replace('_', '.')}`.match(/^(figure|table)\s+([A-Za-z]?\d+\.\d+)$/i);
   return m ? { kind: m[1].toLowerCase(), ref: m[2] } : null;
 }
 
