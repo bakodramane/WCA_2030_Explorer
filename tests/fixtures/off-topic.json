@@ -1,5 +1,5 @@
 {
-  "description": "Off-topic questions the guardrail must REFUSE (A3). None of these can be answered from the WCA 2030 guidelines. Phase C extends this file with near-domain traps.",
+  "description": "Off-topic questions the guardrail must REFUSE (A3). None of these can be answered from the WCA 2030 guidelines. This is the TUNING set (C0.3): thresholds may be fitted to it. Held-out questions live in off-topic-heldout.json and must never be tuned against.",
   "questions": [
     "What is the GDP of Nigeria?",
     "What is the capital of France?",
@@ -59,6 +59,7 @@
     "How much does a wedding cost on average?",
     "What is the most popular social media platform?",
     "How do I delete my Instagram account?",
-    "What is the time difference between London and New York?"
+    "What is the time difference between London and New York?",
+    "How do I convert Celsius to Fahrenheit?"
   ]
 }
