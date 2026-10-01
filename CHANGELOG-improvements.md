@@ -202,3 +202,6 @@ number is the first extracted line of each PDF page.
 - `feat(B2): extract positioned PDF lines` — added a tested PDF extraction
   module carrying PDF page, printed page, and top/bottom line positions while
   leaving the working A2 chunker in place.
+- `feat(B2): strip positional page furniture` — removes front matter, printed
+  page numbers, and lines repeated on five or more page edges while preserving
+  repeated body content and item reference-period metadata.
