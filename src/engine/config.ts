@@ -11,6 +11,11 @@ export const CONFIDENCE_THRESHOLD = 0.42;
  * 0.52 is the lowest value at which none of the 60 tuning off-topic questions is answered (the highest
  * scoring one, "most popular social media platform", reaches 0.505). Gold recall@5 of the document
  * tier alone is 86.4 % at 0.52 against 90.0 % at 0.30.
+ *
+ * OWNER DECISION (OD.1): stays at 0.52; do not move it to 0.54. The known held-out leaks (cattle herd,
+ * tomato fertiliser, aphid pesticide, ocean salinity) are near-domain and are answered with verbatim, cited
+ * WCA text, so nothing is fabricated; 0.54 would cost about 3.6 points of recall@5 and would be chosen
+ * from held-out results. The 5.6 % held-out rate is an accepted, documented limitation.
  */
 export const ENUM_CONFIDENCE_THRESHOLD = 0.52;
 

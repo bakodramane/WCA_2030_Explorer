@@ -1,4 +1,4 @@
-# Evaluation — windowed chunks, chunk-raw ranking, tuned thresholds
+# Evaluation — current data
 
 Data: `public/data` — 414 chunks, 1016 embedded vectors. Ranking: `chunk-raw`. Thresholds: semantic 0.52, Q&A 0.8, lexical floor 0.38. Recall = the expected paragraph, or a chunk within one printed page of the expected page (short queries: the answer chunk contains the term; an item card or curated row counts when its verbatim text holds the answer).
 

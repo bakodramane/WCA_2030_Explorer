@@ -123,6 +123,11 @@ pesticide definition matches "What pesticide kills aphids on beans?"), which an 
 separate from in-domain questions. At 0.54 the same cascade reaches 90.7 % recall@5 with 1/36 held-out
 leaks on both sets.
 
+**Owner decision (OD.1): the semantic threshold stays at 0.52.** The remaining held-out leaks are near-domain
+questions answered with verbatim, cited WCA text (nothing is fabricated); 0.54 would cost about 3.6 points of
+recall@5 and would be chosen from held-out results. The 5.6 % held-out rate is an accepted, documented
+limitation.
+
 **Live tuning via DevTools** (no rebuild needed):
 
 ```js
