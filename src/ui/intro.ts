@@ -1,4 +1,6 @@
 // Header intro panel and the compact header after the first search (D1; E3: split out of App.ts).
+import { GUIDELINES_URL } from './links';
+
 export class IntroPanel {
   private introBody!: HTMLElement;
   private introToggle!: HTMLButtonElement;
@@ -20,6 +22,8 @@ export class IntroPanel {
           guidance to FAO Member Countries for conducting national agricultural censuses. The
           WCA 2030 — the eleventh decennial programme — underpins censuses to be implemented
           worldwide between 2026 and 2035.</p>
+          <a class="intro-link" href="${GUIDELINES_URL}" target="_blank"
+             rel="noopener noreferrer">Read the official guidelines on FAO's Open Knowledge Repository ↗</a>
         </section>
         <section class="intro-section">
           <h2 class="intro-heading">About this Explorer</h2>

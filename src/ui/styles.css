@@ -758,6 +758,20 @@ body {
 }
 .footer-link:hover { opacity: 0.75; }
 
+/* Home-page link to the official guidelines (in the intro panel) */
+.intro-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 0.35rem;
+  color: var(--accent);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-underline-offset: 2px;
+}
+.intro-link:hover { opacity: 0.75; }
+
 /* ── Generic error ───────────────────────────────────────────────────── */
 .search-error {
   font-size: 0.88rem;

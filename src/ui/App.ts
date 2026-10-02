@@ -2,6 +2,7 @@
 // modals, search controller, intro panel, log controls, and service-worker code live in their own files).
 import { RetrievalEngine } from '../engine/retrieval';
 import { IntroPanel } from './intro';
+import { GUIDELINES_URL } from './links';
 import { setKnownItemCodes } from './linkify';
 import { LogControls } from './log-controls';
 import { buildActionGroups, buildBrowseHubButton, buildLearnHubButton } from './modals/hubs';
@@ -48,7 +49,7 @@ export class App {
         <span class="footer-note">
           Answers are drawn exclusively from WCA 2030 official guidelines. No data leaves this device.
           <a class="footer-link"
-             href="https://openknowledge.fao.org/items/96f7d26a-f0ed-499c-a658-d2ecb68cdfbd"
+             href="${GUIDELINES_URL}"
              target="_blank"
              rel="noopener noreferrer">Official guidelines ↗</a>
         </span>
