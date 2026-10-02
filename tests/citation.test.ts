@@ -31,12 +31,13 @@ describe('A1 — printed-page citations', () => {
     chunks = JSON.parse(fs.readFileSync(src, 'utf-8')) as Chunk[];
   });
 
-  it('a chunk containing paragraph 7.4.18 cites printed page 89 and groups under "Chapter 7"', () => {
+  it('a chunk containing paragraph 7.4.18 cites printed page 91 and groups under "Chapter 7"', () => {
     const chunk = chunks.find(c => /\b7\.4\.18\b/.test(c.text));
     expect(chunk, 'no chunk contains paragraph 7.4.18').toBeDefined();
-    // Printed page of ¶7.4.18 is 89 (PDF page 103 — C1 evidence in §0.2).
-    expect(chunk!.printedPage).toBe(89);
-    expect(chunk!.pdfPage).toBe(103);
+    // Printed page of ¶7.4.18 is 91 (PDF page 105) in the April 2026 edition (CD9437EN); it was 89 / 103
+    // in the earlier file, where the C1 audit found it shown as "Page 103".
+    expect(chunk!.printedPage).toBe(91);
+    expect(chunk!.pdfPage).toBe(105);
     expect(chunk!.paragraphs).toContain('7.4.18');
     // The filter pill must be "Chapter 7", not the old "Chapter 8" mislabel.
     expect(deriveGroup(chunk!.sectionTitle, chunk!.printedPage)).toBe('Chapter 7');
@@ -81,12 +82,13 @@ describe('A1 — printed-page citations', () => {
   });
 
   it('groupForPrintedPage maps boundary pages to the right group', () => {
-    expect(groupForPrintedPage(89)).toBe('Chapter 7');
+    expect(groupForPrintedPage(91)).toBe('Chapter 7');
     expect(groupForPrintedPage(2)).toBe('Chapter 1');
-    expect(groupForPrintedPage(100)).toBe('Chapter 8');
-    expect(groupForPrintedPage(134)).toBe('Annex 4');
-    expect(groupForPrintedPage(201)).toBe('Glossary');
-    expect(groupForPrintedPage(208)).toBe('References');
+    expect(groupForPrintedPage(101)).toBe('Chapter 7');
+    expect(groupForPrintedPage(102)).toBe('Chapter 8');
+    expect(groupForPrintedPage(137)).toBe('Annex 4');
+    expect(groupForPrintedPage(203)).toBe('Glossary');
+    expect(groupForPrintedPage(210)).toBe('References');
     expect(groupForPrintedPage(0)).toBeNull();       // front matter
     expect(groupForPrintedPage(-13)).toBeNull();      // front matter
   });

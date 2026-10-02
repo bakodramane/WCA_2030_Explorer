@@ -5,7 +5,7 @@
     "number": 1,
     "title": "Introduction",
     "printedStart": 1,
-    "printedEnd": 11,
+    "printedEnd": 12,
     "parentId": "part-one"
   },
   {
@@ -13,8 +13,8 @@
     "kind": "chapter",
     "number": 2,
     "title": "Importance of the Census of Agriculture and its International Context",
-    "printedStart": 12,
-    "printedEnd": 23,
+    "printedStart": 13,
+    "printedEnd": 24,
     "parentId": "part-one"
   },
   {
@@ -22,8 +22,8 @@
     "kind": "chapter",
     "number": 3,
     "title": "Relationship to Other Censuses",
-    "printedStart": 24,
-    "printedEnd": 36,
+    "printedStart": 25,
+    "printedEnd": 38,
     "parentId": "part-one"
   },
   {
@@ -31,8 +31,8 @@
     "kind": "chapter",
     "number": 4,
     "title": "Concepts and Definitions",
-    "printedStart": 37,
-    "printedEnd": 46,
+    "printedStart": 39,
+    "printedEnd": 48,
     "parentId": "part-two"
   },
   {
@@ -40,8 +40,8 @@
     "kind": "chapter",
     "number": 5,
     "title": "Methodological Considerations",
-    "printedStart": 47,
-    "printedEnd": 62,
+    "printedStart": 49,
+    "printedEnd": 64,
     "parentId": "part-two"
   },
   {
@@ -49,8 +49,8 @@
     "kind": "chapter",
     "number": 6,
     "title": "List of Items for the Census of Agriculture",
-    "printedStart": 63,
-    "printedEnd": 73,
+    "printedStart": 65,
+    "printedEnd": 75,
     "parentId": "part-two"
   },
   {
@@ -58,8 +58,8 @@
     "kind": "chapter",
     "number": 7,
     "title": "Description of Essential Items",
-    "printedStart": 74,
-    "printedEnd": 99,
+    "printedStart": 76,
+    "printedEnd": 101,
     "parentId": "part-two"
   },
   {
@@ -67,8 +67,8 @@
     "kind": "chapter",
     "number": 8,
     "title": "Community-Level Data",
-    "printedStart": 100,
-    "printedEnd": 104,
+    "printedStart": 102,
+    "printedEnd": 106,
     "parentId": "part-two"
   },
   {
@@ -76,8 +76,8 @@
     "kind": "chapter",
     "number": 9,
     "title": "Tabulation",
-    "printedStart": 105,
-    "printedEnd": 118,
+    "printedStart": 107,
+    "printedEnd": 120,
     "parentId": "part-two"
   },
   {
@@ -85,7 +85,7 @@
     "kind": "chapter",
     "number": 10,
     "title": "Data Dissemination, Data Conflicts and Archiving",
-    "printedStart": 119,
+    "printedStart": 121,
     "printedEnd": 126,
     "parentId": "part-two"
   },
@@ -95,7 +95,7 @@
     "number": 1,
     "title": "The Agricultural Census within the Framework of the System of National Accounts (SNA)",
     "printedStart": 127,
-    "printedEnd": 129,
+    "printedEnd": 131,
     "parentId": "annexes"
   },
   {
@@ -103,8 +103,8 @@
     "kind": "annex",
     "number": 2,
     "title": "ISIC Scope of the Agricultural Census",
-    "printedStart": 130,
-    "printedEnd": 132,
+    "printedStart": 132,
+    "printedEnd": 135,
     "parentId": "annexes"
   },
   {
@@ -112,8 +112,8 @@
     "kind": "annex",
     "number": 3,
     "title": "ISIC Aquaculture",
-    "printedStart": 133,
-    "printedEnd": 133,
+    "printedStart": 136,
+    "printedEnd": 136,
     "parentId": "annexes"
   },
   {
@@ -121,8 +121,8 @@
     "kind": "annex",
     "number": 4,
     "title": "Additional Items of the WCA 2030 (by theme, Themes 1–12)",
-    "printedStart": 134,
-    "printedEnd": 172,
+    "printedStart": 137,
+    "printedEnd": 174,
     "parentId": "annexes"
   },
   {
@@ -130,8 +130,8 @@
     "kind": "annex",
     "number": 5,
     "title": "Correspondence between WCA 2030, FAO and SEEA Land Use Classes",
-    "printedStart": 173,
-    "printedEnd": 173,
+    "printedStart": 175,
+    "printedEnd": 175,
     "parentId": "annexes"
   },
   {
@@ -139,8 +139,8 @@
     "kind": "annex",
     "number": 6,
     "title": "Classification of Crops (Indicative Crop Classification — ICC)",
-    "printedStart": 174,
-    "printedEnd": 181,
+    "printedStart": 176,
+    "printedEnd": 183,
     "parentId": "annexes"
   },
   {
@@ -148,8 +148,8 @@
     "kind": "annex",
     "number": 7,
     "title": "Alphabetical List of Crops with Botanical Name and Crop Code (ICC and CPC)",
-    "printedStart": 181,
-    "printedEnd": 189,
+    "printedStart": 183,
+    "printedEnd": 191,
     "parentId": "annexes"
   },
   {
@@ -157,8 +157,8 @@
     "kind": "annex",
     "number": 8,
     "title": "Classification of Livestock",
-    "printedStart": 189,
-    "printedEnd": 189,
+    "printedStart": 191,
+    "printedEnd": 191,
     "parentId": "annexes"
   },
   {
@@ -166,8 +166,8 @@
     "kind": "annex",
     "number": 9,
     "title": "Classification of Machinery and Equipment",
-    "printedStart": 190,
-    "printedEnd": 192,
+    "printedStart": 192,
+    "printedEnd": 194,
     "parentId": "annexes"
   },
   {
@@ -175,8 +175,8 @@
     "kind": "annex",
     "number": 10,
     "title": "Overview of ILO Resolutions concerning Statistics of Work",
-    "printedStart": 193,
-    "printedEnd": 197,
+    "printedStart": 195,
+    "printedEnd": 199,
     "parentId": "annexes"
   },
   {
@@ -184,8 +184,8 @@
     "kind": "annex",
     "number": 11,
     "title": "SDG Indicators Covered Partially by Agricultural Censuses",
-    "printedStart": 198,
-    "printedEnd": 200,
+    "printedStart": 200,
+    "printedEnd": 202,
     "parentId": "annexes"
   },
   {
@@ -193,8 +193,8 @@
     "kind": "glossary",
     "number": 0,
     "title": "Glossary of Terms",
-    "printedStart": 201,
-    "printedEnd": 207,
+    "printedStart": 203,
+    "printedEnd": 209,
     "parentId": null
   },
   {
@@ -202,8 +202,8 @@
     "kind": "references",
     "number": 0,
     "title": "References and Further Reading",
-    "printedStart": 208,
-    "printedEnd": 216,
+    "printedStart": 210,
+    "printedEnd": 215,
     "parentId": null
   },
   {
@@ -211,8 +211,8 @@
     "kind": "section",
     "number": 0,
     "title": "What is a census of agriculture?",
-    "printedStart": 2,
-    "printedEnd": 2,
+    "printedStart": 3,
+    "printedEnd": 3,
     "parentId": "ch1",
     "paragraphs": "1.1–1.1"
   },
@@ -221,8 +221,8 @@
     "kind": "section",
     "number": 0,
     "title": "Background to the World Programme for the Census of Agriculture",
-    "printedStart": 2,
-    "printedEnd": 4,
+    "printedStart": 3,
+    "printedEnd": 5,
     "parentId": "ch1",
     "paragraphs": "1.2–1.11"
   },
@@ -231,8 +231,8 @@
     "kind": "section",
     "number": 0,
     "title": "Objectives of the census of agriculture",
-    "printedStart": 4,
-    "printedEnd": 5,
+    "printedStart": 5,
+    "printedEnd": 6,
     "parentId": "ch1",
     "paragraphs": "1.12–1.14"
   },
@@ -241,8 +241,8 @@
     "kind": "section",
     "number": 0,
     "title": "The census and the programme of agricultural surveys",
-    "printedStart": 5,
-    "printedEnd": 6,
+    "printedStart": 6,
+    "printedEnd": 7,
     "parentId": "ch1",
     "paragraphs": "1.15–1.21"
   },
@@ -251,8 +251,8 @@
     "kind": "section",
     "number": 0,
     "title": "Main features of the WCA 2030",
-    "printedStart": 6,
-    "printedEnd": 8,
+    "printedStart": 7,
+    "printedEnd": 9,
     "parentId": "ch1",
     "paragraphs": "1.22–1.30"
   },
@@ -261,8 +261,8 @@
     "kind": "section",
     "number": 0,
     "title": "Statistical unit, concepts, content, and classifications in the WCA 2030",
-    "printedStart": 8,
-    "printedEnd": 9,
+    "printedStart": 9,
+    "printedEnd": 10,
     "parentId": "ch1",
     "paragraphs": "1.31–1.34"
   },
@@ -271,8 +271,8 @@
     "kind": "section",
     "number": 0,
     "title": "Themes and items omitted",
-    "printedStart": 9,
-    "printedEnd": 11,
+    "printedStart": 10,
+    "printedEnd": 12,
     "parentId": "ch1",
     "paragraphs": "1.35–1.35"
   },
@@ -281,8 +281,8 @@
     "kind": "section",
     "number": 0,
     "title": "Introduction",
-    "printedStart": 12,
-    "printedEnd": 13,
+    "printedStart": 13,
+    "printedEnd": 14,
     "parentId": "ch2",
     "paragraphs": "2.1–2.4"
   },
@@ -291,8 +291,8 @@
     "kind": "section",
     "number": 0,
     "title": "Stakeholders' needs",
-    "printedStart": 13,
-    "printedEnd": 13,
+    "printedStart": 14,
+    "printedEnd": 14,
     "parentId": "ch2"
   },
   {
@@ -300,8 +300,8 @@
     "kind": "section",
     "number": 0,
     "title": "Agricultural planning, policymaking and policy monitoring",
-    "printedStart": 13,
-    "printedEnd": 13,
+    "printedStart": 14,
+    "printedEnd": 14,
     "parentId": "ch2",
     "paragraphs": "2.5–2.5"
   },
@@ -310,8 +310,8 @@
     "kind": "section",
     "number": 0,
     "title": "Research, investment and business decisions",
-    "printedStart": 13,
-    "printedEnd": 14,
+    "printedStart": 14,
+    "printedEnd": 15,
     "parentId": "ch2",
     "paragraphs": "2.6–2.7"
   },
@@ -320,8 +320,8 @@
     "kind": "section",
     "number": 0,
     "title": "Food security",
-    "printedStart": 14,
-    "printedEnd": 14,
+    "printedStart": 15,
+    "printedEnd": 15,
     "parentId": "ch2",
     "paragraphs": "2.8–2.10"
   },
@@ -330,8 +330,8 @@
     "kind": "section",
     "number": 0,
     "title": "Work in agriculture",
-    "printedStart": 14,
-    "printedEnd": 15,
+    "printedStart": 15,
+    "printedEnd": 16,
     "parentId": "ch2",
     "paragraphs": "2.11–2.15"
   },
@@ -340,8 +340,8 @@
     "kind": "section",
     "number": 0,
     "title": "Agriculture and the environment",
-    "printedStart": 15,
-    "printedEnd": 16,
+    "printedStart": 16,
+    "printedEnd": 17,
     "parentId": "ch2",
     "paragraphs": "2.16–2.20"
   },
@@ -350,8 +350,8 @@
     "kind": "section",
     "number": 0,
     "title": "The role of gender in agriculture",
-    "printedStart": 16,
-    "printedEnd": 16,
+    "printedStart": 17,
+    "printedEnd": 17,
     "parentId": "ch2",
     "paragraphs": "2.21–2.24"
   },
@@ -360,8 +360,8 @@
     "kind": "section",
     "number": 0,
     "title": "Baseline data for monitoring and evaluation",
-    "printedStart": 16,
-    "printedEnd": 17,
+    "printedStart": 17,
+    "printedEnd": 18,
     "parentId": "ch2",
     "paragraphs": "2.25–2.26"
   },
@@ -370,8 +370,8 @@
     "kind": "section",
     "number": 0,
     "title": "Statistical needs",
-    "printedStart": 17,
-    "printedEnd": 17,
+    "printedStart": 18,
+    "printedEnd": 18,
     "parentId": "ch2"
   },
   {
@@ -379,8 +379,8 @@
     "kind": "section",
     "number": 0,
     "title": "Source of structural data, including data for economic agricultural accounts and national accounts",
-    "printedStart": 17,
-    "printedEnd": 17,
+    "printedStart": 18,
+    "printedEnd": 18,
     "parentId": "ch2",
     "paragraphs": "2.27–2.27"
   },
@@ -389,8 +389,8 @@
     "kind": "section",
     "number": 0,
     "title": "Holding-level data",
-    "printedStart": 17,
-    "printedEnd": 17,
+    "printedStart": 18,
+    "printedEnd": 18,
     "parentId": "ch2",
     "paragraphs": "2.28–2.29"
   },
@@ -399,8 +399,8 @@
     "kind": "section",
     "number": 0,
     "title": "Advantage over the reporting system",
-    "printedStart": 17,
-    "printedEnd": 18,
+    "printedStart": 18,
+    "printedEnd": 19,
     "parentId": "ch2",
     "paragraphs": "2.30–2.31"
   },
@@ -409,8 +409,8 @@
     "kind": "section",
     "number": 0,
     "title": "Benchmarking data for agricultural statistics",
-    "printedStart": 18,
-    "printedEnd": 18,
+    "printedStart": 19,
+    "printedEnd": 19,
     "parentId": "ch2",
     "paragraphs": "2.32–2.36"
   },
@@ -419,8 +419,8 @@
     "kind": "section",
     "number": 0,
     "title": "Frames for agricultural statistics surveys",
-    "printedStart": 18,
-    "printedEnd": 19,
+    "printedStart": 19,
+    "printedEnd": 20,
     "parentId": "ch2",
     "paragraphs": "2.37–2.41"
   },
@@ -429,8 +429,8 @@
     "kind": "section",
     "number": 0,
     "title": "The statistical farm register",
-    "printedStart": 19,
-    "printedEnd": 20,
+    "printedStart": 20,
+    "printedEnd": 21,
     "parentId": "ch2",
     "paragraphs": "2.42–2.45"
   },
@@ -439,8 +439,8 @@
     "kind": "section",
     "number": 0,
     "title": "Data on structure of agriculture in the small administrative units",
-    "printedStart": 20,
-    "printedEnd": 20,
+    "printedStart": 21,
+    "printedEnd": 21,
     "parentId": "ch2",
     "paragraphs": "2.46–2.48"
   },
@@ -449,8 +449,8 @@
     "kind": "section",
     "number": 0,
     "title": "Data on rare events",
-    "printedStart": 20,
-    "printedEnd": 20,
+    "printedStart": 21,
+    "printedEnd": 21,
     "parentId": "ch2",
     "paragraphs": "2.49–2.51"
   },
@@ -459,8 +459,8 @@
     "kind": "section",
     "number": 0,
     "title": "Integrating census data with geospatial data",
-    "printedStart": 20,
-    "printedEnd": 21,
+    "printedStart": 21,
+    "printedEnd": 22,
     "parentId": "ch2",
     "paragraphs": "2.52–2.53"
   },
@@ -469,8 +469,8 @@
     "kind": "section",
     "number": 0,
     "title": "Using census data for Small Area Estimation",
-    "printedStart": 21,
-    "printedEnd": 21,
+    "printedStart": 22,
+    "printedEnd": 22,
     "parentId": "ch2",
     "paragraphs": "2.54–2.55"
   },
@@ -479,8 +479,8 @@
     "kind": "section",
     "number": 0,
     "title": "Relevant international initiatives",
-    "printedStart": 21,
-    "printedEnd": 21,
+    "printedStart": 22,
+    "printedEnd": 22,
     "parentId": "ch2"
   },
   {
@@ -488,8 +488,8 @@
     "kind": "section",
     "number": 0,
     "title": "Global Strategy to Improve Agricultural and Rural Statistics",
-    "printedStart": 21,
-    "printedEnd": 22,
+    "printedStart": 22,
+    "printedEnd": 23,
     "parentId": "ch2",
     "paragraphs": "2.56–2.59"
   },
@@ -498,8 +498,8 @@
     "kind": "section",
     "number": 0,
     "title": "The 50x2030 Initiative to close the agricultural data gap",
-    "printedStart": 22,
-    "printedEnd": 22,
+    "printedStart": 23,
+    "printedEnd": 23,
     "parentId": "ch2",
     "paragraphs": "2.60–2.62"
   },
@@ -508,8 +508,8 @@
     "kind": "section",
     "number": 0,
     "title": "The Cape Town Global Action Plan for Sustainable Development Data",
-    "printedStart": 22,
-    "printedEnd": 23,
+    "printedStart": 23,
+    "printedEnd": 24,
     "parentId": "ch2",
     "paragraphs": "2.63–2.65"
   },
@@ -518,8 +518,8 @@
     "kind": "section",
     "number": 0,
     "title": "The 2030 Agenda and the Sustainable Development Goals",
-    "printedStart": 23,
-    "printedEnd": 23,
+    "printedStart": 24,
+    "printedEnd": 24,
     "parentId": "ch2",
     "paragraphs": "2.66–2.70"
   },
@@ -528,8 +528,8 @@
     "kind": "section",
     "number": 0,
     "title": "Introduction",
-    "printedStart": 24,
-    "printedEnd": 24,
+    "printedStart": 25,
+    "printedEnd": 25,
     "parentId": "ch3",
     "paragraphs": "3.1–3.1"
   },
@@ -538,8 +538,8 @@
     "kind": "section",
     "number": 0,
     "title": "Relationship with the population and housing census",
-    "printedStart": 24,
-    "printedEnd": 25,
+    "printedStart": 25,
+    "printedEnd": 26,
     "parentId": "ch3",
     "paragraphs": "3.2–3.4"
   },
@@ -548,8 +548,8 @@
     "kind": "section",
     "number": 0,
     "title": "Agriculture in the household sector",
-    "printedStart": 25,
-    "printedEnd": 25,
+    "printedStart": 26,
+    "printedEnd": 26,
     "parentId": "ch3",
     "paragraphs": "3.5–3.5"
   },
@@ -558,8 +558,8 @@
     "kind": "section",
     "number": 0,
     "title": "Statistical units in the agricultural and population censuses",
-    "printedStart": 25,
-    "printedEnd": 25,
+    "printedStart": 26,
+    "printedEnd": 26,
     "parentId": "ch3",
     "paragraphs": "3.6–3.8"
   },
@@ -568,8 +568,8 @@
     "kind": "section",
     "number": 0,
     "title": "Options for coordinating the agricultural and the population and housing censuses",
-    "printedStart": 25,
-    "printedEnd": 29,
+    "printedStart": 26,
+    "printedEnd": 30,
     "parentId": "ch3",
     "paragraphs": "3.9–3.27"
   },
@@ -578,8 +578,8 @@
     "kind": "section",
     "number": 0,
     "title": "The two censuses as a joint operation",
-    "printedStart": 29,
-    "printedEnd": 30,
+    "printedStart": 30,
+    "printedEnd": 31,
     "parentId": "ch3",
     "paragraphs": "3.28–3.29"
   },
@@ -588,8 +588,8 @@
     "kind": "section",
     "number": 0,
     "title": "Combining the census of agriculture with the census of aquaculture",
-    "printedStart": 30,
-    "printedEnd": 30,
+    "printedStart": 31,
+    "printedEnd": 31,
     "parentId": "ch3",
     "paragraphs": "3.30–3.30"
   },
@@ -598,8 +598,8 @@
     "kind": "section",
     "number": 0,
     "title": "Scope of the aquacultural census",
-    "printedStart": 30,
-    "printedEnd": 30,
+    "printedStart": 31,
+    "printedEnd": 31,
     "parentId": "ch3",
     "paragraphs": "3.31–3.32"
   },
@@ -608,8 +608,8 @@
     "kind": "section",
     "number": 0,
     "title": "Statistical unit for the aquacultural census",
-    "printedStart": 30,
-    "printedEnd": 31,
+    "printedStart": 31,
+    "printedEnd": 32,
     "parentId": "ch3",
     "paragraphs": "3.33–3.35"
   },
@@ -618,8 +618,8 @@
     "kind": "section",
     "number": 0,
     "title": "Methodology for a census of agriculture and aquaculture",
-    "printedStart": 31,
-    "printedEnd": 32,
+    "printedStart": 32,
+    "printedEnd": 34,
     "parentId": "ch3",
     "paragraphs": "3.36–3.44"
   },
@@ -628,8 +628,8 @@
     "kind": "section",
     "number": 0,
     "title": "Relationship with economic census",
-    "printedStart": 32,
-    "printedEnd": 33,
+    "printedStart": 34,
+    "printedEnd": 34,
     "parentId": "ch3",
     "paragraphs": "3.45–3.46"
   },
@@ -638,8 +638,8 @@
     "kind": "section",
     "number": 0,
     "title": "Forestry module",
-    "printedStart": 33,
-    "printedEnd": 34,
+    "printedStart": 34,
+    "printedEnd": 35,
     "parentId": "ch3",
     "paragraphs": "3.47–3.49"
   },
@@ -648,8 +648,8 @@
     "kind": "section",
     "number": 0,
     "title": "Fishing module",
-    "printedStart": 34,
-    "printedEnd": 36,
+    "printedStart": 35,
+    "printedEnd": 38,
     "parentId": "ch3",
     "paragraphs": "3.50–3.51"
   },
@@ -658,8 +658,8 @@
     "kind": "section",
     "number": 4.2,
     "title": "Statistical Unit",
-    "printedStart": 37,
-    "printedEnd": 37,
+    "printedStart": 39,
+    "printedEnd": 39,
     "parentId": "ch4"
   },
   {
@@ -667,8 +667,8 @@
     "kind": "section",
     "number": 4.3,
     "title": "The Agricultural Holding (definition)",
-    "printedStart": 37,
-    "printedEnd": 37,
+    "printedStart": 39,
+    "printedEnd": 39,
     "parentId": "ch4"
   },
   {
@@ -676,8 +676,8 @@
     "kind": "section",
     "number": 4.6,
     "title": "The Household",
-    "printedStart": 38,
-    "printedEnd": 38,
+    "printedStart": 40,
+    "printedEnd": 40,
     "parentId": "ch4"
   },
   {
@@ -685,8 +685,8 @@
     "kind": "section",
     "number": 4.1,
     "title": "Household-sector / non-household-sector holdings",
-    "printedStart": 38,
-    "printedEnd": 39,
+    "printedStart": 40,
+    "printedEnd": 41,
     "parentId": "ch4"
   },
   {
@@ -694,8 +694,8 @@
     "kind": "section",
     "number": 4.19,
     "title": "Parcel, Field and Plot",
-    "printedStart": 40,
-    "printedEnd": 40,
+    "printedStart": 42,
+    "printedEnd": 42,
     "parentId": "ch4"
   },
   {
@@ -703,8 +703,8 @@
     "kind": "section",
     "number": 4.21,
     "title": "Agricultural Holder",
-    "printedStart": 40,
-    "printedEnd": 40,
+    "printedStart": 42,
+    "printedEnd": 42,
     "parentId": "ch4"
   },
   {
@@ -712,8 +712,8 @@
     "kind": "section",
     "number": 4.25,
     "title": "Scope of the Census of Agriculture",
-    "printedStart": 41,
-    "printedEnd": 41,
+    "printedStart": 43,
+    "printedEnd": 43,
     "parentId": "ch4"
   },
   {
@@ -721,8 +721,8 @@
     "kind": "section",
     "number": 4.29,
     "title": "Coverage of the Census of Agriculture",
-    "printedStart": 41,
-    "printedEnd": 42,
+    "printedStart": 43,
+    "printedEnd": 44,
     "parentId": "ch4"
   },
   {
@@ -730,8 +730,8 @@
     "kind": "section",
     "number": 4.33,
     "title": "Cut-off Threshold",
-    "printedStart": 42,
-    "printedEnd": 43,
+    "printedStart": 44,
+    "printedEnd": 45,
     "parentId": "ch4"
   },
   {
@@ -739,8 +739,8 @@
     "kind": "section",
     "number": 4.37,
     "title": "Reference Period (reference year & reference day)",
-    "printedStart": 43,
-    "printedEnd": 43,
+    "printedStart": 45,
+    "printedEnd": 45,
     "parentId": "ch4"
   },
   {
@@ -748,8 +748,8 @@
     "kind": "section",
     "number": 4.39,
     "title": "Timing of the Census of Agriculture",
-    "printedStart": 43,
-    "printedEnd": 44,
+    "printedStart": 45,
+    "printedEnd": 46,
     "parentId": "ch4"
   },
   {
@@ -757,8 +757,8 @@
     "kind": "section",
     "number": 4.47,
     "title": "Content of the Agricultural Census",
-    "printedStart": 44,
-    "printedEnd": 45,
+    "printedStart": 46,
+    "printedEnd": 47,
     "parentId": "ch4"
   },
   {
@@ -766,8 +766,8 @@
     "kind": "section",
     "number": 4.5,
     "title": "Steps in Developing the Census of Agriculture",
-    "printedStart": 45,
-    "printedEnd": 46,
+    "printedStart": 47,
+    "printedEnd": 48,
     "parentId": "ch4"
   },
   {
@@ -775,8 +775,8 @@
     "kind": "section",
     "number": 5.3,
     "title": "Overview of census modalities",
-    "printedStart": 47,
-    "printedEnd": 48,
+    "printedStart": 49,
+    "printedEnd": 50,
     "parentId": "ch5"
   },
   {
@@ -784,8 +784,8 @@
     "kind": "section",
     "number": 5.6,
     "title": "The Classical Approach",
-    "printedStart": 48,
-    "printedEnd": 49,
+    "printedStart": 50,
+    "printedEnd": 51,
     "parentId": "ch5"
   },
   {
@@ -793,8 +793,8 @@
     "kind": "section",
     "number": 5.8,
     "title": "The Modular Approach (core + supplementary modules)",
-    "printedStart": 49,
-    "printedEnd": 51,
+    "printedStart": 51,
+    "printedEnd": 53,
     "parentId": "ch5"
   },
   {
@@ -802,8 +802,8 @@
     "kind": "section",
     "number": 5.16,
     "title": "Use of Registers and Administrative Records",
-    "printedStart": 51,
-    "printedEnd": 52,
+    "printedStart": 53,
+    "printedEnd": 54,
     "parentId": "ch5"
   },
   {
@@ -811,8 +811,8 @@
     "kind": "section",
     "number": 5.22,
     "title": "Frames for the Agricultural Census",
-    "printedStart": 52,
-    "printedEnd": 54,
+    "printedStart": 54,
+    "printedEnd": 56,
     "parentId": "ch5"
   },
   {
@@ -820,8 +820,8 @@
     "kind": "section",
     "number": 5.35,
     "title": "Flexible Enumeration Strategies for Agricultural Censuses",
-    "printedStart": 54,
-    "printedEnd": 55,
+    "printedStart": 56,
+    "printedEnd": 57,
     "parentId": "ch5"
   },
   {
@@ -829,8 +829,8 @@
     "kind": "section",
     "number": 5.4,
     "title": "Quality Assurance",
-    "printedStart": 55,
-    "printedEnd": 55,
+    "printedStart": 57,
+    "printedEnd": 57,
     "parentId": "ch5"
   },
   {
@@ -838,8 +838,8 @@
     "kind": "section",
     "number": 5.43,
     "title": "Methods of Enumeration (incl. interviewing methods)",
-    "printedStart": 56,
-    "printedEnd": 57,
+    "printedStart": 58,
+    "printedEnd": 59,
     "parentId": "ch5"
   },
   {
@@ -847,8 +847,8 @@
     "kind": "section",
     "number": 5.54,
     "title": "Complementary Tools to Data Collection (georeferencing, GIS, EO)",
-    "printedStart": 57,
-    "printedEnd": 62,
+    "printedStart": 59,
+    "printedEnd": 64,
     "parentId": "ch5"
   },
   {
@@ -856,8 +856,8 @@
     "kind": "section",
     "number": 6.1,
     "title": "Changes from the Earlier Programme",
-    "printedStart": 63,
-    "printedEnd": 64,
+    "printedStart": 65,
+    "printedEnd": 66,
     "parentId": "ch6"
   },
   {
@@ -865,8 +865,8 @@
     "kind": "section",
     "number": 6.8,
     "title": "Essential Items (list of 27 items across 10 themes)",
-    "printedStart": 64,
-    "printedEnd": 65,
+    "printedStart": 66,
+    "printedEnd": 67,
     "parentId": "ch6"
   },
   {
@@ -874,8 +874,8 @@
     "kind": "section",
     "number": 6.9,
     "title": "Additional Items",
-    "printedStart": 65,
-    "printedEnd": 66,
+    "printedStart": 67,
+    "printedEnd": 68,
     "parentId": "ch6"
   },
   {
@@ -883,8 +883,8 @@
     "kind": "section",
     "number": 6.11,
     "title": "Decision Tree for Determining Census Items",
-    "printedStart": 66,
-    "printedEnd": 66,
+    "printedStart": 68,
+    "printedEnd": 68,
     "parentId": "ch6"
   },
   {
@@ -892,8 +892,8 @@
     "kind": "section",
     "number": 6.13,
     "title": "Items for Consideration by Theme (overview)",
-    "printedStart": 66,
-    "printedEnd": 66,
+    "printedStart": 68,
+    "printedEnd": 68,
     "parentId": "ch6"
   },
   {
@@ -901,8 +901,8 @@
     "kind": "section",
     "number": 6.14,
     "title": "Theme-by-Theme Item Tables (Themes 1–12)",
-    "printedStart": 67,
-    "printedEnd": 72,
+    "printedStart": 69,
+    "printedEnd": 74,
     "parentId": "ch6"
   },
   {
@@ -910,8 +910,8 @@
     "kind": "section",
     "number": 6.16,
     "title": "Community-Level Items",
-    "printedStart": 72,
-    "printedEnd": 73,
+    "printedStart": 74,
+    "printedEnd": 75,
     "parentId": "ch6"
   },
   {
@@ -919,8 +919,8 @@
     "kind": "theme",
     "number": 1,
     "title": "Theme 1: Identification and General Characteristics",
-    "printedStart": 75,
-    "printedEnd": 78,
+    "printedStart": 77,
+    "printedEnd": 80,
     "parentId": "ch7"
   },
   {
@@ -928,8 +928,8 @@
     "kind": "theme",
     "number": 2,
     "title": "Theme 2: Land (total area, land use classification, land tenure)",
-    "printedStart": 79,
-    "printedEnd": 86,
+    "printedStart": 81,
+    "printedEnd": 88,
     "parentId": "ch7"
   },
   {
@@ -937,8 +937,8 @@
     "kind": "theme",
     "number": 3,
     "title": "Theme 3: Irrigation",
-    "printedStart": 86,
-    "printedEnd": 87,
+    "printedStart": 88,
+    "printedEnd": 89,
     "parentId": "ch7"
   },
   {
@@ -946,8 +946,8 @@
     "kind": "theme",
     "number": 4,
     "title": "Theme 4: Crops (temporary, permanent, fertilizers)",
-    "printedStart": 87,
-    "printedEnd": 91,
+    "printedStart": 89,
+    "printedEnd": 93,
     "parentId": "ch7"
   },
   {
@@ -955,8 +955,8 @@
     "kind": "theme",
     "number": 5,
     "title": "Theme 5: Livestock (production systems, numbers, breeding animals)",
-    "printedStart": 91,
-    "printedEnd": 93,
+    "printedStart": 93,
+    "printedEnd": 95,
     "parentId": "ch7"
   },
   {
@@ -964,8 +964,8 @@
     "kind": "theme",
     "number": 6,
     "title": "Theme 6: Agricultural Practices and Equipment",
-    "printedStart": 93,
-    "printedEnd": 95,
+    "printedStart": 95,
+    "printedEnd": 97,
     "parentId": "ch7"
   },
   {
@@ -973,8 +973,8 @@
     "kind": "theme",
     "number": 7,
     "title": "Theme 7: Services for Agriculture",
-    "printedStart": 95,
-    "printedEnd": 95,
+    "printedStart": 97,
+    "printedEnd": 97,
     "parentId": "ch7"
   },
   {
@@ -982,8 +982,8 @@
     "kind": "theme",
     "number": 8,
     "title": "Theme 8: Demographic and Social Characteristics",
-    "printedStart": 95,
-    "printedEnd": 95,
+    "printedStart": 97,
+    "printedEnd": 97,
     "parentId": "ch7"
   },
   {
@@ -991,8 +991,8 @@
     "kind": "theme",
     "number": 9,
     "title": "Theme 9: Work on the Holding",
-    "printedStart": 95,
-    "printedEnd": 99,
+    "printedStart": 97,
+    "printedEnd": 101,
     "parentId": "ch7"
   },
   {
@@ -1000,8 +1000,8 @@
     "kind": "theme",
     "number": 10,
     "title": "Theme 10: Aquaculture",
-    "printedStart": 99,
-    "printedEnd": 99,
+    "printedStart": 101,
+    "printedEnd": 101,
     "parentId": "ch7"
   },
   {
@@ -1009,8 +1009,8 @@
     "kind": "theme",
     "number": 11,
     "title": "Theme 11: Forestry",
-    "printedStart": 99,
-    "printedEnd": 99,
+    "printedStart": 101,
+    "printedEnd": 101,
     "parentId": "ch7"
   },
   {
@@ -1018,8 +1018,8 @@
     "kind": "theme",
     "number": 12,
     "title": "Theme 12: Fishing",
-    "printedStart": 99,
-    "printedEnd": 99,
+    "printedStart": 101,
+    "printedEnd": 101,
     "parentId": "ch7"
   },
   {
@@ -1027,8 +1027,8 @@
     "kind": "section",
     "number": 0,
     "title": "Methodological considerations",
-    "printedStart": 101,
-    "printedEnd": 101,
+    "printedStart": 103,
+    "printedEnd": 103,
     "parentId": "ch8"
   },
   {
@@ -1036,8 +1036,8 @@
     "kind": "section",
     "number": 0,
     "title": "Defining a community as a statistical unit",
-    "printedStart": 101,
-    "printedEnd": 101,
+    "printedStart": 103,
+    "printedEnd": 103,
     "parentId": "ch8",
     "paragraphs": "8.8–8.11"
   },
@@ -1046,8 +1046,8 @@
     "kind": "section",
     "number": 0,
     "title": "Data collection methods",
-    "printedStart": 101,
-    "printedEnd": 102,
+    "printedStart": 103,
+    "printedEnd": 104,
     "parentId": "ch8",
     "paragraphs": "8.12–8.15"
   },
@@ -1056,8 +1056,8 @@
     "kind": "section",
     "number": 0,
     "title": "Community-level items: geography, socioeconomic conditions, infrastructure and services, development programmes",
-    "printedStart": 102,
-    "printedEnd": 104,
+    "printedStart": 104,
+    "printedEnd": 106,
     "parentId": "ch8",
     "paragraphs": "8.16–8.32"
   },
@@ -1066,8 +1066,8 @@
     "kind": "section",
     "number": 0,
     "title": "Essential items to be tabulated in standard reports",
-    "printedStart": 107,
-    "printedEnd": 111,
+    "printedStart": 109,
+    "printedEnd": 113,
     "parentId": "ch9",
     "paragraphs": "9.9–9.11"
   },
@@ -1076,8 +1076,8 @@
     "kind": "section",
     "number": 0,
     "title": "Main classification variables",
-    "printedStart": 111,
-    "printedEnd": 114,
+    "printedStart": 113,
+    "printedEnd": 116,
     "parentId": "ch9",
     "paragraphs": "9.12–9.23"
   },
@@ -1086,8 +1086,8 @@
     "kind": "section",
     "number": 0,
     "title": "Working time on the holding",
-    "printedStart": 114,
-    "printedEnd": 114,
+    "printedStart": 116,
+    "printedEnd": 116,
     "parentId": "ch9",
     "paragraphs": "9.24–9.25"
   },
@@ -1096,8 +1096,8 @@
     "kind": "section",
     "number": 0,
     "title": "Cross-tabulations",
-    "printedStart": 114,
-    "printedEnd": 115,
+    "printedStart": 116,
+    "printedEnd": 117,
     "parentId": "ch9",
     "paragraphs": "9.26–9.31"
   },
@@ -1106,8 +1106,8 @@
     "kind": "section",
     "number": 0,
     "title": "Data confidentiality and data disclosure control",
-    "printedStart": 115,
-    "printedEnd": 116,
+    "printedStart": 117,
+    "printedEnd": 118,
     "parentId": "ch9",
     "paragraphs": "9.32–9.33"
   },
@@ -1116,8 +1116,8 @@
     "kind": "section",
     "number": 0,
     "title": "Community-level data tabulations",
-    "printedStart": 116,
-    "printedEnd": 118,
+    "printedStart": 118,
+    "printedEnd": 120,
     "parentId": "ch9",
     "paragraphs": "9.34–9.39"
   },
@@ -1126,8 +1126,8 @@
     "kind": "section",
     "number": 0,
     "title": "Aquaculture tabulations",
-    "printedStart": 118,
-    "printedEnd": 118,
+    "printedStart": 120,
+    "printedEnd": 120,
     "parentId": "ch9",
     "paragraphs": "9.40–9.42"
   },
@@ -1136,8 +1136,8 @@
     "kind": "section",
     "number": 0,
     "title": "Dissemination of aggregate results",
-    "printedStart": 120,
-    "printedEnd": 121,
+    "printedStart": 122,
+    "printedEnd": 123,
     "parentId": "ch10",
     "paragraphs": "10.6–10.13"
   },
@@ -1146,8 +1146,8 @@
     "kind": "section",
     "number": 0,
     "title": "Safe access to census microdata",
-    "printedStart": 121,
-    "printedEnd": 123,
+    "printedStart": 123,
+    "printedEnd": 125,
     "parentId": "ch10",
     "paragraphs": "10.14–10.19"
   },
@@ -1156,8 +1156,8 @@
     "kind": "section",
     "number": 0,
     "title": "Promoting statistics through contemporary media and tools",
-    "printedStart": 123,
-    "printedEnd": 123,
+    "printedStart": 125,
+    "printedEnd": 125,
     "parentId": "ch10",
     "paragraphs": "10.20–10.23"
   },
@@ -1166,8 +1166,8 @@
     "kind": "section",
     "number": 0,
     "title": "Data conflicts",
-    "printedStart": 123,
-    "printedEnd": 124,
+    "printedStart": 125,
+    "printedEnd": 126,
     "parentId": "ch10",
     "paragraphs": "10.24–10.28"
   },
@@ -1176,7 +1176,7 @@
     "kind": "section",
     "number": 0,
     "title": "Data archiving",
-    "printedStart": 124,
+    "printedStart": 126,
     "printedEnd": 126,
     "parentId": "ch10",
     "paragraphs": "10.29–10.31"
@@ -1186,8 +1186,8 @@
     "kind": "theme",
     "number": 1,
     "title": "Annex 4 · Theme 1: Identification and general characteristics",
-    "printedStart": 134,
-    "printedEnd": 136,
+    "printedStart": 137,
+    "printedEnd": 139,
     "parentId": "annex4"
   },
   {
@@ -1195,8 +1195,8 @@
     "kind": "theme",
     "number": 2,
     "title": "Annex 4 · Theme 2: Land",
-    "printedStart": 136,
-    "printedEnd": 139,
+    "printedStart": 139,
+    "printedEnd": 142,
     "parentId": "annex4"
   },
   {
@@ -1204,8 +1204,8 @@
     "kind": "theme",
     "number": 3,
     "title": "Annex 4 · Theme 3: Irrigation",
-    "printedStart": 139,
-    "printedEnd": 142,
+    "printedStart": 142,
+    "printedEnd": 145,
     "parentId": "annex4"
   },
   {
@@ -1213,8 +1213,8 @@
     "kind": "theme",
     "number": 4,
     "title": "Annex 4 · Theme 4: Crops",
-    "printedStart": 142,
-    "printedEnd": 146,
+    "printedStart": 145,
+    "printedEnd": 149,
     "parentId": "annex4"
   },
   {
@@ -1222,8 +1222,8 @@
     "kind": "theme",
     "number": 5,
     "title": "Annex 4 · Theme 5: Livestock",
-    "printedStart": 146,
-    "printedEnd": 149,
+    "printedStart": 149,
+    "printedEnd": 152,
     "parentId": "annex4"
   },
   {
@@ -1231,8 +1231,8 @@
     "kind": "theme",
     "number": 6,
     "title": "Annex 4 · Theme 6: Agricultural practices",
-    "printedStart": 149,
-    "printedEnd": 158,
+    "printedStart": 152,
+    "printedEnd": 161,
     "parentId": "annex4"
   },
   {
@@ -1240,8 +1240,8 @@
     "kind": "theme",
     "number": 7,
     "title": "Annex 4 · Theme 7: Services for agriculture",
-    "printedStart": 158,
-    "printedEnd": 162,
+    "printedStart": 161,
+    "printedEnd": 165,
     "parentId": "annex4"
   },
   {
@@ -1249,8 +1249,8 @@
     "kind": "theme",
     "number": 8,
     "title": "Annex 4 · Theme 8: Demographic and social characteristics",
-    "printedStart": 162,
-    "printedEnd": 164,
+    "printedStart": 165,
+    "printedEnd": 167,
     "parentId": "annex4"
   },
   {
@@ -1258,8 +1258,8 @@
     "kind": "theme",
     "number": 9,
     "title": "Annex 4 · Theme 9: Work on the holding",
-    "printedStart": 164,
-    "printedEnd": 164,
+    "printedStart": 167,
+    "printedEnd": 167,
     "parentId": "annex4"
   },
   {
@@ -1267,8 +1267,8 @@
     "kind": "theme",
     "number": 10,
     "title": "Annex 4 · Theme 10: Aquaculture",
-    "printedStart": 164,
-    "printedEnd": 166,
+    "printedStart": 167,
+    "printedEnd": 169,
     "parentId": "annex4"
   },
   {
@@ -1276,8 +1276,8 @@
     "kind": "theme",
     "number": 11,
     "title": "Annex 4 · Theme 11: Forestry",
-    "printedStart": 166,
-    "printedEnd": 169,
+    "printedStart": 169,
+    "printedEnd": 172,
     "parentId": "annex4"
   },
   {
@@ -1285,8 +1285,8 @@
     "kind": "theme",
     "number": 12,
     "title": "Annex 4 · Theme 12: Fishing",
-    "printedStart": 169,
-    "printedEnd": 172,
+    "printedStart": 172,
+    "printedEnd": 174,
     "parentId": "annex4"
   }
 ]

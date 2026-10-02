@@ -4,6 +4,7 @@ import type { DescriptionBlock, ItemRow } from '../src/engine/types';
 import OUTLINE_JSON from '../src/data/outline.json';
 import { extractPdfLines, type PdfLine } from './lib/pdf-lines';
 import { stripPageFurniture } from './lib/strip-furniture';
+import { SOURCE_PDF_FILE } from '../src/engine/source-pdf';
 
 type Category = ItemRow['category'];
 interface Header { code: string; name: string; index: number; page: number; category: Category; theme: string }
@@ -51,7 +52,11 @@ function findReference(lines: PdfLine[], start: number, limit: number): number {
   return -1;
 }
 function collectHeaders(lines: PdfLine[], category: Category): Header[] {
-  const [firstPage, lastPage] = category === 'essential' ? [74, 99] : [134, 172];
+  // Page ranges come from the outline (Chapter 7 for essential items, Annex 4 for additional items),
+  // so a re-typeset edition only needs data/source-outline.md updated.
+  const region = (OUTLINE_JSON as Array<{ id: string; printedStart: number; printedEnd: number }>)
+    .find(e => e.id === (category === 'essential' ? 'ch7' : 'annex4'))!;
+  const [firstPage, lastPage] = [region.printedStart, region.printedEnd];
   const labels = themeLabels();
   const headers: Header[] = [];
   const seen = new Set<string>();
@@ -187,7 +192,7 @@ export async function extractItems(pdfPath: string): Promise<ItemRow[]> {
 }
 
 async function main(): Promise<void> {
-  const pdfPath = path.join(process.cwd(), 'source', 'Census-2030_EN-DTP-9.pdf');
+  const pdfPath = path.join(process.cwd(), 'source', SOURCE_PDF_FILE);
   const outPath = path.join(process.cwd(), 'public', 'data', 'items.json');
   const rows = await extractItems(pdfPath);
   fs.writeFileSync(outPath, `${JSON.stringify(rows, null, 2)}\n`, 'utf-8');

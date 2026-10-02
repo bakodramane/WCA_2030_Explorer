@@ -2,8 +2,9 @@ import path from 'node:path';
 import { extractPdfLines } from './pdf-lines';
 import { compactKey, displayText, normaliseForMatch } from './normalise';
 import { stripPageFurniture } from './strip-furniture';
+import { SOURCE_PDF_FILE } from '../../src/engine/source-pdf';
 
-export const SOURCE_PDF = path.join(process.cwd(), 'source', 'Census-2030_EN-DTP-9.pdf');
+export const SOURCE_PDF = path.join(process.cwd(), 'source', SOURCE_PDF_FILE);
 
 const BULLET = /•/g;
 

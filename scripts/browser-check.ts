@@ -4,13 +4,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { launchBrowser, openApp, search, withPreview } from './lib/browser';
+import { SOURCE_PDF_FILE } from '../src/engine/source-pdf';
 
 async function main(): Promise<void> {
   const browser = await launchBrowser();
   const checks: Array<[string, boolean, string]> = [];
   const check = (name: string, ok: boolean, detail = ''): void => { checks.push([name, ok, detail]); };
   const sw = fs.readFileSync(path.join('docs', 'sw.js'), 'utf-8');
-  check('PDF is in the precache manifest', sw.includes('source/Census-2030_EN-DTP-9.pdf'));
+  check('PDF is in the precache manifest', sw.includes(`source/${SOURCE_PDF_FILE}`));
   check('only the SIMD WASM build is precached (threaded builds need cross-origin isolation)', sw.includes('models/ort-wasm-simd.wasm') && !sw.includes('ort-wasm-threaded') && !sw.includes('ort-wasm-simd-threaded') && !/url:"models\/ort-wasm\.wasm"/.test(sw));
   check('embeddings are binary files in the precache', sw.includes('data/embeddings.f32') && sw.includes('data/qa-embeddings.f32'));
 
@@ -38,7 +39,7 @@ async function main(): Promise<void> {
     // 3. "View page in PDF" points at the PDF page (printed + 14).
     await search(page, 'How is a plot related to a field and a parcel?');
     const href = await page.locator('#wca-results .pdf-link').first().getAttribute('href');
-    check('curated card links to PDF page 54 (printed 40 + 14)', !!href && /source\/Census-2030_EN-DTP-9\.pdf#page=54$/.test(href), String(href));
+    check('curated card links to PDF page 56 (printed 42 + 14)', !!href && href.endsWith(`source/${SOURCE_PDF_FILE}#page=56`), String(href));
 
     // 4. Offline: the service worker serves everything, including the PDF, with the network disabled.
     await page.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout: 60_000 }).catch(() => undefined);
@@ -48,7 +49,7 @@ async function main(): Promise<void> {
     await openApp(page, `${baseUrl}?q=land%20tenure`);
     await page.waitForSelector('#wca-results .result-card, #wca-results .not-found-card', { timeout: 30_000 });
     check('offline: search works after reload', (await page.locator('#wca-results .result-card').count()) > 0);
-    const pdfStatus = await page.evaluate(async url => { try { return (await fetch(url)).status; } catch { return 0; } }, `${baseUrl}source/Census-2030_EN-DTP-9.pdf`);
+    const pdfStatus = await page.evaluate(async url => { try { return (await fetch(url)).status; } catch { return 0; } }, `${baseUrl}source/${SOURCE_PDF_FILE}`);
     check('offline: the PDF is served from the precache', pdfStatus === 200, String(pdfStatus));
     await context.setOffline(false);
 

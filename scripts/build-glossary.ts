@@ -2,6 +2,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { extractPdfLines } from './lib/pdf-lines';
 import { stripPageFurniture } from './lib/strip-furniture';
+import { SOURCE_PDF_FILE } from '../src/engine/source-pdf';
+import OUTLINE_JSON from '../src/data/outline.json';
+
+// The glossary's printed page range comes from the outline, so a re-typeset edition only needs
+// data/source-outline.md updated.
+const GLOSSARY = (OUTLINE_JSON as Array<{ id: string; kind: string; printedStart: number; printedEnd: number }>)
+  .find(e => e.kind === 'glossary')!;
 
 interface GlossaryRow {
   term: string;
@@ -18,7 +25,7 @@ function referenceFromDefinition(definition: string): string {
 
 export async function extractGlossary(pdfPath: string): Promise<GlossaryRow[]> {
   const lines = stripPageFurniture(await extractPdfLines(pdfPath))
-    .filter(line => line.printedPage >= 201 && line.printedPage <= 207)
+    .filter(line => line.printedPage >= GLOSSARY.printedStart && line.printedPage <= GLOSSARY.printedEnd)
     .filter(line => line.text !== 'GLOSSARY OF TERMS');
   const rows: GlossaryRow[] = [];
   let term = '';
@@ -34,7 +41,7 @@ export async function extractGlossary(pdfPath: string): Promise<GlossaryRow[]> {
     const match = line.text.match(ENTRY_START);
     if (match) {
       flush();
-      term = match[1];
+      term = match[1].replace(/\s+/g, ' ').trim();
       parts = [match[2]];
     } else if (term) {
       parts.push(line.text);
@@ -45,7 +52,7 @@ export async function extractGlossary(pdfPath: string): Promise<GlossaryRow[]> {
 }
 
 async function main(): Promise<void> {
-  const pdfPath = path.join(process.cwd(), 'source', 'Census-2030_EN-DTP-9.pdf');
+  const pdfPath = path.join(process.cwd(), 'source', SOURCE_PDF_FILE);
   const outPath = path.join(process.cwd(), 'public', 'data', 'glossary.json');
   const rows = await extractGlossary(pdfPath);
   fs.writeFileSync(outPath, `${JSON.stringify(rows, null, 2)}\n`, 'utf-8');

@@ -28,22 +28,23 @@ Work through the phases below in order. **Complete and confirm each phase before
 The WCA 2030 source document is a proper PDF file:
 
 ```
-Relative path : ./source/Census-2030_EN-DTP-9.pdf
-Absolute path : C:\Users\BAKO\OneDrive - Food and Agriculture Organization\Documents\GitHub\WCA_2030_Explorer\source\Census-2030_EN-DTP-9.pdf
+Relative path : ./source/WCA-2030.pdf
+Absolute path : C:\Users\BAKO\OneDrive - Food and Agriculture Organization\Documents\GitHub\WCA_2030_Explorer\source\WCA-2030.pdf
 ```
 
-> **Before running any script**, confirm the file exists at the path above.
-> If the filename differs, update every reference to it in `scripts/chunk.ts` accordingly.
+> **Before running any script**, confirm the file exists at the path above. It is the April 2026
+> edition (FAO, 2026, CD9437EN, ISBN 978-92-5-140661-8). The filename is set once, in
+> `src/engine/source-pdf.ts` (`SOURCE_PDF_FILE`); README §4 describes how to move to a new edition.
 
 Key content regions to prioritise during chunking (verified **printed** pages,
 from `data/source-outline.md`):
 
 | Content | Printed pages |
 |---|---|
-| Chapter 4 — Concepts & Definitions | 37–46 |
-| Chapter 7 — Essential Items | 74–99 |
-| Annex 4 — Additional Items | 134–172 |
-| Authoritative Glossary | 201–207 |
+| Chapter 4 — Concepts & Definitions | 39–48 |
+| Chapter 7 — Essential Items | 76–101 |
+| Annex 4 — Additional Items | 137–174 |
+| Authoritative Glossary | 203–209 |
 
 Chunks from these regions receive a `priority: 'high'` flag and a `1.15×` retrieval score boost.
 
@@ -73,7 +74,7 @@ Create this exact layout before writing any logic:
 WCA_2030_Explorer/
 ├── CLAUDE.md                          ← this file
 ├── source/
-│   └── Census-2030_EN-DTP-9.pdf      ← WCA 2030 source (already present)
+│   └── WCA-2030.pdf      ← WCA 2030 source (already present)
 ├── scripts/
 │   ├── chunk.ts                       ← Phase 2: PDF extraction + chunking
 │   ├── embed.ts                       ← Phase 3: embedding pipeline
@@ -178,7 +179,7 @@ import pdf from 'pdf-parse';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const pdfPath = path.join(process.cwd(), 'source', 'Census-2030_EN-DTP-9.pdf');
+const pdfPath = path.join(process.cwd(), 'source', 'WCA-2030.pdf');
 const dataBuffer = fs.readFileSync(pdfPath);
 
 // Capture per-page text using the pagerender callback

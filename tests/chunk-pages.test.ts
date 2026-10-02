@@ -6,6 +6,7 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { PDFParse } from 'pdf-parse';
 import fs from 'node:fs';
 import path from 'node:path';
+import { SOURCE_PDF_FILE } from '../src/engine/source-pdf';
 
 interface Chunk {
   id: string;
@@ -22,7 +23,7 @@ interface Chunk {
 
 const rawPath    = path.join(process.cwd(), 'src', 'data', 'chunks-raw.json');
 const publicPath = path.join(process.cwd(), 'public', 'data', 'chunks.json');
-const pdfPath    = path.join(process.cwd(), 'source', 'Census-2030_EN-DTP-9.pdf');
+const pdfPath    = path.join(process.cwd(), 'source', SOURCE_PDF_FILE);
 
 function escRe(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

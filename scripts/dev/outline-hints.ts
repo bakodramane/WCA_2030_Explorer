@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { extractPdfLines } from '../lib/pdf-lines';
 import { stripPageFurniture } from '../lib/strip-furniture';
+import { SOURCE_PDF_FILE } from '../../src/engine/source-pdf';
 
 const CHAPTERS = ['ch1', 'ch2', 'ch3', 'ch8', 'ch9', 'ch10'];
 /** Headings that are not a single line (or are lower-case sub-headings) and were read by hand. */
@@ -23,7 +24,7 @@ const cmp = (a: string, b: string): number => num(a)[0] - num(b)[0] || num(a)[1]
 interface Entry { id: string; title: string; printedStart: number; parentId: string }
 
 async function main(): Promise<void> {
-  const lines = stripPageFurniture(await extractPdfLines(path.join(process.cwd(), 'source', 'Census-2030_EN-DTP-9.pdf')));
+  const lines = stripPageFurniture(await extractPdfLines(path.join(process.cwd(), 'source', SOURCE_PDF_FILE)));
   const outline = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'src', 'data', 'outline.json'), 'utf-8')) as Array<Entry & { kind: string; printedEnd: number }>;
   const hints = new Map<string, string>();
 

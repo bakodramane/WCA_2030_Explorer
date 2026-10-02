@@ -27,7 +27,7 @@ The app is intended for FAO staff and national census bureaux who need authorita
 
 - Node.js ≥ 18 (for native `fetch`, `structuredClone`, WASM support)
 - npm ≥ 9
-- The WCA 2030 source PDF at `./source/Census-2030_EN-DTP-9.pdf`
+- The WCA 2030 source PDF at `./source/WCA-2030.pdf`
 
 > **Windows users:** run all commands in **Git Bash** or **PowerShell**.
 > Do **not** use `cmd.exe` — the `npx tsx` calls require a POSIX-compatible shell or PowerShell for proper path handling.
@@ -62,7 +62,7 @@ npm run build
 
 Compiles TypeScript, bundles the app, and generates:
 - `docs/` — the production bundle
-- `docs/sw.js` — the Workbox service worker with a 25-entry pre-cache manifest (~39 MB total)
+- `docs/sw.js` — the Workbox service worker with a 25-entry pre-cache manifest (~50 MB total)
 
 ### Step 3 — Preview locally
 
@@ -190,18 +190,36 @@ column as passages separated by a line holding only ` [...] `, with one page per
 
 ## 4. Updating guidelines
 
-When a new edition of the WCA guidelines is released:
+The source is `./source/WCA-2030.pdf` (FAO, 2026, CD9437EN, ISBN 978-92-5-140661-8). Its name is set
+once, in `src/engine/source-pdf.ts`; every script, test, and the app read it from there.
 
-1. Replace `./source/Census-2030_EN-DTP-9.pdf` with the new PDF.
-   Update every filename reference in `scripts/chunk.ts` if it differs.
-2. Verify the high-priority page ranges in `scripts/chunk.ts` still match the new
-   document's chapter layout, and update the `STATIC_HIGH_RANGES` array if needed.
-3. Re-run the full pipeline:
+When a new edition or re-typeset file is released:
+
+1. Replace `./source/WCA-2030.pdf` with the new PDF (keep the name, or change `SOURCE_PDF_FILE`).
+2. Re-map the outline's page numbers. Text usually moves between pages even when wording barely
+   changes, so carry `data/source-outline.md` over from the previous file:
+   ```bash
+   git show HEAD~1:source/WCA-2030.pdf > /tmp/old.pdf   # the previous edition
+   npx tsx scripts/dev/remap-outline.ts /tmp/old.pdf --write
+   ```
+   Then compare chapter, annex, and section start pages with the new PDF's table of contents, and
+   the Annex 4 theme ranges with the `THEME n:` headings on the annex pages. `npx tsx scripts/outline.ts`
+   and `npx vitest run tests/outline*.test.ts` check the result against the PDF. The items,
+   glossary, and validation steps read their page ranges from the outline.
+3. Re-run the pipeline, which rebuilds every data file and validates it:
    ```bash
    npm run build-index
    ```
-   This writes the updated `public/data/chunks.json` directly — no copy step needed.
-4. The `version` in `model-meta.json` is now stamped automatically by `npm run build-index`
+4. If validation reports curated Q&A page or wording mismatches, repair them and keep a log separate
+   from the owner-review history:
+   ```bash
+   npx tsx scripts/repair-qa.ts --exact --log=reports/qa-edition-update-<date>.csv
+   npm run build-qa && npx tsx scripts/write-meta.ts && npx tsx scripts/validate-data.ts
+   ```
+   Read every non-`page-only` row in the log before accepting it. Then regenerate the gold set's
+   expected pages (`npx tsx scripts/dev/build-gold.ts`), update any page-specific test assertions,
+   and run `npm run eval` to compare retrieval quality with the previous edition.
+5. The `version` in `model-meta.json` is stamped automatically by `npm run build-index`
    (last data step, `scripts/write-meta.ts`): `wca2030-` plus the first 12 hex characters of a
    SHA-256 over `chunks.json`, `qa.json`, `items.json`, and `glossary.json`. Do not edit it by hand.
    On startup the app compares it with `localStorage.wca_index_version`; when they differ it drops
@@ -221,14 +239,14 @@ When a new edition of the WCA guidelines is released:
 
 ### First-load download size
 
-On the very first visit the service worker pre-caches **~39 MB** of assets (25 files):
+On the very first visit the service worker pre-caches **~50 MB** of assets (25 files):
 
 | Asset | Size |
 |---|---|
 | `model_quantized.onnx` (ONNX weights) | ~22 MB |
 | `ort-wasm-simd.wasm` (the only WASM build precached) | ~9.5 MB |
 | Data: `chunks.json`, two `.f32` embedding files, `qa.json`, items, glossary, figures | ~3.9 MB |
-| Source PDF (page links work offline) | ~2.4 MB |
+| Source PDF (page links work offline) | ~13.3 MB |
 | JS bundle, CSS, HTML, fonts, icons | ~1.0 MB |
 
 Subsequent loads use the cache entirely — no network traffic.

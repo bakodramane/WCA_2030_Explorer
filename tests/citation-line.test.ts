@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { citationLine, displayTitle, matchBand, pdfLinkHtml, pdfPageUrl, qaBand } from '../src/ui/citation';
+import { SOURCE_PDF_FILE } from '../src/engine/source-pdf';
 
 describe('D2 — citation line and match band', () => {
   it('writes one line: §paragraph · section · page', () => {
@@ -28,7 +29,7 @@ describe('D2 — citation line and match band', () => {
   });
 
   it('D3: links to the bundled PDF at the PDF page (printed + 14), same origin', () => {
-    expect(pdfPageUrl(54)).toMatch(/source\/Census-2030_EN-DTP-9\.pdf#page=54$/);
+    expect(pdfPageUrl(54)).toBe(pdfPageUrl(54).replace(/[^/]*$/, '') + `${SOURCE_PDF_FILE}#page=54`);
     expect(pdfPageUrl(54).startsWith('http')).toBe(false);
     const html = pdfLinkHtml(54);
     expect(html).toContain('View page in PDF');

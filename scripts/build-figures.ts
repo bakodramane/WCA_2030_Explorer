@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { extractPdfLines } from './lib/pdf-lines';
 import { stripPageFurniture } from './lib/strip-furniture';
+import { SOURCE_PDF_FILE } from '../src/engine/source-pdf';
 
 interface FigureTableRow {
   ref: string;
@@ -53,7 +54,7 @@ export async function extractFiguresTables(pdfPath: string): Promise<FigureTable
 }
 
 async function main(): Promise<void> {
-  const pdfPath = path.join(process.cwd(), 'source', 'Census-2030_EN-DTP-9.pdf');
+  const pdfPath = path.join(process.cwd(), 'source', SOURCE_PDF_FILE);
   const outPath = path.join(process.cwd(), 'public', 'data', 'figures-tables.json');
   const rows = await extractFiguresTables(pdfPath);
   fs.writeFileSync(outPath, `${JSON.stringify(rows, null, 2)}\n`, 'utf-8');

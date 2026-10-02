@@ -4,6 +4,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { OUTLINE } from '../src/engine/outline';
 import { extractPdfLines } from '../scripts/lib/pdf-lines';
 import { stripPageFurniture } from '../scripts/lib/strip-furniture';
+import { SOURCE_PDF_FILE } from '../src/engine/source-pdf';
 
 const PARA = /^([1-9]\d*\.\d+)\s+/;
 const num = (p: string): [number, number] => { const [a, b] = p.split('.').map(Number); return [a, b]; };
@@ -12,7 +13,7 @@ const cmp = (a: string, b: string): number => num(a)[0] - num(b)[0] || num(a)[1]
 describe('B2.1 — paragraph hints match the PDF', () => {
   const pageOf = new Map<string, number>();
   beforeAll(async () => {
-    const lines = stripPageFurniture(await extractPdfLines(path.join(process.cwd(), 'source', 'Census-2030_EN-DTP-9.pdf')));
+    const lines = stripPageFurniture(await extractPdfLines(path.join(process.cwd(), 'source', SOURCE_PDF_FILE)));
     for (const line of lines) {
       const para = line.text.match(PARA)?.[1];
       if (para && !pageOf.has(para)) pageOf.set(para, line.printedPage);
