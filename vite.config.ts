@@ -16,7 +16,8 @@ function sourcePdf(): Plugin {
 }
 
 export default defineConfig({
-  base: '/WCA_2030_Explorer/',
+  // GitHub Pages serves the app under /WCA_2030_Explorer/; Netlify builds (NETLIFY=true) serve it from the root.
+  base: process.env.NETLIFY === 'true' ? '/' : '/WCA_2030_Explorer/',
   build: { outDir: 'docs' },
   plugins: [
     sourcePdf(),

@@ -341,3 +341,7 @@ One commit covers these tasks because the pieces depend on each other (the eval 
 - **E4** — Repository cleanup. Removed the stale compiled `tests/*.js` and `.netlify/` from git and ignored both. Moved `scripts/debug-sections.ts` and `scripts/qa_sim_test.ts` into `scripts/dev/` (import paths fixed). Drafted `.github/workflows/deploy.yml.proposed` (test, build, publish `docs/` via the Pages artifact flow); it is inactive and carries the switch-over steps. Activating it changes the Pages source, which needs the owner's approval under §0.6. 278 tests pass.
 
 - **E5** — Documentation. README: 278 tests, 25-entry ~39 MB pre-cache with the real file list, the binary-embedding outputs of `build-index`, `npm run eval`/`a11y`/`browser-check`, the printed-page citation format, and the excerpt-review section numbered 3a. `CLAUDE.md` already held the verified landmark table, chunk-count bound, and `Chunk` interface. `improvement_prompt.md` Progress table updated.
+
+### CI — Netlify deploy preview
+
+- The Netlify deploy preview for the pull request failed: Netlify's dashboard settings pointed at another project's publish folder, and the build hard-codes the GitHub Pages base path. Added `netlify.toml` (publish `docs`, Node 22) and made `vite.config.ts` use base `/` only when `NETLIFY=true`. The GitHub Pages build output is byte-identical; the Netlify-mode build was smoke-tested in Chromium.
