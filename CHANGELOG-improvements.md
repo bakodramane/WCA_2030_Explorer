@@ -387,3 +387,8 @@ One commit covers these tasks because the pieces depend on each other (the eval 
   `npm run a11y`, and `npm run browser-check` pass.
 - **Pre-cache size** 39.3 MB → **49.6 MB**: the new PDF is 13.3 MB (was 2.5 MB) and is pre-cached so
   "View page in PDF" works offline.
+- **Compressed source PDF.** The owner committed a compressed copy of the same edition (1.2 MB, from 13.3 MB).
+  Its extracted text is identical to the uncompressed file — all 10 097 lines match in text, page, and line
+  position — so it replaces `source/WCA-2030.pdf` under the same name, and `npm run build-index` reproduces the
+  committed data content exactly (index version unchanged, `wca2030-23827aabc654`; validation passes).
+  Pre-cache 49.6 MB → **38.1 MB**.

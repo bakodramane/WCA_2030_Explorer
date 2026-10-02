@@ -62,7 +62,7 @@ npm run build
 
 Compiles TypeScript, bundles the app, and generates:
 - `docs/` — the production bundle
-- `docs/sw.js` — the Workbox service worker with a 25-entry pre-cache manifest (~50 MB total)
+- `docs/sw.js` — the Workbox service worker with a 25-entry pre-cache manifest (~38 MB total)
 
 ### Step 3 — Preview locally
 
@@ -239,14 +239,14 @@ When a new edition or re-typeset file is released:
 
 ### First-load download size
 
-On the very first visit the service worker pre-caches **~50 MB** of assets (25 files):
+On the very first visit the service worker pre-caches **~38 MB** of assets (25 files):
 
 | Asset | Size |
 |---|---|
 | `model_quantized.onnx` (ONNX weights) | ~22 MB |
 | `ort-wasm-simd.wasm` (the only WASM build precached) | ~9.5 MB |
 | Data: `chunks.json`, two `.f32` embedding files, `qa.json`, items, glossary, figures | ~3.9 MB |
-| Source PDF (page links work offline) | ~13.3 MB |
+| Source PDF (page links work offline) | ~1.2 MB |
 | JS bundle, CSS, HTML, fonts, icons | ~1.0 MB |
 
 Subsequent loads use the cache entirely — no network traffic.
