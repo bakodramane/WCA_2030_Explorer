@@ -1,4 +1,39 @@
-/* Google Fonts (Lora) loaded via <link> in index.html — no @import here */
+/* ── Self-hosted fonts (A5) ──────────────────────────────────────────────────
+   Lora and JetBrains Mono WOFF2 files live in public/fonts/ (SIL OFL licences
+   alongside them) and are pre-cached by the Workbox service worker, so the
+   app makes zero requests to external hosts — offline included. */
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/lora-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/lora-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/lora-400-italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono-400.woff2') format('woff2');
+}
 
 /* ── Design tokens ───────────────────────────────────────────────────── */
 :root {
@@ -6,7 +41,7 @@
   --surface:   #ffffff;
   --ink:       #1a1a1a;
   --accent:    #1a3a2a;
-  --muted:     #6b7280;
+  --muted:     #555e6b;  /* D4: 5.8:1 on --bg (was #6b7280, 4.26:1) */
   --warn:      #92400e;
   --warn-bg:   #fffbeb;
   --border:    #d1c9b8;
@@ -368,7 +403,7 @@ body {
 }
 
 .card-text mark,
-.qa-answer mark,
+.qa-summary mark,
 .qa-excerpt p mark {
   background: var(--mark-bg);
   color: var(--ink);
@@ -451,12 +486,31 @@ body {
   border-radius: 3px;
 }
 
-.qa-answer {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--ink);
+.qa-summary-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0.8rem 0 0.2rem;
+}
+
+.qa-summary {
+  font-size: 0.85rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--muted);
   margin: 0 0 0.75rem;
-  line-height: 1.55;
+  line-height: 1.5;
+}
+
+/* A4: the paraphrased curated summary is always visually subordinate to the
+   verbatim excerpt — inside result cards and inside Learn / self-test blocks. */
+.learn-answer-text.qa-summary {
+  font-size: 0.85rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--muted);
 }
 
 .qa-excerpt-label {
@@ -1403,7 +1457,7 @@ body {
   margin-left: auto;
   margin-right: 0.5rem;
 }
-.test-tally-known  { color: #16a34a; font-weight: 700; }
+.test-tally-known  { color: #166534; font-weight: 700; }
 .test-tally-review { color: var(--warn); font-weight: 700; }
 .test-tally-total  { color: var(--muted); }
 .test-tally-sep    { color: var(--muted); }
@@ -1867,4 +1921,135 @@ body {
   font-size: 0.78rem;
   color: var(--muted);
   line-height: 1.5;
+}
+
+/* OD.3: multi-passage excerpts */
+.qa-gap {
+  border: 0;
+  border-top: 1px dashed var(--border);
+  margin: 0.6rem 0;
+  text-align: center;
+  overflow: visible;
+}
+.qa-gap::after {
+  content: '[…]';
+  position: relative;
+  top: -0.7em;
+  padding: 0 0.5rem;
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+.qa-passage-page {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 0.2rem;
+}
+
+/* ── D1: compact header after the first search ──────────────────────────
+   Title + search box only; everything else sits behind "Browse & learn". */
+.browse-learn-toggle { display: none; }
+
+.app-header--compact {
+  padding: 0.75rem 0 0.75rem;
+  margin-bottom: 1rem;
+}
+.app-header--compact .app-title {
+  display: inline-block;
+  font-size: 1.05rem;
+  margin: 0 0.9rem 0.5rem 0;
+}
+.app-header--compact .browse-learn-toggle {
+  display: inline-block;
+  min-height: 44px;
+  padding: 0 1rem;
+  margin-bottom: 0.5rem;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.app-header--compact:not(.app-header--expanded) .app-subtitle,
+.app-header--compact:not(.app-header--expanded) .trust-strip,
+.app-header--compact:not(.app-header--expanded) .intro-panel,
+.app-header--compact:not(.app-header--expanded) .action-groups,
+.app-header--compact:not(.app-header--expanded) .hub-buttons,
+.app-header--compact:not(.app-header--expanded) .suggestion-chips,
+.app-header--compact .search-helper {
+  display: none !important;
+}
+
+/* ── D2: citation line and match band ───────────────────────────────── */
+.card-citation {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+.match-band {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.match-band--strong  { background: var(--accent); color: #fff; border-color: var(--accent); }
+.match-band--good    { background: var(--mark-bg); color: var(--accent); }
+.match-band--partial { background: #e8e2d4; color: #5c4a22; }
+
+/* ── D3: link to the PDF page ───────────────────────────────────────── */
+.pdf-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* ── D4: touch targets, footer wrapping ─────────────────────────────── */
+.app-footer { flex-wrap: wrap; }
+.log-controls { display: inline-flex; flex-wrap: wrap; gap: 0.25rem 0.5rem; }
+
+.copy-btn,
+.footer-link,
+.log-export-btn,
+.log-clear-btn,
+.intro-toggle,
+.modal-close,
+.learn-reset-btn,
+.not-found-action-btn,
+.excerpt-toggle,
+.modal-show-more {
+  min-height: 44px;
+  min-width: 44px;
+}
+.footer-link, .intro-toggle, .learn-reset-btn { display: inline-flex; align-items: center; }
+.modal-filter-input { min-height: 44px; }
+.log-export-btn, .log-clear-btn { display: inline-flex; align-items: center; justify-content: center; }
+.modal-close { display: inline-flex; align-items: center; justify-content: center; }
+
+.chip { min-height: 44px; }
+
+/* D4: on phones the filter pills form one row that scrolls sideways instead of wrapping into many lines. */
+@media (max-width: 600px) {
+  .filter-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    padding-bottom: 0.8rem;
+  }
+  .filter-pill { flex: 0 0 auto; min-height: 44px; scroll-snap-align: start; }
 }

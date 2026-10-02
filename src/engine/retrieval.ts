@@ -3,19 +3,20 @@ import { pipeline, env } from '@xenova/transformers';
 import type { Chunk, RankedResult, SectionResult, SectionDebugEntry, QaRow, QaResult, ItemRow, GlossaryEntry, LearningModule, FigureTableEntry } from './types';
 import { STOP_WORDS } from './stopwords';
 import { expandQuery } from './query';
+import { OUTLINE } from './outline';
+import { QA_THRESHOLD } from './config';
+import { buildVocabulary, contentWords, isDomainVocabularyQuery, stemWord } from './vocabulary';
 
-// Keep in sync with guardrail.QA_THRESHOLD — duplicated here to avoid a
-// module-load-order issue that makes the export undefined in the vitest environment
-// when retrieval.ts's vi.mock('@xenova/transformers') is hoisted.
-const DEFAULT_QA_THRESHOLD = 0.60;
+// `import.meta.env` is injected by Vite; it is absent when scripts run under tsx (npm run eval).
+const BASE_URL: string = (import.meta as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? '/';
 
 // ── Offline-first configuration ───────────────────────────────────────────────
 // Set before any pipeline() call so the browser loads everything from the
 // service-worker-cached models/ path and never reaches the network.
-// import.meta.env.BASE_URL is injected by Vite at build time (e.g.
+// BASE_URL is injected by Vite at build time (e.g.
 // '/WCA_2030_Explorer/' on GitHub Pages, '/' in local dev) so the paths
 // resolve correctly regardless of the deployment subdirectory.
-(env as Record<string, unknown>).localModelPath    = import.meta.env.BASE_URL + 'models/';
+(env as Record<string, unknown>).localModelPath    = BASE_URL + 'models/';
 (env as Record<string, unknown>).allowRemoteModels = false;
 
 // Override the ONNX Runtime WASM file path. The library defaults to the
@@ -23,7 +24,7 @@ const DEFAULT_QA_THRESHOLD = 0.60;
 try {
   const backends = (env as any).backends;
   if (backends?.onnx?.wasm) {
-    backends.onnx.wasm.wasmPaths = import.meta.env.BASE_URL + 'models/';
+    backends.onnx.wasm.wasmPaths = BASE_URL + 'models/';
   }
 } catch { /* env.backends not present in test mock — safe to ignore */ }
 
@@ -44,6 +45,17 @@ interface IndexDoc {
   sectionTitle: string;
 }
 
+/** E1: rows of a binary Float32 embeddings file as subarray views (DIM values each), or null if absent. */
+async function loadVectors(file: string): Promise<Float32Array[] | null> {
+  try {
+    const res = await fetch(BASE_URL + file);
+    const all = new Float32Array(await res.arrayBuffer());
+    return Array.from({ length: all.length / DIM }, (_, i) => all.subarray(i * DIM, (i + 1) * DIM));
+  } catch {
+    return null;
+  }
+}
+
 // ── RetrievalEngine ───────────────────────────────────────────────────────────
 
 // ── QA threshold helper ───────────────────────────────────────────────────────
@@ -59,15 +71,31 @@ function readQaThreshold(): number {
       if (Number.isFinite(v) && v > 0 && v < 1) return v;
     }
   } catch { /* no localStorage in Node test env */ }
-  return DEFAULT_QA_THRESHOLD;
+  return QA_THRESHOLD;
 }
 
 // ── RetrievalEngine ───────────────────────────────────────────────────────────
 
 export class RetrievalEngine {
   private chunks: Chunk[]           = [];
-  /** Parallel Float32Array per chunk — avoids repeated number[] → Float32 conversions */
-  private vecs:   Float32Array[]    = [];
+  /** E2: id → chunk, built once in init(). */
+  private chunkById: Map<string, Chunk> = new Map();
+  /** E2: each distinct query text is embedded once; the curated tier and document search share the result. */
+  private queryVectors = new Map<string, Float32Array>();
+
+  /** Embed a query text (normalised mean-pooled vector), cached per distinct text. */
+  private async embedQuery(text: string): Promise<Float32Array> {
+    const cached = this.queryVectors.get(text);
+    if (cached) return cached;
+    const out = await this.extractor(text, { pooling: 'mean', normalize: true });
+    const vector = new Float32Array(out.data as ArrayLike<number>);
+    if (this.queryVectors.size >= 64) this.queryVectors.delete(this.queryVectors.keys().next().value as string);
+    this.queryVectors.set(text, vector);
+    return vector;
+  }
+
+  /** Window vectors per chunk (C0.4) — avoids repeated number[] → Float32 conversions */
+  private vecs:   Float32Array[][]  = [];
   private index!: MiniSearch<IndexDoc>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private extractor: any            = null;
@@ -91,19 +119,29 @@ export class RetrievalEngine {
    */
   async init(): Promise<void> {
     // 1. Load the content index (fetch works in both browser and test contexts)
-    const res = await fetch(import.meta.env.BASE_URL + 'data/chunks.json');
+    const res = await fetch(BASE_URL + 'data/chunks.json');
     const raw: Chunk[] = await res.json();
+    const chunkVectors = await loadVectors('data/embeddings.f32');
 
     this.chunks = raw;
-    // Convert each embedding array to Float32Array for fast SIMD-friendly loops
-    this.vecs = raw.map(c => new Float32Array(c.embedding));
+    this.chunkById = new Map(raw.map(c => [c.id, c])); // E2: built once, not on every lexicalSearch
+    // One Float32Array view per window. Vectors come from embeddings.f32 (E1: rows in chunk and window
+    // order); chunks that still carry inline vectors, and legacy single-vector chunks, keep working.
+    let row = 0;
+    this.vecs = raw.map(c => {
+      if (c.windows?.length) {
+        return c.windows.map(w => w.embedding ? new Float32Array(w.embedding) : chunkVectors![row++]);
+      }
+      return [new Float32Array(c.embedding ?? [])];
+    });
 
     // 1b. Load the curated Q&A index
     try {
-      const qaRes = await fetch(import.meta.env.BASE_URL + 'data/qa.json');
+      const qaRes = await fetch(BASE_URL + 'data/qa.json');
       const qaRaw: QaRow[] = await qaRes.json();
       this.qaItems = qaRaw;
-      this.qaVecs  = qaRaw.map(r => new Float32Array(r.embedding));
+      const qaVectors = qaRaw.some(r => !r.embedding) ? await loadVectors('data/qa-embeddings.f32') : null;
+      this.qaVecs  = qaRaw.map((r, i) => r.embedding ? new Float32Array(r.embedding) : qaVectors![i]);
     } catch {
       // qa.json absent (e.g. fresh dev env before build-qa runs) — Tier 1 silently disabled
       this.qaItems = [];
@@ -112,7 +150,7 @@ export class RetrievalEngine {
 
     // 1c. Load the item catalogue
     try {
-      const itemsRes = await fetch(import.meta.env.BASE_URL + 'data/items.json');
+      const itemsRes = await fetch(BASE_URL + 'data/items.json');
       this.items = await itemsRes.json();
     } catch {
       this.items = [];
@@ -120,7 +158,7 @@ export class RetrievalEngine {
 
     // 1d. Load the glossary
     try {
-      const glossaryRes = await fetch(import.meta.env.BASE_URL + 'data/glossary.json');
+      const glossaryRes = await fetch(BASE_URL + 'data/glossary.json');
       this.glossary = await glossaryRes.json();
     } catch {
       this.glossary = [];
@@ -128,7 +166,7 @@ export class RetrievalEngine {
 
     // 1e. Load the figures and tables index
     try {
-      const ftRes = await fetch(import.meta.env.BASE_URL + 'data/figures-tables.json');
+      const ftRes = await fetch(BASE_URL + 'data/figures-tables.json');
       this.figuresTables = await ftRes.json();
     } catch {
       this.figuresTables = [];
@@ -149,6 +187,37 @@ export class RetrievalEngine {
     this.index.addAll(
       raw.map(({ id, text, sectionTitle }): IndexDoc => ({ id, text, sectionTitle })),
     );
+
+    // A3: corpus-derived domain-term allow-list. Document frequency of every
+    // content term (≥5 chars, not a stop word) across chunks; terms occurring
+    // in at least ~5% of the chunks (min 2, so small test corpora still build
+    // an allow-list) form the corpus's characteristic vocabulary. This is the
+    // data-driven "not a common English word" filter: generic English words
+    // that merely occur in the corpus (e.g. "before", "final") stay below it.
+    const minDf = Math.max(2, Math.ceil(raw.length / 20));
+    const df = new Map<string, number>();
+    for (const c of raw) {
+      const terms = new Set<string>();
+      const haystack = (c.text + ' ' + c.sectionTitle).toLowerCase();
+      for (const t of haystack.split(/\W+/)) {
+        if (t.length >= 5 && !STOP_WORDS.has(t)) terms.add(t);
+      }
+      for (const t of terms) df.set(t, (df.get(t) ?? 0) + 1);
+    }
+    this.domainTerms = new Set(
+      [...df.entries()]
+        .filter(([, n]) => n >= minDf)
+        .map(([t]) => t),
+    );
+
+    // C0.2: vocabulary of the document's own terms: glossary terms, outline titles, item names,
+    // and the curated questions (expert-written domain language).
+    this.vocabulary = buildVocabulary([
+      ...this.glossary.map(g => g.term),
+      ...OUTLINE.map(e => e.title),
+      ...this.items.map(i => i.name),
+      ...this.qaItems.map(q => q.question),
+    ]);
   }
 
   /**
@@ -162,19 +231,25 @@ export class RetrievalEngine {
    * surfaces preferentially for relevant queries.
    */
   async semanticSearch(query: string, topK = 5): Promise<RankedResult[]> {
-    const out  = await this.extractor(expandQuery(query), { pooling: 'mean', normalize: true });
-    // out.data is a Float32Array of length DIM
-    const qVec = new Float32Array(out.data as ArrayLike<number>);
+    const qVec = await this.embedQuery(expandQuery(query));
 
     // Pre-compute content words once for the exact-match boost check below.
     const contentWords = this.contentWordsFromQuery(query);
 
     const scored = this.chunks.map((chunk, i) => {
-      const ev = this.vecs[i];
-      let dot = 0;
-      for (let k = 0; k < DIM; k++) dot += qVec[k] * ev[k];
+      // C0.4: a chunk scores as its best window (cosine of unit vectors = dot product).
+      let dot = -Infinity;
+      for (const ev of this.vecs[i]) {
+        let windowDot = 0;
+        for (let k = 0; k < DIM; k++) windowDot += qVec[k] * ev[k];
+        if (windowDot > dot) dot = windowDot;
+      }
+      // rawScore = best-window cosine (vectors are L2-normalised). A3: the
+      // guardrail compares rawScore with the threshold; the boosts below only
+      // affect ranking (score), never the answer/refuse decision.
+      let score = dot;
       // 1.15× boost for high-priority regions (Concepts, Essential Items, Glossary).
-      let score = chunk.priority === 'high' ? dot * HIGH_PRIORITY_K : dot;
+      if (chunk.priority === 'high') score *= HIGH_PRIORITY_K;
       // 1.10× exact-match boost when the chunk's verbatim text contains at least
       // one content word from the query.  Stacks with the priority boost so
       // e.g. a high-priority chunk that also mentions "holder" gets ×1.15×1.10.
@@ -184,14 +259,15 @@ export class RetrievalEngine {
       ) {
         score *= EXACT_MATCH_K;
       }
-      return { chunk, score };
+      return { chunk, score, rawScore: dot };
     });
 
     scored.sort((a, b) => b.score - a.score);
 
-    return scored.slice(0, topK).map(({ chunk, score }) => ({
+    return scored.slice(0, topK).map(({ chunk, score, rawScore }) => ({
       chunk,
       score,
+      rawScore,
       matchType: 'semantic' as const,
     }));
   }
@@ -206,19 +282,62 @@ export class RetrievalEngine {
    */
   private static readonly MIN_LEXICAL_SCORE = 8;
 
+  /** Corpus-characteristic content terms (built from document frequency in
+   *  init() — terms in ≥ ~1% of chunks, min 2; see A3). Lexical fallback
+   *  results require at least one of the query's domain terms to appear in
+   *  the matched chunk. */
+  private domainTerms: Set<string> = new Set();
+
+  /** C0.2: stems of every word in glossary terms, outline titles, and item names. */
+  private vocabulary: Set<string> = new Set();
+
+  /** True when every content word of the query is domain vocabulary (see vocabulary.ts). */
+  isVocabularyQuery(query: string): boolean {
+    return isDomainVocabularyQuery(query, this.vocabulary);
+  }
+
+  /** Test hook: the corpus-derived domain-term allow-list built in init(). */
+  getDomainTerms(): Set<string> {
+    return this.domainTerms;
+  }
+
   lexicalSearch(query: string, topK = 5): RankedResult[] {
+    // A3: lexical fallback gate — the query must contain at least TWO distinct
+    // content words of 5+ characters that are corpus-characteristic domain
+    // terms, and the matched chunk must contain both. Measured on the
+    // off-topic fixture: a single shared word (even a frequent one like
+    // "population" or the running-header "world") is not evidence that a
+    // question belongs to the WCA domain; two distinct domain terms is.
+    const termWords = query
+      .toLowerCase()
+      .split(/\W+/)
+      .filter(t => t.length >= 5 && !STOP_WORDS.has(t) && this.domainTerms.has(t));
+    // C0.2: a terse query made only of domain vocabulary also passes; the matched chunk
+    // must contain every one of its words (compared by stem).
+    const vocabQuery = termWords.length < 2 && this.isVocabularyQuery(query);
+    const gateWords = vocabQuery ? contentWords(query).map(stemWord) : termWords;
+    if (gateWords.length < 2 && !vocabQuery) return [];
+
     const hits  = this.index.search(query, { prefix: true, fuzzy: 0.2 });
-    const byId  = new Map(this.chunks.map(c => [c.id, c]));
+    const byId  = this.chunkById;
 
     return hits
       .filter(r => (r.score as number) >= RetrievalEngine.MIN_LEXICAL_SCORE)
-      .slice(0, topK)
       .filter(r => byId.has(r.id as string))
       .map(r => ({
         chunk:     byId.get(r.id as string)!,
         score:     r.score,
+        // Lexical scores are BM25, not cosine; the guardrail does not
+        // threshold-check lexical results (MIN_LEXICAL_SCORE + the gate above
+        // play that role), so rawScore mirrors the score for type completeness.
+        rawScore:  r.score,
         matchType: 'lexical' as const,
-      }));
+      }))
+      .filter(r => {
+        const text = r.chunk.text.toLowerCase();
+        return gateWords.every(w => text.includes(w));
+      })
+      .slice(0, topK);
   }
 
   /**
@@ -244,7 +363,7 @@ export class RetrievalEngine {
     // Group chunk results by sectionTitle, preserving descending-score order
     // within each group (since allResults is already sorted descending).
     const sectionMap = new Map<string, {
-      scored: Array<{ chunk: Chunk; score: number }>;
+      scored: Array<{ chunk: Chunk; score: number; rawScore: number }>;
       pages:  number[];
     }>();
 
@@ -252,8 +371,8 @@ export class RetrievalEngine {
       const key = r.chunk.sectionTitle;
       if (!sectionMap.has(key)) sectionMap.set(key, { scored: [], pages: [] });
       const s = sectionMap.get(key)!;
-      s.scored.push({ chunk: r.chunk, score: r.score });
-      s.pages.push(r.chunk.pageRef);
+      s.scored.push({ chunk: r.chunk, score: r.score, rawScore: r.rawScore });
+      s.pages.push(r.chunk.printedPage);
     }
 
     const contentWords = this.contentWordsFromQuery(query);
@@ -264,10 +383,11 @@ export class RetrievalEngine {
       const pageStart = Math.min(...pages);
       const pageEnd   = Math.max(...pages);
 
-      // Fix 2a: skip front-matter and table-of-contents pages (≤ 10).
-      // These pages list section titles verbatim, giving them artificially high
-      // semantic similarity to any query that echoes chapter names.
-      if (pageEnd <= 10) continue;
+      // Fix 2a: skip front-matter pages (printed page ≤ 0). The A1 chunker now
+      // drops front matter and the table of contents outright, so this is a
+      // defensive guard; printed pages ≥ 1 are genuine body content and must
+      // NOT be excluded (Chapter 1 starts on printed page 2).
+      if (pageEnd <= 0) continue;
 
       // Fix 2b: skip sections whose page span suggests a chunking artefact.
       if (pageEnd - pageStart > 40) continue;
@@ -276,6 +396,10 @@ export class RetrievalEngine {
       const top3     = scored.slice(0, 3);
       // Fix 1: average of top-3 (not sum) so section size cannot inflate score.
       const avgScore = top3.reduce((sum, c) => sum + c.score, 0) / top3.length;
+      // A3: plain-cosine section score — average of the top-3 rawScores with
+      // no priority, exact-word or title boosts. The guardrail compares THIS
+      // value; the boosted score above only ranks sections.
+      const rawScore = top3.reduce((sum, c) => sum + c.rawScore, 0) / top3.length;
 
       // Fix 3: compound title boost — multiply by 1.25 for each content word
       // from the query that appears in the section title.  A title matching
@@ -289,9 +413,11 @@ export class RetrievalEngine {
         pageStart,
         pageEnd,
         score,
+        rawScore,
         topChunks: top3.map(c => ({
           chunk:     c.chunk,
           score:     c.score,
+          rawScore:  c.rawScore,
           matchType: 'semantic' as const,
         })),
       });
@@ -302,9 +428,10 @@ export class RetrievalEngine {
     if (scoredSections.length === 0) {
       return allResults.slice(0, topK).map(r => ({
         sectionTitle: r.chunk.sectionTitle,
-        pageStart:    r.chunk.pageRef,
-        pageEnd:      r.chunk.pageRef,
+        pageStart:    r.chunk.printedPage,
+        pageEnd:      r.chunk.printedPage,
         score:        r.score,
+        rawScore:     r.rawScore,
         topChunks:    [r],
       }));
     }
@@ -329,35 +456,41 @@ export class RetrievalEngine {
    *
    * Embeds the query and computes cosine similarity (dot product of normalised
    * vectors) against every pre-embedded question in qa.json.  Returns the
-   * best-matching row only if its score meets or exceeds QA_THRESHOLD (default
-   * 0.60, tunable via localStorage 'wca_qa_threshold').
+   * best-matching row only if its score meets or exceeds QA_THRESHOLD (config.ts,
+   * tunable via localStorage 'wca_qa_threshold').
    *
    * Returns null when:
    *   • qa.json was not loaded (graceful degradation)
    *   • no match meets the threshold
    */
   async qaSearch(query: string): Promise<QaResult | null> {
+    const best = await this.qaBest(query);
+    return best && best.score >= readQaThreshold() ? best : null;
+  }
+
+  /**
+   * The closest curated question and its cosine similarity, with no threshold applied
+   * (the eval sweeps the threshold). Null when qa.json was not loaded.
+   */
+  async qaBest(query: string): Promise<QaResult | null> {
     if (this.qaItems.length === 0) return null;
 
     // Use the raw query — no synonym expansion — because the stored Q&A embeddings
     // were produced from the original question text.  Expansion shifts the vector
     // away from the stored question, hurting recall for the curated tier.
-    const out  = await this.extractor(query, { pooling: 'mean', normalize: true });
-    const qVec = new Float32Array(out.data as ArrayLike<number>);
+    const qVec = await this.embedQuery(query);
 
     let bestScore = -Infinity;
     let bestIndex = -1;
 
     for (let i = 0; i < this.qaVecs.length; i++) {
+      if (this.qaItems[i].servable === false) continue; // OD.2: unapproved excerpt
       const ev = this.qaVecs[i];
       let dot  = 0;
       for (let k = 0; k < DIM; k++) dot += qVec[k] * ev[k];
       if (dot > bestScore) { bestScore = dot; bestIndex = i; }
     }
-
-    const threshold = readQaThreshold();
-    if (bestIndex < 0 || bestScore < threshold) return null;
-    return { row: this.qaItems[bestIndex], score: bestScore };
+    return bestIndex < 0 ? null : { row: this.qaItems[bestIndex], score: bestScore };
   }
 
   /** Returns all question strings from the curated Q&A bank, in load order. */
@@ -518,7 +651,7 @@ export class RetrievalEngine {
       }
       const s = sectionMap.get(c.sectionTitle)!;
       s.count++;
-      s.pages.push(c.pageRef);
+      s.pages.push(c.printedPage);
     }
 
     return [...sectionMap.entries()]

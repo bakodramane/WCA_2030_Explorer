@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WCA 2030 — curated excerpt review</title>
+<!--
+  OD.4: owner review of curated excerpts flagged needs_owner_review. Self-contained: no network, no build step.
+  Open it from the file system (choose the three files when asked) or serve the repository root and open
+  /scripts/dev/review-excerpts.html (the files then load by themselves). Decisions are exported as
+  data/excerpt-decisions.csv and applied with: npx tsx scripts/apply-excerpt-decisions.ts
+-->
+<style>
+  :root { --bg:#f5f0e8; --surface:#fff; --ink:#1a1a1a; --accent:#1a3a2a; --muted:#5b6270; --border:#d1c9b8; --warn:#92400e; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 Georgia, serif; }
+  header { position:sticky; top:0; background:var(--accent); color:#fff; padding:.6rem 1rem; display:flex; gap:1rem; align-items:center; flex-wrap:wrap; z-index:2; }
+  header h1 { font-size:1.05rem; margin:0; }
+  main { max-width:62rem; margin:1rem auto; padding:0 1rem; }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:6px; margin:1rem 0; padding:1rem; }
+  .card.decided { border-left:6px solid var(--accent); }
+  .card.rejected { border-left:6px solid var(--warn); }
+  h2 { font-size:1.05rem; margin:.1rem 0 .5rem; }
+  .meta { color:var(--muted); font:.8rem ui-monospace, monospace; }
+  .label { font:.75rem ui-monospace, monospace; text-transform:uppercase; color:var(--muted); margin:.7rem 0 .2rem; }
+  blockquote { margin:.2rem 0; padding:.4rem .8rem; border-left:3px solid var(--border); background:#faf8f3; white-space:pre-wrap; }
+  .gap { border:0; border-top:1px dashed var(--border); margin:.4rem 0; }
+  button, input[type=file], input[type=search] { font:inherit; min-height:44px; padding:.2rem .8rem; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:4px; cursor:pointer; margin:.2rem .3rem .2rem 0; }
+  button.secondary { background:#fff; color:var(--accent); border:1px solid var(--accent); }
+  button.danger { background:var(--warn); }
+  .alts .alt { border-top:1px solid var(--border); padding-top:.4rem; margin-top:.6rem; }
+  .status { font-weight:bold; color:var(--accent); }
+  #loader { background:#fffbeb; border:1px solid var(--warn); padding:1rem; border-radius:6px; }
+  .src { user-select:text; max-height:14rem; overflow:auto; }
+  mark { background:#d4e8d4; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Curated excerpt review</h1>
+  <span id="progress"></span>
+  <button id="export" class="secondary" disabled>Export decisions (CSV)</button>
+  <label><input type="checkbox" id="showDecided"> show decided rows</label>
+</header>
+<main>
+  <div id="loader" hidden>
+    <p>Your browser blocks automatic file loading from <code>file://</code>. Choose the three files from the repository:</p>
+    <p>1. <code>data/wca-qa.csv</code> <input type="file" id="f-csv" accept=".csv"></p>
+    <p>2. <code>reports/qa-excerpt-repairs.csv</code> <input type="file" id="f-log" accept=".csv"></p>
+    <p>3. <code>public/data/chunks.json</code> <input type="file" id="f-chunks" accept=".json"></p>
+  </div>
+  <div id="list"></div>
+</main>
+<script>
+'use strict';
+const SEPARATOR = '\n [...] \n';
+const KEY = 'wca_excerpt_decisions_v1';
+const STOP = new Set('the and for are was were with that this from have has had not but its their which shall should may can will been being into than then also such these those other more most only over under between each any all'.split(' '));
+const data = { csv: null, log: null, chunks: null };
+let decisions = {};
+try { decisions = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { decisions = {}; }
+
+/* ---------- helpers ---------- */
+function parseCsv(text) {
+  text = text.replace(/^\ufeff/, '');
+  const rows = []; let row = [], field = '', quoted = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (quoted) { if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else quoted = false; } else field += c; }
+    else if (c === '"') quoted = true;
+    else if (c === ',') { row.push(field); field = ''; }
+    else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; row.push(field); field = ''; if (row.some(v => v !== '')) rows.push(row); row = []; }
+    else field += c;
+  }
+  if (field !== '' || row.length) { row.push(field); rows.push(row); }
+  const head = rows.shift();
+  return rows.map(r => Object.fromEntries(head.map((h, i) => [h, r[i] || ''])));
+}
+function csvField(v) { v = String(v); return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+function el(tag, props, ...kids) {
+  const e = document.createElement(tag);
+  Object.assign(e, props || {});
+  for (const k of kids.flat()) if (k != null) e.append(k);
+  return e;
+}
+const norm = s => s.replace(/\s+/g, ' ').trim();
+const words = s => (s.toLowerCase().match(/[a-z0-9]{3,}/g) || []).filter(w => !STOP.has(w));
+const splitPassages = s => s.split(/\r?\n[ \t]*\[\.\.\.\][ \t]*\r?\n/).map(p => p.trim()).filter(Boolean);
+const pagesOf = s => String(s).split(/[;,]/).map(p => p.trim()).filter(Boolean);
+
+/* ---------- source windows and scoring ---------- */
+let windows = [], idf = new Map();
+function buildWindows() {
+  windows = [];
+  for (const c of data.chunks) {
+    const ws = c.windows && c.windows.length ? c.windows : [{ start: 0, end: c.text.length }];
+    for (const w of ws) windows.push({ text: c.text.slice(w.start, w.end), chunk: c, tokens: new Set(words(c.text.slice(w.start, w.end))) });
+  }
+  const df = new Map();
+  for (const w of windows) for (const t of w.tokens) df.set(t, (df.get(t) || 0) + 1);
+  for (const [t, n] of df) idf.set(t, Math.log(1 + windows.length / n));
+}
+function alternatives(query, avoid) {
+  const q = new Set(words(query));
+  const avoidKey = avoid.map(a => norm(a));
+  return windows
+    .filter(w => !avoidKey.some(a => a.includes(norm(w.text).slice(0, 60))))
+    .map(w => { let s = 0; for (const t of q) if (w.tokens.has(t)) s += idf.get(t) || 0; return { w, s: s / Math.sqrt(w.tokens.size + 20) }; })
+    .sort((a, b) => b.s - a.s).slice(0, 3).map(x => x.w);
+}
+const cite = c => (c.paragraphs[0] ? '§' + c.paragraphs[0] + ' · ' : '') + c.sectionTitle + ' · p. ' + c.printedPage;
+
+/* ---------- rendering ---------- */
+function passageBlocks(text, pages) {
+  const ps = splitPassages(text), pg = pagesOf(pages), out = [];
+  ps.forEach((p, i) => {
+    if (i) out.push(el('hr', { className: 'gap' }));
+    out.push(el('div', { className: 'meta' }, 'passage ' + (i + 1) + (pg[i] ? ' · p. ' + pg[i] : '')), el('blockquote', {}, p));
+  });
+  return out;
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(decisions)); } catch (e) {} updateProgress(); }
+function decide(row, d) { decisions[row.question] = Object.assign({ row: row._row }, d); save(); render(); }
+
+function editPanel(row, card) {
+  const picked = []; // {text, page}
+  const box = el('div', { className: 'edit' });
+  const search = el('input', { type: 'search', placeholder: 'Search the source (words)…', size: 40 });
+  const results = el('div'), chosen = el('div');
+  const redraw = () => {
+    chosen.replaceChildren(el('div', { className: 'label' }, 'Selected passages (' + picked.length + ')'),
+      ...picked.map((p, i) => el('div', {}, el('blockquote', {}, p.text), el('button', { className: 'secondary', onclick: () => { picked.splice(i, 1); redraw(); } }, 'Remove'))),
+      el('button', { disabled: !picked.length, onclick: () => decide(row, { action: 'edit', passages: picked.map(p => p.text).join(SEPARATOR), pages: picked.map(p => p.page).join('; ') }) }, 'Save edit'));
+  };
+  const find = () => {
+    const q = new Set(words(search.value)); if (!q.size) return;
+    const hits = windows.map(w => { let s = 0; for (const t of q) if (w.tokens.has(t)) s += idf.get(t) || 0; return { w, s }; }).filter(x => x.s > 0).sort((a, b) => b.s - a.s).slice(0, 5);
+    results.replaceChildren(...hits.map(({ w }) => {
+      const src = el('blockquote', { className: 'src' }, w.chunk.text); src.dataset.chunk = w.chunk.id;
+      return el('div', {}, el('div', { className: 'meta' }, cite(w.chunk)), src);
+    }));
+  };
+  search.addEventListener('input', find);
+  const add = el('button', { onclick: () => {
+    const sel = window.getSelection(); const text = norm(sel.toString());
+    if (!text) { alert('Select text inside a source passage first.'); return; }
+    const host = sel.anchorNode && (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentElement).closest('.src');
+    const chunk = host && data.chunks.find(c => c.id === host.dataset.chunk);
+    if (!chunk || !norm(chunk.text).includes(text)) { alert('Only verbatim text selected from a source passage can be used.'); return; }
+    picked.push({ text, page: chunk.printedPage }); redraw();
+  } }, 'Add selection as a passage');
+  box.append(el('div', { className: 'label' }, 'Edit: select verbatim text in the source (free typing is not possible)'), search, results, add, chosen);
+  redraw(); card.append(box);
+}
+
+function render() {
+  const list = document.getElementById('list'); list.replaceChildren();
+  const showDecided = document.getElementById('showDecided').checked;
+  const flagged = data.csv.map((r, i) => Object.assign(r, { _row: i + 2 })).filter(r => r.needs_owner_review === 'yes' && r.approved_by !== 'owner');
+  const logByRow = new Map(data.log.map(l => [Number(l.row), l]));
+  for (const row of flagged) {
+    const d = decisions[row.question];
+    if (d && !showDecided) continue;
+    const entry = logByRow.get(row._row) || {};
+    const card = el('section', { className: 'card' + (d ? (d.action === 'reject' ? ' rejected' : ' decided') : '') });
+    card.append(el('h2', {}, row.question),
+      el('div', { className: 'meta' }, 'row ' + row._row + ' · method ' + (entry.method || '?') + ' · coverage ' + (entry.coverage || '?') + ' · ' + row.section_title));
+    if (d) card.append(el('p', { className: 'status' }, 'Decision: ' + d.action + (d.action === 'alternative' ? ' ' + d.alt : ''), ' ', el('button', { className: 'secondary', onclick: () => { delete decisions[row.question]; save(); render(); } }, 'Undo')));
+    card.append(el('div', { className: 'label' }, 'Original excerpt (before repair)'), el('blockquote', {}, entry.old_excerpt || '(not in the log)'),
+      el('div', { className: 'label' }, 'Proposed excerpt (what Accept keeps)'), ...passageBlocks(row.excerpt, row.page_number));
+    const alts = alternatives(row.question + ' ' + (entry.old_excerpt || ''), splitPassages(row.excerpt));
+    const altBox = el('div', { className: 'alts' }, el('div', { className: 'label' }, 'Three best alternative source passages'));
+    alts.forEach((w, i) => altBox.append(el('div', { className: 'alt' }, el('div', { className: 'meta' }, 'Alternative ' + (i + 1) + ' · ' + cite(w.chunk)), el('blockquote', {}, w.text),
+      el('button', { className: 'secondary', onclick: () => decide(row, { action: 'alternative', alt: i + 1, passages: w.text, pages: String(w.chunk.printedPage) }) }, 'Use alternative ' + (i + 1)))));
+    card.append(altBox, el('div', { className: 'label' }, 'Decision'),
+      el('button', { onclick: () => decide(row, { action: 'accept', passages: '', pages: '' }) }, 'Accept proposed'),
+      el('button', { className: 'secondary', onclick: () => { if (!card.querySelector('.edit')) editPanel(row, card); } }, 'Edit'),
+      el('button', { className: 'danger', onclick: () => decide(row, { action: 'reject', passages: '', pages: '' }) }, 'Reject (keep out of the Q&A tier)'));
+    list.append(card);
+  }
+  if (!list.children.length) list.append(el('p', {}, 'No undecided flagged rows.'));
+  updateProgress(flagged.length);
+}
+function updateProgress(total) {
+  if (total == null) total = data.csv ? data.csv.filter(r => r.needs_owner_review === 'yes' && r.approved_by !== 'owner').length : 0;
+  const n = Object.keys(decisions).length;
+  document.getElementById('progress').textContent = n + ' decided of ' + total + ' flagged';
+  document.getElementById('export').disabled = n === 0;
+}
+document.getElementById('showDecided').addEventListener('change', render);
+document.getElementById('export').addEventListener('click', () => {
+  const head = ['row', 'question', 'action', 'passages', 'pages'];
+  const lines = [head.join(',')].concat(Object.entries(decisions).map(([q, d]) => [d.row, q, d.action, d.passages || '', d.pages || ''].map(csvField).join(',')));
+  const a = el('a', { href: URL.createObjectURL(new Blob([lines.join('\n') + '\n'], { type: 'text/csv' })), download: 'excerpt-decisions.csv' });
+  document.body.append(a); a.click(); a.remove();
+});
+
+/* ---------- loading ---------- */
+function ready() { if (data.csv && data.log && data.chunks) { document.getElementById('loader').hidden = true; buildWindows(); render(); } }
+function readFile(input, kind) {
+  input.addEventListener('change', async () => {
+    const text = await input.files[0].text();
+    data[kind] = kind === 'chunks' ? JSON.parse(text) : parseCsv(text); ready();
+  });
+}
+readFile(document.getElementById('f-csv'), 'csv'); readFile(document.getElementById('f-log'), 'log'); readFile(document.getElementById('f-chunks'), 'chunks');
+(async () => {
+  try {
+    const get = async (p) => { const r = await fetch(p); if (!r.ok) throw new Error(p); return r; };
+    data.csv = parseCsv(await (await get('../../data/wca-qa.csv')).text());
+    data.log = parseCsv(await (await get('../../reports/qa-excerpt-repairs.csv')).text());
+    data.chunks = await (await get('../../public/data/chunks.json')).json();
+    ready();
+  } catch (e) { document.getElementById('loader').hidden = false; }
+})();
+</script>
+</body>
+</html>

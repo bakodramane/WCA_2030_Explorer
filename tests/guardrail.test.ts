@@ -1,30 +1,38 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { evaluate, CONFIDENCE_THRESHOLD, ENUM_CONFIDENCE_THRESHOLD } from '../src/engine/guardrail';
+import { evaluate, CONFIDENCE_THRESHOLD, ENUM_CONFIDENCE_THRESHOLD, LEXICAL_SEMANTIC_FLOOR, QA_THRESHOLD } from '../src/engine/guardrail';
 import type { RankedResult } from '../src/engine/types';
 
 // QA threshold constants — hardcoded here to avoid a vitest module-init ordering
 // issue that arises because retrieval.test.ts hoists a vi.mock for @xenova/transformers,
 // which can leave guardrail.ts's newer exports undefined in the same test run.
-// The source of truth remains guardrail.QA_THRESHOLD = 0.60.
-const QA_THRESHOLD_VALUE    = 0.60;
-const QA_THRESHOLD_EXPECTED = 0.60; // keep in sync with guardrail.QA_THRESHOLD
+// The source of truth is src/engine/config.ts.
+const QA_THRESHOLD_VALUE    = QA_THRESHOLD;
+const QA_THRESHOLD_EXPECTED = QA_THRESHOLD;
 
 // ── Helper ─────────────────────────────────────────────────────────────────────
 
 function mkResult(
   score: number,
-  opts: { id?: string; section?: string; matchType?: 'semantic' | 'lexical'; priority?: 'high' | 'normal' } = {},
+  opts: { id?: string; section?: string; matchType?: 'semantic' | 'lexical'; priority?: 'high' | 'normal'; rawScore?: number } = {},
 ): RankedResult {
   return {
     chunk: {
       id:           opts.id ?? 'x',
+      sectionId:    opts.id ?? 'x',
       sectionTitle: opts.section ?? `Section ${opts.id ?? 'x'}`,
-      pageRef:      1,
+      chapterLabel: 'Chapter 1',
+      paragraphs:   ['1.1'],
+      pdfPage:      15,
+      printedPage:  1,
+      printedPageEnd: 1,
       text:         'placeholder text',
       priority:     opts.priority ?? 'normal',
       embedding:    [],
     },
     score,
+    // A3: rawScore is what the guardrail thresholds against. Default it to the
+    // boosted score so pre-A3 tests keep their meaning unless overridden.
+    rawScore: opts.rawScore ?? score,
     matchType: opts.matchType ?? 'semantic',
   };
 }
@@ -73,7 +81,10 @@ describe('guardrail — evaluate()', () => {
   // ── 2. Semantic fails — lexical saves ────────────────────────────────────────
 
   it('falls back to lexical and returns answered:true when semantic score is below threshold', () => {
-    const sem = [mkResult(0.20, { id: 'a' }), mkResult(0.10, { id: 'b' })];
+    // A3: semantic raws just above the LEXICAL_SEMANTIC_FLOOR are below the 0.42 lookup
+    // threshold, so the semantic tier fails — but they clear the floor, so the lexical
+    // fallback is allowed to answer.
+    const sem = [mkResult(LEXICAL_SEMANTIC_FLOOR + 0.02, { id: 'a' }), mkResult(LEXICAL_SEMANTIC_FLOOR + 0.01, { id: 'b' })];
     const lexResult = mkResult(12.5, { id: 'lex1', section: 'Lexical Hit', matchType: 'lexical' });
     const lexFallback = vi.fn(() => [lexResult]);
 
@@ -92,10 +103,15 @@ describe('guardrail — evaluate()', () => {
     evaluate([mkResult(0.9, { id: 'a' })], lexFallback);
     expect(lexFallback).not.toHaveBeenCalled();
 
-    // Semantic fails at 0.1, so fallback must be invoked
+    // Semantic fails at 0.1 raw (but ≥ the lexical floor), so the
+    // fallback is invoked. A3: below the floor the fallback is never called.
     const lexFallback2 = vi.fn(() => [mkResult(5, { matchType: 'lexical' })]);
-    evaluate([mkResult(0.1, { id: 'b' })], lexFallback2);
+    evaluate([mkResult(LEXICAL_SEMANTIC_FLOOR + 0.01, { id: 'b' })], lexFallback2);
     expect(lexFallback2).toHaveBeenCalledOnce();
+
+    const lexFallback3 = vi.fn(() => [mkResult(5, { matchType: 'lexical' })]);
+    evaluate([mkResult(0.1, { id: 'c' })], lexFallback3);
+    expect(lexFallback3).not.toHaveBeenCalled(); // below LEXICAL_SEMANTIC_FLOOR
   });
 
   // ── 3. Both fail ─────────────────────────────────────────────────────────────
@@ -169,14 +185,19 @@ describe('guardrail — evaluate()', () => {
 
   // ── 5. Enum mode threshold (Fix B) ────────────────────────────────────────────
 
-  it('enum mode uses ENUM_CONFIDENCE_THRESHOLD (0.35) by default, passing a score that lookup would block', () => {
-    // 0.36 is above the enum default (0.35) but below the lookup default (0.42).
-    const res = evaluate([mkResult(0.36, { id: 'a' })], noLexical, 'enum');
-    expect(res.answered).toBe(true);
+  it('enum mode: ENUM_CONFIDENCE_THRESHOLD is above the lookup default — a 0.43 raw score answers in lookup mode but is refused in enum mode', () => {
+    // Before A3 the enum threshold (0.35 on boosted scores) was LOWER than the
+    // lookup threshold; gating on the raw cosine made it the stricter gate.
+    const resEnum = evaluate([mkResult(0.43, { id: 'a' })], noLexical, 'enum');
+    expect(resEnum.answered).toBe(false);
 
-    // Same score in lookup mode must fail.
-    const resLookup = evaluate([mkResult(0.36, { id: 'b' })], noLexical, 'lookup');
-    expect(resLookup.answered).toBe(false);
+    const resLookup = evaluate([mkResult(0.43, { id: 'b' })], noLexical, 'lookup');
+    expect(resLookup.answered).toBe(true);
+  });
+
+  it('enum mode answers when the raw score clears ENUM_CONFIDENCE_THRESHOLD', () => {
+    const res = evaluate([mkResult(ENUM_CONFIDENCE_THRESHOLD + 0.01, { id: 'a' })], noLexical, 'enum');
+    expect(res.answered).toBe(true);
   });
 
   it('enum mode blocks scores below ENUM_CONFIDENCE_THRESHOLD', () => {
@@ -204,6 +225,57 @@ describe('guardrail — evaluate()', () => {
     const res = evaluate([mkResult(0.36, { id: 'a' })], noLexical);
     expect(res.answered).toBe(false);
   });
+
+  // ── 6. A3 — guardrail gates on the UNBOOSTED rawScore ────────────────────────
+
+  it('A3: a boosted score above threshold never turns a refusal into an answer (lookup mode)', () => {
+    // C4 scenario shape: raw cosine 0.40, boosted ×1.15×1.10 ≈ 0.51 > 0.42 —
+    // yet the guardrail must refuse because rawScore 0.40 < 0.42.
+    const res = evaluate(
+      [mkResult(0.51, { id: 'a', rawScore: 0.40 })],
+      noLexical,
+      'lookup',
+    );
+    expect(res.answered).toBe(false);
+  });
+
+  it('A3: boosts may reorder but a passing rawScore still answers', () => {
+    const res = evaluate(
+      [
+        mkResult(0.55, { id: 'boosted-low-raw', rawScore: 0.30 }),
+        mkResult(0.50, { id: 'plain-high-raw', rawScore: 0.45 }),
+      ],
+      noLexical,
+      'lookup',
+    );
+    expect(res.answered).toBe(true);
+    // Only the result whose RAW score clears the threshold is answered.
+    expect(res.results!.every(r => r.rawScore >= CONFIDENCE_THRESHOLD)).toBe(true);
+    expect(res.results!.map(r => r.chunk.id)).toEqual(['plain-high-raw']);
+  });
+
+  it('A3: enum mode also gates on rawScore, not the boosted score', () => {
+    // Section-boosted score 0.63 (avg 0.31 × 1.15 × 1.10 × 1.25ⁿ) but plain
+    // average raw cosine 0.31 < 0.45 → refused. This is the exact "GDP of
+    // Nigeria" failure from audit finding C4.
+    const res = evaluate(
+      [mkResult(0.63, { id: 'a', rawScore: 0.31 })],
+      noLexical,
+      'enum',
+    );
+    expect(res.answered).toBe(false);
+  });
+
+  it('A3: lexical fallback is refused when the best semantic raw score is below LEXICAL_SEMANTIC_FLOOR', () => {
+    // Semantically implausible query (best raw 0.20): even a strong BM25 hit
+    // must not produce an answer.
+    const sem = [mkResult(0.20, { id: 'a' })];
+    const lexFallback = vi.fn(() => [mkResult(50, { id: 'lex1', matchType: 'lexical' })]);
+    const res = evaluate(sem, lexFallback);
+    expect(res.answered).toBe(false);
+    expect(lexFallback).not.toHaveBeenCalled();
+    expect(res.sectionsSearched).toBeDefined();
+  });
 });
 
 // ── Q&A threshold semantics ────────────────────────────────────────────────────
@@ -212,11 +284,11 @@ describe('guardrail — evaluate()', () => {
 // CONFIDENCE_THRESHOLD (0.42) and ENUM_CONFIDENCE_THRESHOLD (0.35).
 
 describe('QA tier gate', () => {
-  it('QA_THRESHOLD (0.60) is higher than CONFIDENCE_THRESHOLD to avoid false Q&A hits', () => {
+  it('QA_THRESHOLD is higher than CONFIDENCE_THRESHOLD to avoid false Q&A hits', () => {
     expect(QA_THRESHOLD_VALUE).toBeGreaterThan(CONFIDENCE_THRESHOLD);
   });
 
-  it('QA_THRESHOLD (0.60) is higher than ENUM_CONFIDENCE_THRESHOLD', () => {
+  it('QA_THRESHOLD is higher than ENUM_CONFIDENCE_THRESHOLD', () => {
     expect(QA_THRESHOLD_VALUE).toBeGreaterThan(ENUM_CONFIDENCE_THRESHOLD);
   });
 

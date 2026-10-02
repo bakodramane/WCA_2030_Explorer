@@ -1,15 +1,40 @@
 export interface Chunk {
   id: string;
+  sectionId: string;
   sectionTitle: string;
-  pageRef: number;
+  chapterLabel: string;
+  paragraphs: string[];
+  /** Page in the source PDF file (1-based). */
+  pdfPage: number;
+  /** Printed page of the chunk's first word (= pdfPage − 14). */
+  printedPage: number;
+  /** Printed page of the chunk's last word (A2: per-chunk page tracking). */
+  printedPageEnd: number;
   text: string;
   priority: 'high' | 'normal';
+  /**
+   * C0.4: the chunk is embedded as windows of at most 200 tokens (the model was trained on
+   * 256), each a slice `text.slice(start, end)`. A chunk scores as its best window.
+   */
+  windows?: ChunkWindow[];
+  /** Legacy single whole-chunk vector; used only when `windows` is absent. */
+  embedding?: number[];
+}
+
+export interface ChunkWindow {
+  start: number;
+  end: number;
   embedding: number[];
 }
 
 export interface RankedResult {
   chunk: Chunk;
+  /** Boosted score used for ranking (priority / exact-word boosts applied). */
   score: number;
+  /** Plain cosine similarity, unboosted. The guardrail compares THIS value
+   *  with the threshold (A3): boosts may reorder results but must never turn
+   *  a refusal into an answer. */
+  rawScore: number;
   matchType: 'semantic' | 'lexical';
 }
 
@@ -17,7 +42,11 @@ export interface SectionResult {
   sectionTitle: string;
   pageStart: number;
   pageEnd: number;
+  /** Boosted section score (avg of top-3 boosted chunk scores × title boost). */
   score: number;
+  /** Plain-cosine section score: average of the top-3 chunk rawScores,
+   *  with no priority, exact-word or title boosts (A3). */
+  rawScore: number;
   topChunks: RankedResult[];
 }
 
@@ -83,7 +112,10 @@ export interface QaRow {
   excerpt:       string;
   tags:          string;
   confidence:    string;
-  embedding:     number[];
+  /** OD.2: false = excerpt awaits owner approval; never served by the Q&A tier. Absent = servable. */
+  servable?:     boolean;
+  /** Inline vector (legacy / tests); the build writes qa-embeddings.f32 instead (E1). */
+  embedding?:    number[];
 }
 
 export interface QaResult {

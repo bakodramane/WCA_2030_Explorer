@@ -1,103 +1,52 @@
 import type { RankedResult, QaResult, ItemRow, DescriptionBlock, GlossaryEntry, FigureTableEntry } from '../engine/types';
 import type { GuardrailResponse } from '../engine/guardrail';
-import { STOP_WORDS } from '../engine/stopwords';
 import { linkifyItems } from './linkify';
+import { excerptCitation, pagesLabel, parseExcerpts } from '../engine/excerpts';
+import { esc, highlight } from './text';
+import { citationLine, displayTitle, matchBand, pagesText, pdfLinkHtml, PDF_PAGE_OFFSET, qaBand } from './citation';
+import { passagesHtml } from './qa-block';
 
 // ── Safety helpers ────────────────────────────────────────────────────────────
-
-function esc(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
-function escRe(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-// ── Term highlighting ─────────────────────────────────────────────────────────
-// 1. Escape the verbatim text so no raw HTML leaks through.
-// 2. Split on non-word characters so trailing punctuation (e.g. "holder?")
-//    does not prevent a match in the chunk text.
-// 3. Keep only content words: length ≥ 4 AND not in STOP_WORDS.
-//    For "what is the definition of a holder?" this leaves only
-//    "definition" and "holder" — stop words like "what", "the", "is"
-//    are never highlighted.
-
-function highlight(text: string, query: string): string {
-  const escaped = esc(text);
-  const tokens = query
-    .toLowerCase()
-    .split(/\W+/)
-    .filter(t => t.length >= 4 && !STOP_WORDS.has(t))
-    .map(escRe);
-  if (tokens.length === 0) return escaped;
-  const re = new RegExp(`(${tokens.join('|')})`, 'gi');
-  return escaped.replace(re, '<mark>$1</mark>');
-}
 
 // ── Score normalisation ───────────────────────────────────────────────────────
 // Cosine similarity (semantic):  0 – 1  → multiply by 100 for %
 // BM25 (lexical):                0 – ∞  → normalise against 20 as a soft max
 
-function scoreBar(score: number, matchType: 'semantic' | 'lexical'): number {
-  const pct = matchType === 'semantic'
-    ? Math.abs(score) * 100
-    : (score / 20) * 100;
-  return Math.min(Math.max(pct, 0), 100);
-}
-
-function scoreLabel(score: number, matchType: 'semantic' | 'lexical'): string {
-  const displayScore = Math.min(score, 1.0);
-  return matchType === 'semantic'
-    ? `${(displayScore * 100).toFixed(0)}%`
-    : score.toFixed(1);
-}
-
 // ── Public API ────────────────────────────────────────────────────────────────
+
+export { highlight };
 
 export class ResultCard {
   /** Render one RankedResult as an <article> element. */
   static render(result: RankedResult, query: string): HTMLElement {
-    const { chunk, score, matchType } = result;
-    const pct        = scoreBar(score, matchType);
-    const label      = scoreLabel(score, matchType);
-    const badgeLabel = matchType === 'semantic' ? 'Best meaning match' : 'Keyword match';
+    const { chunk, matchType } = result;
+    const band = matchBand(result);
 
-    // Citation string: WCA 2030, §Section (p.N): first 80 chars…
+    const paragraph = chunk.paragraphs[0] ?? null;
+    const citationLead = paragraph
+      ? `§${paragraph}, ${displayTitle(chunk.sectionTitle)}`
+      : displayTitle(chunk.sectionTitle);
+
+    // B2: paragraph-aware citation, quoting only the verbatim chunk text.
     const citationText =
-      `WCA 2030, ${chunk.sectionTitle} (p.${chunk.pageRef}): ` +
-      `${chunk.text.slice(0, 80)}…`;
+      `WCA 2030, ${citationLead} (${pagesText(chunk.printedPage, chunk.printedPageEnd)}): ` +
+      `"${chunk.text.slice(0, 80)}…"`;
 
     const card = document.createElement('article');
     card.className = 'result-card';
 
+    // D2: one citation line (§ · section · page); the full outline title is in the tooltip.
     card.innerHTML = `
       <header class="card-header">
-        <span class="card-section" title="${esc(chunk.sectionTitle)}">
-          § ${esc(chunk.sectionTitle)}
-        </span>
-        <span class="card-page">Page ${chunk.pageRef}</span>
+        <span class="card-citation" title="${esc(chunk.sectionTitle)}">${esc(citationLine(chunk))}</span>
       </header>
       <div class="card-body">
-        <p class="card-source">Source: §&nbsp;${esc(chunk.sectionTitle)}&nbsp;·&nbsp;p.${chunk.pageRef}</p>
         <p class="card-text">${highlight(chunk.text, query)}</p>
       </div>
       <footer class="card-footer">
-        <div class="card-score" title="Match confidence based on local search.">
-          <div class="score-bar-track"
-               role="progressbar"
-               aria-label="Match confidence"
-               aria-valuenow="${pct.toFixed(0)}"
-               aria-valuemin="0"
-               aria-valuemax="100">
-            <div class="score-bar-fill" style="width:${pct.toFixed(1)}%"></div>
-          </div>
-          <span class="score-label">${label}</span>
-        </div>
-        <span class="match-badge match-badge--${matchType}">${badgeLabel}</span>
+        <span class="match-band match-band--${band.className}" title="${esc(band.tooltip)}">${band.label}</span>
+        <span class="match-badge match-badge--${matchType}">${matchType === 'semantic' ? 'meaning' : 'keyword'}</span>
+        ${pdfLinkHtml(chunk.pdfPage)}
         <button class="copy-btn" type="button"
                 data-citation="${esc(citationText)}">
           Copy citation
@@ -129,54 +78,45 @@ export class ResultCard {
   }
 
   /**
-   * Tier-1 verified-answer card.
+   * Tier-1 curated-question card (A4).
    *
    * Layout:
-   *   VERIFIED ANSWER badge (forest green)
-   *   answer text (prominent)
-   *   excerpt in a blockquote
+   *   "Curated question" badge (forest green)
+   *   VERBATIM excerpt as the primary answer (blockquote)
+   *   paraphrased curated summary beneath it, subordinate, labelled
+   *     "Curated summary (not verbatim)"
    *   section_title + page_number citation
-   *   Copy citation button
+   *   Copy citation button (citation text uses the excerpt only)
    *
    * Never shown without its excerpt and page citation.
    */
   static renderQA(result: QaResult, query: string): HTMLElement {
     const { row, score } = result;
-    const pct = Math.min(score * 100, 100).toFixed(0);
+    const band = qaBand(score);
 
-    const citationText =
-      `WCA 2030, ${row.section_title} (p.${row.page_number}): ` +
-      `${row.excerpt.slice(0, 80)}…`;
+    // A4: the citation must quote the VERBATIM excerpt, never the paraphrase.
+    const passages = parseExcerpts(row.excerpt, row.page_number);
+    const citationText = excerptCitation(row.section_title, passages);
 
     const card = document.createElement('article');
     card.className = 'result-card result-card--verified';
 
     card.innerHTML = `
       <header class="card-header">
-        <span class="verified-badge">ANSWER</span>
-        <span class="card-page">Page ${esc(row.page_number)}</span>
+        <span class="verified-badge">Curated question</span>
+        <span class="card-page">${esc(pagesLabel(passages))}</span>
       </header>
       <div class="card-body">
-        <p class="qa-answer">${linkifyItems(highlight(esc(row.answer), query))}</p>
-        <p class="qa-excerpt-label">WCA 2030 excerpt (Page ${esc(String(row.page_number))})</p>
-        <blockquote class="qa-excerpt">
-          <p>${linkifyItems(highlight(esc(row.excerpt), query))}</p>
-        </blockquote>
-        <p class="card-source">Source: §&nbsp;${esc(row.section_title)}&nbsp;·&nbsp;p.${esc(String(row.page_number))}</p>
+        <p class="qa-excerpt-label">WCA 2030 excerpt (${esc(pagesLabel(passages))})</p>
+        ${passagesHtml(passages, text => linkifyItems(highlight(text, query)))}
+        <p class="qa-summary-label">Curated summary (not verbatim)</p>
+        <p class="qa-summary">${linkifyItems(highlight(row.answer, query))}</p>
+        <p class="card-source">Source: §&nbsp;${esc(row.section_title)}&nbsp;·&nbsp;${esc(pagesLabel(passages).replace('Pages', 'pp.').replace('Page', 'p.'))}</p>
       </div>
       <footer class="card-footer">
-        <div class="card-score" title="Match confidence based on local search.">
-          <div class="score-bar-track"
-               role="progressbar"
-               aria-label="Match confidence"
-               aria-valuenow="${pct}"
-               aria-valuemin="0"
-               aria-valuemax="100">
-            <div class="score-bar-fill" style="width:${pct}%"></div>
-          </div>
-          <span class="score-label">${pct}%</span>
-        </div>
-        <span class="match-badge match-badge--verified">verified</span>
+        <span class="match-band match-band--${band.className}" title="${esc(band.tooltip)}">${band.label}</span>
+        <span class="match-badge match-badge--verified">curated</span>
+        ${pdfLinkHtml(passages[0].printedPage + PDF_PAGE_OFFSET)}
         <button class="copy-btn" type="button"
                 data-citation="${esc(citationText)}">
           Copy citation
@@ -185,15 +125,15 @@ export class ResultCard {
     `;
 
     // Excerpt toggle for long QA excerpts on mobile
-    if (window.matchMedia('(max-width: 600px)').matches && row.excerpt.length > 350) {
-      const excerptP = card.querySelector<HTMLElement>('.qa-excerpt p')!;
-      excerptP.classList.add('qa-excerpt--truncated');
+    if (window.matchMedia('(max-width: 600px)').matches && passages.map(p => p.text).join('').length > 350) {
+      const excerptPs = [...card.querySelectorAll<HTMLElement>('.qa-excerpt p')];
+      excerptPs.forEach(p => p.classList.add('qa-excerpt--truncated'));
       const toggle = document.createElement('button');
       toggle.type = 'button';
       toggle.className = 'excerpt-toggle';
       toggle.textContent = 'Show full excerpt';
       toggle.addEventListener('click', () => {
-        const nowTruncated = excerptP.classList.toggle('qa-excerpt--truncated');
+        const nowTruncated = excerptPs.map(p => p.classList.toggle('qa-excerpt--truncated'))[0];
         toggle.textContent = nowTruncated ? 'Show full excerpt' : 'Show less';
       });
       card.querySelector('.card-body')!.appendChild(toggle);
@@ -298,6 +238,7 @@ export class ResultCard {
       </div>
       <footer class="card-footer">
         <span class="match-badge match-badge--item">item</span>
+        ${pdfLinkHtml(item.page + PDF_PAGE_OFFSET)}
         <button class="copy-btn" type="button"
                 data-citation="${esc(citationText)}">
           Copy citation
@@ -368,6 +309,7 @@ export class ResultCard {
       </div>
       <footer class="card-footer">
         <span class="match-badge match-badge--figure-table">${entry.kind}</span>
+        ${pdfLinkHtml(entry.page + PDF_PAGE_OFFSET)}
         <button class="copy-btn" type="button"
                 data-citation="${esc(citationText)}">
           Copy citation

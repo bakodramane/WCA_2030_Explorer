@@ -18,7 +18,7 @@ Work through the phases below in order. **Complete and confirm each phase before
 1. **Answers are extracted text only** — never paraphrased or generated. The retrieved chunk is the answer.
 2. **No external API calls at runtime** — the app must work with zero internet access after first load.
 3. **Guardrail is mandatory** — below the confidence threshold, the app returns: *"This question could not be answered from the WCA 2030 guidelines. Sections searched: [list]."*
-4. **Every answer cites** the source chunk's section title and page number.
+4. **Every answer cites** the source chunk's section title and **printed** page number (printed page = PDF page − 14; verified for main body, annexes, and glossary).
 5. **No generative model at runtime** — do not integrate any LLM inference at query time.
 
 ---
@@ -35,14 +35,15 @@ Absolute path : C:\Users\BAKO\OneDrive - Food and Agriculture Organization\Docum
 > **Before running any script**, confirm the file exists at the path above.
 > If the filename differs, update every reference to it in `scripts/chunk.ts` accordingly.
 
-Key content regions to prioritise during chunking (by expected page range — verify against your copy):
+Key content regions to prioritise during chunking (verified **printed** pages,
+from `data/source-outline.md`):
 
-| Content | Approximate pages |
+| Content | Printed pages |
 |---|---|
-| Chapter 4 — Concepts & Definitions | 55–70 |
-| Chapter 7 — Essential Items | 100–140 |
-| Annex 4 — Additional Items | ~175 |
-| Authoritative Glossary | last 30 pages |
+| Chapter 4 — Concepts & Definitions | 37–46 |
+| Chapter 7 — Essential Items | 74–99 |
+| Annex 4 — Additional Items | 134–172 |
+| Authoritative Glossary | 201–207 |
 
 Chunks from these regions receive a `priority: 'high'` flag and a `1.15×` retrieval score boost.
 
@@ -198,31 +199,49 @@ If `pagerender` is unsupported by the installed version of `pdf-parse`, fall bac
 
 ### Step 2b — Chunking
 
-After extraction, chunk the page array using this strategy:
+After extraction, use the modular B2 pipeline under `scripts/lib/`:
 
-- Detect section headings using regex patterns that match: numbered headings (`4.1`, `7.2.3`), `CHAPTER`, `ANNEX`, `GLOSSARY`, and all-caps lines of 3–10 words.
-- Split each section into overlapping paragraphs of **200–350 words**. Overlap consecutive chunks by **50 words** (slide the window).
+- `pdf-lines.ts` preserves page and line positions; `strip-furniture.ts` removes
+  front matter and repeated edge furniture without deleting item metadata.
+- `units.ts` detects numbered body/annex paragraphs and glossary entries.
+- `assign-section.ts` assigns canonical structure exclusively from
+  `data/source-outline.md` / `src/data/outline.json` — never from ALL-CAPS
+  title guessing.
+- `pack.ts` packs consecutive units in one section into **200–350 words**.
+  Only an atomic unit over 350 words is split, with a 50-word overlap.
 - Assign each chunk:
   ```ts
   interface Chunk {
-    id: string;          // e.g. "ch4-s2-p3"
+    id: string;          // `${sectionId}-${firstParagraphNumber ?? 'intro'}-${n}`
+    sectionId: string;
     sectionTitle: string;
-    pageRef: number;     // page number from pdf-parse
+    chapterLabel: string;
+    paragraphs: string[];
+    pdfPage: number;     // page in the source PDF (1-based)
+    printedPage: number; // page as printed in the document footer (pdfPage − 14)
+    printedPageEnd: number;
     text: string;        // verbatim extracted text
     priority: 'high' | 'normal';
   }
   ```
-- Set `priority: 'high'` for chunks whose `pageRef` falls in the four key regions (verify page ranges against your PDF copy and update the landmark table at the top of this file).
+  Front matter and the table of contents (printed page ≤ 0, i.e. PDF pages 1–14) are excluded from chunking.
+- Set `priority: 'high'` for chunks whose `pdfPage` falls in the four key regions (verify page ranges against your PDF copy and update the landmark table at the top of this file).
 
 ### Step 2c — Output & validation
 
 - Write `./src/data/chunks-raw.json`.
 - Log: total chunks, high-priority count, average chunk word count, page range covered.
 - Write unit tests in `tests/chunking.test.ts` asserting:
-  - Total chunk count is between 800 and 6 000.
+  - Total chunk count is between 350 and 1 200. (The original 800–6 000 bound
+    was a guess made before the corpus was measured: the WCA 2030 body text is
+    ~108 000 unique words, which yields roughly 430–560 chunks at 200–350 words
+    each — see §0.3 of `improvement_prompt.md`.)
   - No chunk exceeds 420 words.
-  - Every chunk has a non-empty `sectionTitle` and a positive `pageRef`.
-  - At least 10% of chunks carry `priority: 'high'`.
+  - Every chunk has a non-empty `sectionTitle`, a positive `printedPage`,
+    and `printedPage === pdfPage − 14`.
+  - At least 90% of chunks contain 150–350 words.
+  - Every section title occurs in `outline.json`.
+  - Between 10% and 45% of chunks carry `priority: 'high'`.
 
 **Phase 2 complete when:** `npx tsx scripts/chunk.ts` exits cleanly and the assertions above pass.
 
@@ -234,14 +253,14 @@ After extraction, chunk the page array using this strategy:
 
 1. Load `chunks-raw.json`.
 2. Load `Xenova/all-MiniLM-L6-v2` via `@xenova/transformers` pipeline `'feature-extraction'`.
-3. Embed each chunk's `text` in batches of 32 using `mean_pooling: true, normalize: true`. The output dimension is 384.
-4. Add `embedding: number[]` to each chunk object.
-5. Write `./src/data/chunks.json` — the complete array with embeddings.
+3. **Embed each chunk as windows (C0.4).** `all-MiniLM-L6-v2` was trained on inputs of at most 256 tokens, but chunks average ~377 tokens, so a whole-chunk embedding silently loses the tail and cost about 11 points of recall@5. `scripts/lib/windows.ts` splits each chunk into sentence-aligned windows of at most 200 tokens (a short closing sentence is repeated as overlap; tables and code lists are cut into word runs). Embed the windows in batches of 32 using `mean_pooling: true, normalize: true`. The output dimension is 384.
+4. Add `windowScheme` and `windows: { start, end, embedding: number[] }[]` to each chunk (`text.slice(start, end)` is the window). The chunk's `text` is unchanged and stays the verbatim display and citation unit.
+5. Write `./public/data/chunks.json` — the complete array with windows (compact JSON).
 6. Write `./src/data/model-meta.json`:
    ```json
    { "model": "Xenova/all-MiniLM-L6-v2", "dim": 384, "version": "wca2030-v1" }
    ```
-7. **Resumable:** if `chunks.json` already exists, skip chunks that already have embeddings — only embed new or missing ones.
+7. **Resumable:** if `chunks.json` already exists, reuse the windows of every chunk whose text and `windowScheme` are unchanged — only embed new or changed chunks.
 8. Log progress every 50 chunks. Estimated run time: 5–20 minutes.
 
 ### Copy WASM model files for offline caching
@@ -257,7 +276,7 @@ execSync('npx tsx scripts/chunk.ts',  { stdio: 'inherit' });
 execSync('npx tsx scripts/embed.ts',  { stdio: 'inherit' });
 ```
 
-**Phase 3 complete when:** `chunks.json` exists, contains `embedding` arrays of length 384, and model files are present in `public/models/`.
+**Phase 3 complete when:** `chunks.json` exists, every chunk has `windows` whose `embedding` arrays have length 384, and model files are present in `public/models/`.
 
 ---
 
@@ -265,15 +284,28 @@ execSync('npx tsx scripts/embed.ts',  { stdio: 'inherit' });
 
 Implement a `RetrievalEngine` class:
 
+> **C-phase update.** The answer cascade (exact lookups → curated Q&A → document search → guardrail) lives in
+> `src/engine/answer.ts` and is shared by the UI and `scripts/eval.ts`. Document search ranks chunks by the raw
+> cosine of their best 200-token window (at most two per section), a result must mention every named entity in
+> the question (`src/engine/entities.ts`), and terse queries made only of domain vocabulary
+> (`src/engine/vocabulary.ts`) may be answered by the BM25 fallback. All thresholds are in `src/engine/config.ts`
+> with the measurements behind them; `npm run eval` regenerates `reports/eval-latest.md`.
+
 ### Types (`src/engine/types.ts`)
 ```ts
 export interface Chunk {
   id: string;
+  sectionId: string;
   sectionTitle: string;
-  pageRef: number;
+  chapterLabel: string;
+  paragraphs: string[];
+  pdfPage: number;
+  printedPage: number;
+  printedPageEnd: number;
   text: string;
   priority: 'high' | 'normal';
-  embedding: number[];
+  windows?: { start: number; end: number; embedding: number[] }[]; // C0.4
+  embedding?: number[]; // legacy single vector, used only when `windows` is absent
 }
 
 export interface RankedResult {
@@ -284,13 +316,13 @@ export interface RankedResult {
 ```
 
 ### `async init(): Promise<void>`
-- Fetch and parse `./data/chunks.json`. Convert each `embedding` array to `Float32Array` for performance.
+- Fetch and parse `./data/chunks.json`. Convert every window `embedding` array to `Float32Array` for performance.
 - Load `Xenova/all-MiniLM-L6-v2` from the cached `./models/` path (set `env.localModelPath` and `env.allowRemoteModels = false` to enforce offline use).
 - Build a `minisearch` index over all chunk `text` fields (fields: `text`, `sectionTitle`).
 
 ### `async semanticSearch(query: string, topK = 5): Promise<RankedResult[]>`
 - Encode the query with `normalize: true`.
-- Compute cosine similarity using a `Float32Array` dot product loop (vectors are already normalised, so dot product equals cosine similarity).
+- Compute cosine similarity using a `Float32Array` dot product loop (vectors are already normalised, so dot product equals cosine similarity). A chunk's score is the **best of its windows**; the guardrail compares that raw score.
 - Multiply scores of `priority: 'high'` chunks by `1.15` before ranking.
 - Return the top-K results sorted by score descending.
 
@@ -306,7 +338,7 @@ Write unit tests in `tests/retrieval.test.ts` with mock embeddings verifying: co
 ## Phase 5 — Guardrail (`src/engine/guardrail.ts`)
 
 ```ts
-export const CONFIDENCE_THRESHOLD = 0.42; // tune after manual testing
+export const CONFIDENCE_THRESHOLD = 0.42; // see src/engine/config.ts for the tuned cascade thresholds (C3)
 
 export interface GuardrailResponse {
   answered: boolean;
@@ -375,7 +407,7 @@ Each passing result renders as:
 └──────────────────────────────────────────────────────────┘
 ```
 - Highlight matched query terms in the verbatim text with `<mark style="background:#d4e8d4">`.
-- "Copy citation" copies to clipboard: `WCA 2030, §[sectionTitle] (p.[pageRef]): [first 80 chars]…`
+- "Copy citation" copies to clipboard: `WCA 2030, §[sectionTitle] (p.[printedPage]): [first 80 chars]…` (printed page = PDF page − 14)
 
 ### Guardrail (not-found) card
 When `answered: false`, render a distinct card with amber border (`#92400e`):
@@ -399,7 +431,7 @@ When `answered: false`, render a distinct card with amber border (`#92400e`):
    - All JS/CSS/HTML bundles.
    - `data/chunks.json`.
    - All files under `public/models/` (WASM + ONNX model files).
-2. In `App.ts`, on service worker activation, compare `model-meta.json`'s `version` field against `localStorage.getItem('wca_index_version')`. If they differ, clear stale caches and reload `chunks.json`.
+2. On startup the app (`src/engine/index-version.ts`) fetches `data/model-meta.json` and compares its `version` — a content hash of `chunks.json`, `qa.json`, `items.json`, and `glossary.json`, written by `scripts/write-meta.ts` — with `localStorage.getItem('wca_index_version')`. If they differ it clears stale runtime caches of the data files (never the Workbox precache), stores the new version, and shows the update banner.
 3. Set `env.allowRemoteModels = false` in the retrieval engine to guarantee the model is never fetched from the internet at runtime.
 
 **Phase 7 complete when:** after `npm run build && npm run preview`, you can install the app as a PWA, disable your network connection entirely, and all queries still work.
@@ -455,7 +487,7 @@ Run these after every build:
 1. **Purpose & constraints** — what the app answers and what it refuses.
 2. **Build instructions** — the three-step sequence above, including Windows-specific notes (run in Git Bash or PowerShell; avoid CMD for `npx tsx`).
 3. **Threshold tuning** — open browser DevTools console, run `localStorage.setItem('wca_threshold', '0.38')` and reload to test lower/higher values.
-4. **Updating guidelines** — when a new WCA version is released, replace the PDF in `./source/`, re-run `npm run build-index`, rebuild, and redeploy. Bump `version` in `model-meta.json`.
+4. **Updating guidelines** — when a new WCA version is released, replace the PDF in `./source/`, re-run `npm run build-index`, rebuild, and redeploy. The `version` in `model-meta.json` is regenerated automatically as a content hash.
 5. **Distribution options**:
    - **Hosted PWA** — deploy `dist/` to Netlify, GitHub Pages, or any static host; share the URL.
    - **Air-gapped use** — zip `dist/` and serve locally with `npx serve dist` (Node must be installed on the target machine).

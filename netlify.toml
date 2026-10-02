@@ -1,0 +1,8 @@
+# Netlify deploy previews. Settings here override the Netlify dashboard.
+# GitHub Pages remains the production host and serves the committed docs/.
+[build]
+  command = "npm run build"
+  publish = "docs"
+
+[build.environment]
+  NODE_VERSION = "22"
