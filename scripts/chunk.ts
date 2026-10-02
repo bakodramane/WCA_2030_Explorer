@@ -10,13 +10,14 @@ import { DEFAULT_PACK, packUnits } from './lib/pack';
 import { extractPdfLines } from './lib/pdf-lines';
 import { stripPageFurniture } from './lib/strip-furniture';
 import { splitIntoUnits } from './lib/units';
+import { SOURCE_PDF_FILE } from '../src/engine/source-pdf';
 
 function wordCount(text: string): number {
   return text.split(/\s+/).filter(Boolean).length;
 }
 
 async function main(): Promise<void> {
-  const pdfPath = path.join(process.cwd(), 'source', 'Census-2030_EN-DTP-9.pdf');
+  const pdfPath = path.join(process.cwd(), 'source', SOURCE_PDF_FILE);
   // WCA_MAX_WORDS / WCA_MIN_TARGET_WORDS / WCA_CHUNKS_RAW build experimental variants (see scripts/eval.ts).
   const outPath = process.env.WCA_CHUNKS_RAW ?? path.join(process.cwd(), 'src', 'data', 'chunks-raw.json');
   const pack = {

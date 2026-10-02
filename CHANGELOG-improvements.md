@@ -345,3 +345,50 @@ One commit covers these tasks because the pieces depend on each other (the eval 
 ### CI — Netlify deploy preview
 
 - The Netlify deploy preview for the pull request failed: Netlify's dashboard settings pointed at another project's publish folder, and the build hard-codes the GitHub Pages base path. Added `netlify.toml` (publish `docs`, Node 22) and made `vite.config.ts` use base `/` only when `NETLIFY=true`. The GitHub Pages build output is byte-identical; the Netlify-mode build was smoke-tested in Chromium.
+
+## Source edition update — April 2026 PDF (CD9437EN)
+
+- **Source file.** `source/Census-2030_EN-DTP-9.pdf` (catalogue CC5968AR, March 2026, 230 pages) is replaced by
+  `source/WCA-2030.pdf` (FAO, 2026, CD9437EN, ISBN 978-92-5-140661-8, 232 pages), moved from
+  `docs/source/WCA 2030.pdf` where it was first committed. The filename now lives in one constant,
+  `SOURCE_PDF_FILE` (`src/engine/source-pdf.ts`), used by the app, `vite.config.ts`, every script, and the tests.
+- **What changed in the document.** Paragraph numbering is identical (718 paragraphs). The text is re-typeset:
+  every paragraph moved 1–2 printed pages later (155 by one page, 563 by two); the printed-page offset is still
+  PDF − 14. Spelling moved to -ize (e.g. "emphasized", "minimize", "specialized"), quotes are typographic, one
+  reference became "Masoud et al.", and SDG "indicator" is capitalised in one passage.
+- **Outline.** `data/source-outline.md` was carried over with the new `scripts/dev/remap-outline.ts` (locates each
+  old page's opening and closing text in the new PDF, within a 0–4-page forward window), then checked against the
+  new table of contents (PDF pp. 5–7): six section starts, Chapter 1/10, Annex 1/2, and References ends, and all
+  twelve Annex 4 theme ranges (from the `THEME n:` headings) were set by hand. Chapter 7 is now pp. 76–101,
+  Annex 4 pp. 137–174, Glossary pp. 203–209.
+- **Builders read ranges from the outline.** `build-items.ts`, `build-glossary.ts`, and the glossary check in
+  `validate-checks.ts` hard-coded old page ranges, which dropped 7 items and 21 glossary terms on the first run.
+  They now read Chapter 7, Annex 4, and the glossary ranges from `outline.json`. Glossary terms collapse internal
+  whitespace (the new file puts a tab inside some terms). Result: 123 items and 118 glossary terms, as before;
+  three item descriptions differ only by the new edition's wording or extraction (0104 "specialized", 0204
+  "Indicator", 0413 "P2 O5").
+- **Running headers.** Chapters 1, 4, 8, and 10 repeat their running header on fewer than five pages in the new
+  layout, so the frequency filter missed them and 11 chunks contained "CHAPTER n: …" text. A one-line
+  "CHAPTER n: TITLE" at a page edge is now always treated as furniture (chapter-opening pages set the heading on
+  two lines). Chunks containing a chapter running header: 4 → 0.
+- **Curated Q&A.** `repair-qa.ts` now repairs multi-passage excerpts passage by passage (it previously treated
+  them as one passage), takes `--log=` so an edition update does not overwrite the B4-R review history in
+  `reports/qa-excerpt-repairs.csv`, and takes `--exact` to cite each passage's exact start page. Run with both:
+  401 rows changed — 392 page-only, 8 passage matches and 1 furniture removal for the new wording — all high
+  confidence, none newly flagged; every text change was read by hand, and one heading prefix ("COMMUNITY-LEVEL
+  ITEMS") was trimmed. Log: `reports/qa-edition-update-2026-04.csv`. The 55 rows awaiting owner review are
+  unchanged and still withheld.
+- **Gold set.** Expected pages regenerated from the new PDF; two phrase/range anchors updated for the new spelling
+  and annex pages. `build-gold.ts` now reads multi-passage page lists ("76; 78"), which had left two items with no
+  expected page.
+- **Results** (same 140-item gold set, full cascade): recall@5 92.9 % → **92.9 %**; recall@1 80.7 % → 80.7 %;
+  top-citation correctness 80.7 % → **81.3 %**; tuning false answers 0/60 → 0/60; held-out 2/36 and 2/36,
+  unchanged. Chunks 414 → 414; section/theme-level titles 83.8 % → 83.6 %. `validate-data` passes; 279 tests,
+  `npm run a11y`, and `npm run browser-check` pass.
+- **Pre-cache size** 39.3 MB → **49.6 MB**: the new PDF is 13.3 MB (was 2.5 MB) and is pre-cached so
+  "View page in PDF" works offline.
+- **Compressed source PDF.** The owner committed a compressed copy of the same edition (1.2 MB, from 13.3 MB).
+  Its extracted text is identical to the uncompressed file — all 10 097 lines match in text, page, and line
+  position — so it replaces `source/WCA-2030.pdf` under the same name, and `npm run build-index` reproduces the
+  committed data content exactly (index version unchanged, `wca2030-23827aabc654`; validation passes).
+  Pre-cache 49.6 MB → **38.1 MB**.

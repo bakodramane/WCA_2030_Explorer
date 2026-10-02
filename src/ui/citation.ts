@@ -1,6 +1,7 @@
 // D2: the single citation line of a result card, and the match band that replaces the percentage bar.
 import { ENUM_CONFIDENCE_THRESHOLD, QA_THRESHOLD } from '../engine/config';
 import type { Chunk } from '../engine/types';
+import { SOURCE_PDF_FILE } from '../engine/source-pdf';
 
 /** Phrases that keep their capitals when a Title Case outline title is turned into sentence case. */
 const PROPER = ['Cape Town Global Action Plan', 'Global Strategy to Improve Agricultural and Rural Statistics', '50x2030 Initiative',
@@ -66,7 +67,7 @@ export const PDF_PAGE_OFFSET = 14;
 const BASE_URL: string = (import.meta as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? '/';
 
 export function pdfPageUrl(pdfPage: number): string {
-  return `${BASE_URL}source/Census-2030_EN-DTP-9.pdf#page=${pdfPage}`;
+  return `${BASE_URL}source/${SOURCE_PDF_FILE}#page=${pdfPage}`;
 }
 
 /** The "View page in PDF" anchor shared by every card type. */

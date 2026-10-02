@@ -2,15 +2,16 @@ import { defineConfig, type Plugin } from 'vite';
 import fs from 'node:fs';
 import path from 'node:path';
 import { VitePWA } from 'vite-plugin-pwa';
+import { SOURCE_PDF_FILE } from './src/engine/source-pdf';
 
-const SOURCE_PDF = path.join('source', 'Census-2030_EN-DTP-9.pdf');
+const SOURCE_PDF = path.join('source', SOURCE_PDF_FILE);
 
 /** D3: ship the official PDF with the app (and in the precache) so "View page in PDF" works offline. */
 function sourcePdf(): Plugin {
   return {
     name: 'wca-source-pdf',
     generateBundle() {
-      this.emitFile({ type: 'asset', fileName: 'source/Census-2030_EN-DTP-9.pdf', source: fs.readFileSync(SOURCE_PDF) });
+      this.emitFile({ type: 'asset', fileName: `source/${SOURCE_PDF_FILE}`, source: fs.readFileSync(SOURCE_PDF) });
     },
   };
 }

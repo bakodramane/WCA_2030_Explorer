@@ -14,6 +14,15 @@ function isProtectedMetadata(text: string): boolean {
   return /^(Reference period:|Essential item\.)/i.test(text);
 }
 
+/**
+ * A one-line "CHAPTER n: TITLE" at a page edge is the running header. Chapter-opening pages set
+ * "CHAPTER n" and the title on separate lines, so this never removes a heading. Short chapters repeat
+ * their running header on fewer than MIN_REPEAT_PAGES pages, so frequency alone misses them.
+ */
+function isChapterRunningHeader(line: PdfLine): boolean {
+  return isEdgeLine(line) && /^CHAPTER \d+:\s+\S/.test(lineKey(line.text));
+}
+
 function isPageNumberLine(line: PdfLine): boolean {
   return lineKey(line.text) === String(line.printedPage);
 }
@@ -57,6 +66,7 @@ export function stripPageFurniture(lines: PdfLine[]): PdfLine[] {
     if (isPageNumberLine(line)) return false;
     if (isProtectedMetadata(line.text)) return true;
     if (!isEdgeLine(line)) return true;
+    if (isChapterRunningHeader(line)) return false;
 
     return (edgePagesByText.get(lineKey(line.text))?.size ?? 0) < MIN_REPEAT_PAGES;
   });

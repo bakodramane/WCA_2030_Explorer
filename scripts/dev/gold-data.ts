@@ -101,7 +101,7 @@ export const NEW_QUESTIONS: Array<[string, string, string | null, string, [numbe
   ['n12', 'How can drones be used in a census?', '5.51', 'Drones are emerging as a valuable tool'],
   ['n13', 'How are pixels used with earth observation data for crop statistics?', '5.63', 'generate a regular grid'],
   ['n14', 'What does the plus sign mean in the lists of items?', '6.7', 'All new items in the lists are marked with a'],
-  ['n15', 'Why does the WCA 2030 propose community-level items?', '6.16', 'decentralised planning'],
+  ['n15', 'Why does the WCA 2030 propose community-level items?', '6.16', 'decentralized planning'],
   ['n16', 'Can both essential and additional items be used to create frames for supplementary modules?', '6.4', 'may be used to create frames for sample-based census supplementary modules'],
   ['n17', 'Which concept of household size is recommended, persons present or usual residents?', '7.1.17', 'de jure concept'],
   ['n18', 'How long is the cycle that separates temporary from permanent meadows and pastures?', '7.2.21', 'A period of less than five years is used to differentiate'],
@@ -125,8 +125,8 @@ export const NEW_QUESTIONS: Array<[string, string, string | null, string, [numbe
   ['n36', 'Which marital status categories are recommended for household members?', null, 'marital status categories should be based on international standards'],
   ['n37', 'How is organic agriculture defined in Annex 4?', null, 'Organic agriculture is a holistic production management system'],
   ['n38', 'Which classification of fishing gear is recommended for Item 1207?', null, 'International Standard Statistical Classification of Fishing Gears'],
-  ['n39', 'In the crop classification, which crops are listed as temporary fibre crops?', null, 'Temporary fibre crops', [174, 181]],
-  ['n40', 'What is the botanical name of sisal in the alphabetical list of crops?', null, 'Sisal Agave sisalana', [181, 189]],
+  ['n39', 'In the crop classification, which crops are listed as temporary fibre crops?', null, 'Temporary fibre crops', [176, 183]],
+  ['n40', 'What is the botanical name of sisal in the alphabetical list of crops?', null, 'Sisal Agave sisalana', [183, 191]],
 ];
 
 /** Short domain queries (C0.2): [query, regex the answer chunk must contain]. */

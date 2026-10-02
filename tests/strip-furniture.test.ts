@@ -31,6 +31,21 @@ describe('B2 strip-furniture', () => {
     expect(kept).toEqual(['Body 15', 'Body 16', 'Body 17', 'Body 18', 'Body 19']);
   });
 
+  it('drops a one-line chapter running header even on fewer than five pages, keeping the opening heading', () => {
+    const lines: PdfLine[] = [
+      // Chapter-opening page: heading set on two lines, kept.
+      line('CHAPTER 1', 17, 0, 5), line('INTRODUCTION', 17, 1, 4), line('1.1 Body text', 17, 3, 2),
+      // Running header on two later pages only, at the top edge: dropped.
+      line('CHAPTER 1: INTRODUCTION', 19, 1, 4), line('Body 19', 19, 3, 2),
+      line('CHAPTER 1: INTRODUCTION', 21, 1, 4), line('Body 21', 21, 3, 2),
+      // The same words inside the page body are content, kept.
+      line('CHAPTER 1: INTRODUCTION', 23, 4, 4), line('Body 23', 23, 5, 3),
+    ];
+    expect(stripPageFurniture(lines).map(item => item.text)).toEqual([
+      'CHAPTER 1', 'INTRODUCTION', '1.1 Body text', 'Body 19', 'Body 21', 'CHAPTER 1: INTRODUCTION', 'Body 23',
+    ]);
+  });
+
   it('keeps repeated body text and protected item 0101 metadata', () => {
     const lines: PdfLine[] = [];
     for (let pdfPage = 70; pdfPage <= 74; pdfPage++) {

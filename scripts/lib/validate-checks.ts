@@ -1,6 +1,7 @@
 import { findStartPages, type SourceText } from './source-text';
 import { compactKey } from './normalise';
 import { splitPages, splitPassages } from '../../src/engine/excerpts';
+import OUTLINE_JSON from '../../src/data/outline.json';
 
 export interface Failure {
   dataset: 'qa' | 'qa-json' | 'item' | 'glossary' | 'chunk';
@@ -12,8 +13,10 @@ export interface Failure {
 }
 
 export const QA_PAGE_TOLERANCE = 1;
-const GLOSSARY_FIRST_PAGE = 201;
-const GLOSSARY_LAST_PAGE = 207;
+// The glossary's printed pages come from the outline, so a re-typeset edition only needs data/source-outline.md updated.
+const GLOSSARY = (OUTLINE_JSON as Array<{ kind: string; printedStart: number; printedEnd: number }>).find(e => e.kind === 'glossary')!;
+const GLOSSARY_FIRST_PAGE = GLOSSARY.printedStart;
+const GLOSSARY_LAST_PAGE = GLOSSARY.printedEnd;
 
 function nearest(hits: number[], page: number): number {
   return hits.reduce((best, hit) => Math.abs(hit - page) < Math.abs(best - page) ? hit : best, hits[0]);

@@ -6,12 +6,14 @@ import { extractPdfLines } from '../lib/pdf-lines';
 import { findStartPages, loadSourceText } from '../lib/source-text';
 import { stripPageFurniture } from '../lib/strip-furniture';
 import { NEW_QUESTIONS, REWORDED, SHORT_QUERIES } from './gold-data';
+import { SOURCE_PDF_FILE } from '../../src/engine/source-pdf';
+import { splitPages } from '../../src/engine/excerpts';
 
 async function main(): Promise<void> {
   const root = process.cwd();
   const { records } = readCsvRecords(path.join(root, 'data', 'wca-qa.csv'));
   const source = await loadSourceText();
-  const lines = stripPageFurniture(await extractPdfLines(path.join(root, 'source', 'Census-2030_EN-DTP-9.pdf')));
+  const lines = stripPageFurniture(await extractPdfLines(path.join(root, 'source', SOURCE_PDF_FILE)));
   const paragraphPage = new Map<string, number>();
   for (const line of lines) {
     const para = line.text.match(/^((?:[1-9]\d*\.\d+(?:\.\d+)?))\s+[A-Z]/)?.[1];
@@ -19,9 +21,10 @@ async function main(): Promise<void> {
   }
 
   const items: unknown[] = [];
+  // Multi-passage rows list one page per passage ("76; 78"); the first passage's page is the answer.
   REWORDED.forEach(([row, question], i) => {
     const r = records[row];
-    items.push({ id: `r${String(i + 1).padStart(2, '0')}`, kind: 'reworded', question, expectedPrintedPage: Number(r.page_number), expectedParagraphs: [], sourceQuestion: r.question });
+    items.push({ id: `r${String(i + 1).padStart(2, '0')}`, kind: 'reworded', question, expectedPrintedPage: splitPages(r.page_number)[0], expectedParagraphs: [], sourceQuestion: r.question });
   });
 
   for (const [id, question, paragraph, phrase, range] of NEW_QUESTIONS) {

@@ -5,7 +5,7 @@
       "id": "r01",
       "kind": "reworded",
       "question": "Which items count as additional items in the WCA 2030?",
-      "expectedPrintedPage": 65,
+      "expectedPrintedPage": 67,
       "expectedParagraphs": [],
       "sourceQuestion": "What are the additional items?"
     },
@@ -13,7 +13,7 @@
       "id": "r02",
       "kind": "reworded",
       "question": "Explain the census approach that combines a census with administrative data.",
-      "expectedPrintedPage": 6,
+      "expectedPrintedPage": 7,
       "expectedParagraphs": [],
       "sourceQuestion": "What is the combined administrative data census modality?"
     },
@@ -21,7 +21,7 @@
       "id": "r03",
       "kind": "reworded",
       "question": "What goals does the agricultural census aim to achieve under the WCA 2030?",
-      "expectedPrintedPage": 4,
+      "expectedPrintedPage": 5,
       "expectedParagraphs": [],
       "sourceQuestion": "What are the three basic objectives of the WCA 2030 agricultural census?"
     },
@@ -29,7 +29,7 @@
       "id": "r04",
       "kind": "reworded",
       "question": "What data collection method is advised for additional items?",
-      "expectedPrintedPage": 7,
+      "expectedPrintedPage": 8,
       "expectedParagraphs": [],
       "sourceQuestion": "How should countries generally collect additional items?"
     },
@@ -37,7 +37,7 @@
       "id": "r05",
       "kind": "reworded",
       "question": "What became of the 2020 theme on managerial decisions and ownership within the household?",
-      "expectedPrintedPage": 7,
+      "expectedPrintedPage": 8,
       "expectedParagraphs": [],
       "sourceQuestion": "What happened to the WCA 2020 standalone theme on intrahousehold managerial decisions and ownership?"
     },
@@ -45,7 +45,7 @@
       "id": "r06",
       "kind": "reworded",
       "question": "Which policy fields benefit directly from agricultural census data?",
-      "expectedPrintedPage": 13,
+      "expectedPrintedPage": 14,
       "expectedParagraphs": [],
       "sourceQuestion": "What are examples of policy areas where agricultural census data contribute directly?"
     },
@@ -53,7 +53,7 @@
       "id": "r07",
       "kind": "reworded",
       "question": "How does a census of agriculture contribute to gender analysis?",
-      "expectedPrintedPage": 16,
+      "expectedPrintedPage": 17,
       "expectedParagraphs": [],
       "sourceQuestion": "What gender-related role does the agricultural census play?"
     },
@@ -61,7 +61,7 @@
       "id": "r08",
       "kind": "reworded",
       "question": "Is the ten-yearly census enough to supply ongoing agricultural statistics?",
-      "expectedPrintedPage": 18,
+      "expectedPrintedPage": 19,
       "expectedParagraphs": [],
       "sourceQuestion": "Can a decennial census replace current agricultural statistics?"
     },
@@ -69,7 +69,7 @@
       "id": "r09",
       "kind": "reworded",
       "question": "If a country wants a statistical farm register out of the census, what must be decided early in planning?",
-      "expectedPrintedPage": 20,
+      "expectedPrintedPage": 21,
       "expectedParagraphs": [],
       "sourceQuestion": "What early census-planning decision is needed if the census will establish a statistical farm register?"
     },
@@ -77,7 +77,7 @@
       "id": "r10",
       "kind": "reworded",
       "question": "In what way does the 50x2030 Initiative draw on agricultural censuses?",
-      "expectedPrintedPage": 22,
+      "expectedPrintedPage": 23,
       "expectedParagraphs": [],
       "sourceQuestion": "How does the 50x2030 Initiative use the census of agriculture?"
     },
@@ -85,7 +85,7 @@
       "id": "r11",
       "kind": "reworded",
       "question": "Which identification approach is proposed for matching holdings and households between the agricultural and population censuses?",
-      "expectedPrintedPage": 25,
+      "expectedPrintedPage": 26,
       "expectedParagraphs": [],
       "sourceQuestion": "What identifier strategy does WCA 2030 suggest when linking agricultural and population census units?"
     },
@@ -93,7 +93,7 @@
       "id": "r12",
       "kind": "reworded",
       "question": "Does WCA 2030 advise attaching a complete agricultural module to the population census?",
-      "expectedPrintedPage": 28,
+      "expectedPrintedPage": 29,
       "expectedParagraphs": [],
       "sourceQuestion": "Is adding a full agriculture module to the population census generally recommended?"
     },
@@ -101,7 +101,7 @@
       "id": "r13",
       "kind": "reworded",
       "question": "How is the agricultural census connected to the economic census?",
-      "expectedPrintedPage": 32,
+      "expectedPrintedPage": 34,
       "expectedParagraphs": [],
       "sourceQuestion": "Why can the agricultural census be related to the economic census?"
     },
@@ -109,7 +109,7 @@
       "id": "r14",
       "kind": "reworded",
       "question": "What is the notion of a household founded on?",
-      "expectedPrintedPage": 38,
+      "expectedPrintedPage": 40,
       "expectedParagraphs": [],
       "sourceQuestion": "What is the household concept based on?"
     },
@@ -117,7 +117,7 @@
       "id": "r15",
       "kind": "reworded",
       "question": "Define plot.",
-      "expectedPrintedPage": 40,
+      "expectedPrintedPage": 42,
       "expectedParagraphs": [],
       "sourceQuestion": "What is a plot?"
     },
@@ -125,7 +125,7 @@
       "id": "r16",
       "kind": "reworded",
       "question": "What problem follows when some regions or kinds of holdings are left out of the census coverage?",
-      "expectedPrintedPage": 42,
+      "expectedPrintedPage": 44,
       "expectedParagraphs": [],
       "sourceQuestion": "What downstream risk occurs when census coverage excludes some geographic areas or holding types?"
     },
@@ -133,7 +133,7 @@
       "id": "r17",
       "kind": "reworded",
       "question": "Which two reference periods does the census of agriculture use?",
-      "expectedPrintedPage": 43,
+      "expectedPrintedPage": 45,
       "expectedParagraphs": [],
       "sourceQuestion": "What are the two main reference periods of the agricultural census?"
     },
@@ -141,7 +141,7 @@
       "id": "r18",
       "kind": "reworded",
       "question": "Which topics should take priority in the content of the agricultural census?",
-      "expectedPrintedPage": 44,
+      "expectedPrintedPage": 46,
       "expectedParagraphs": [],
       "sourceQuestion": "What content should be prioritized in the agricultural census?"
     },
@@ -149,7 +149,7 @@
       "id": "r19",
       "kind": "reworded",
       "question": "Why is a sample-based structure survey not allowed to be called a census?",
-      "expectedPrintedPage": 48,
+      "expectedPrintedPage": 50,
       "expectedParagraphs": [],
       "sourceQuestion": "Why should a sample-based agricultural structure operation not be called a census under WCA 2030?"
     },
@@ -157,7 +157,7 @@
       "id": "r20",
       "kind": "reworded",
       "question": "Describe the modular approach to census taking.",
-      "expectedPrintedPage": 49,
+      "expectedPrintedPage": 51,
       "expectedParagraphs": [],
       "sourceQuestion": "What is the modular approach?"
     },
@@ -165,7 +165,7 @@
       "id": "r21",
       "kind": "reworded",
       "question": "What is needed to link census data with administrative sources?",
-      "expectedPrintedPage": 52,
+      "expectedPrintedPage": 54,
       "expectedParagraphs": [],
       "sourceQuestion": "What is essential for linking census and administrative data sources?"
     },
@@ -173,7 +173,7 @@
       "id": "r22",
       "kind": "reworded",
       "question": "Under what conditions does a farm register work well as a census frame?",
-      "expectedPrintedPage": 52,
+      "expectedPrintedPage": 54,
       "expectedParagraphs": [],
       "sourceQuestion": "When can a farm register be a good census frame?"
     },
@@ -181,7 +181,7 @@
       "id": "r23",
       "kind": "reworded",
       "question": "What does WCA 2030 say about mixing full enumeration with sampling?",
-      "expectedPrintedPage": 54,
+      "expectedPrintedPage": 56,
       "expectedParagraphs": [],
       "sourceQuestion": "What is the WCA 2030 stance on combining complete and sample enumeration?"
     },
@@ -189,7 +189,7 @@
       "id": "r24",
       "kind": "reworded",
       "question": "Why do census accuracy assessments need to be reported?",
-      "expectedPrintedPage": 56,
+      "expectedPrintedPage": 58,
       "expectedParagraphs": [],
       "sourceQuestion": "Why should accuracy be evaluated and reported?"
     },
@@ -197,7 +197,7 @@
       "id": "r25",
       "kind": "reworded",
       "question": "Which safeguard does CAWI usually rely on to ensure the right holding answers?",
-      "expectedPrintedPage": 57,
+      "expectedPrintedPage": 59,
       "expectedParagraphs": [],
       "sourceQuestion": "What safeguard is usually used in CAWI for a specific holding?"
     },
@@ -205,7 +205,7 @@
       "id": "r26",
       "kind": "reworded",
       "question": "How should a holding be identified and located according to WCA 2030?",
-      "expectedPrintedPage": 58,
+      "expectedPrintedPage": 60,
       "expectedParagraphs": [],
       "sourceQuestion": "What does WCA 2030 recommend for holding identification and location?"
     },
@@ -213,7 +213,7 @@
       "id": "r27",
       "kind": "reworded",
       "question": "What time is needed to establish an earth-observation based crop statistics system?",
-      "expectedPrintedPage": 62,
+      "expectedPrintedPage": 64,
       "expectedParagraphs": [],
       "sourceQuestion": "How long does WCA 2030 say an EO crop statistical system takes to set up?"
     },
@@ -221,7 +221,7 @@
       "id": "r28",
       "kind": "reworded",
       "question": "What does the decision tree say about items that change fast and have a reference period under six months?",
-      "expectedPrintedPage": 66,
+      "expectedPrintedPage": 68,
       "expectedParagraphs": [],
       "sourceQuestion": "If an item changes quickly year to year and has a reference period of six months or less, what does the WCA 2030 decision tree imply?"
     },
@@ -229,7 +229,7 @@
       "id": "r29",
       "kind": "reworded",
       "question": "Which irrigation item is essential in WCA 2030?",
-      "expectedPrintedPage": 68,
+      "expectedPrintedPage": 70,
       "expectedParagraphs": [],
       "sourceQuestion": "What is the essential WCA 2030 irrigation item?"
     },
@@ -237,7 +237,7 @@
       "id": "r30",
       "kind": "reworded",
       "question": "Name the essential items about work on the holding.",
-      "expectedPrintedPage": 70,
+      "expectedPrintedPage": 72,
       "expectedParagraphs": [],
       "sourceQuestion": "Which work-on-the-holding items are essential?"
     },
@@ -245,7 +245,7 @@
       "id": "r31",
       "kind": "reworded",
       "question": "What sector categories are used for holdings?",
-      "expectedPrintedPage": 76,
+      "expectedPrintedPage": 78,
       "expectedParagraphs": [],
       "sourceQuestion": "How does WCA 2030 classify holding sectors?"
     },
@@ -253,7 +253,7 @@
       "id": "r32",
       "kind": "reworded",
       "question": "How is the main purpose of production assigned when a holding both sells and consumes its output?",
-      "expectedPrintedPage": 78,
+      "expectedPrintedPage": 80,
       "expectedParagraphs": [],
       "sourceQuestion": "If a holding both sells and consumes its produce, how is main purpose classified?"
     },
@@ -261,7 +261,7 @@
       "id": "r33",
       "kind": "reworded",
       "question": "What is the typical way of gathering holding and parcel area data?",
-      "expectedPrintedPage": 80,
+      "expectedPrintedPage": 82,
       "expectedParagraphs": [],
       "sourceQuestion": "What is the most common method for collecting holding and parcel areas?"
     },
@@ -269,7 +269,7 @@
       "id": "r34",
       "kind": "reworded",
       "question": "Under what circumstances is land not regarded as temporarily fallow?",
-      "expectedPrintedPage": 82,
+      "expectedPrintedPage": 84,
       "expectedParagraphs": [],
       "sourceQuestion": "When is land not considered temporarily fallow?"
     },
@@ -277,7 +277,7 @@
       "id": "r35",
       "kind": "reworded",
       "question": "How do you count area actually irrigated if land is irrigated and harvested two times in one year?",
-      "expectedPrintedPage": 87,
+      "expectedPrintedPage": 89,
       "expectedParagraphs": [],
       "sourceQuestion": "If the same land is irrigated and harvested twice in a year, how is area actually irrigated counted?"
     },
@@ -285,7 +285,7 @@
       "id": "r36",
       "kind": "reworded",
       "question": "Why might associated temporary and permanent crop areas add up to more than the land area?",
-      "expectedPrintedPage": 90,
+      "expectedPrintedPage": 92,
       "expectedParagraphs": [],
       "sourceQuestion": "Why can the reported area of associated temporary and permanent crops exceed physical land area?"
     },
@@ -293,7 +293,7 @@
       "id": "r37",
       "kind": "reworded",
       "question": "What separates rearing an animal from working as an employee looking after it?",
-      "expectedPrintedPage": 93,
+      "expectedPrintedPage": 95,
       "expectedParagraphs": [],
       "sourceQuestion": "How does WCA 2030 distinguish raising an animal from being employed to care for it?"
     },
@@ -301,7 +301,7 @@
       "id": "r38",
       "kind": "reworded",
       "question": "What is determined by Item 0901?",
-      "expectedPrintedPage": 96,
+      "expectedPrintedPage": 98,
       "expectedParagraphs": [],
       "sourceQuestion": "What does Item 0901 determine?"
     },
@@ -309,7 +309,7 @@
       "id": "r39",
       "kind": "reworded",
       "question": "What caution does WCA 2030 give about adding a community survey?",
-      "expectedPrintedPage": 100,
+      "expectedPrintedPage": 102,
       "expectedParagraphs": [],
       "sourceQuestion": "What warning does WCA 2030 give about adding a community survey?"
     },
@@ -317,7 +317,7 @@
       "id": "r40",
       "kind": "reworded",
       "question": "Is it right to take crop and livestock figures from community leaders rather than from holdings?",
-      "expectedPrintedPage": 102,
+      "expectedPrintedPage": 104,
       "expectedParagraphs": [],
       "sourceQuestion": "Should crop and livestock estimates be collected from community officials instead of holdings?"
     },
@@ -325,7 +325,7 @@
       "id": "r41",
       "kind": "reworded",
       "question": "What does a tabulation programme mean?",
-      "expectedPrintedPage": 105,
+      "expectedPrintedPage": 107,
       "expectedParagraphs": [],
       "sourceQuestion": "What is a tabulation programme?"
     },
@@ -333,7 +333,7 @@
       "id": "r42",
       "kind": "reworded",
       "question": "What is meant by a classification variable?",
-      "expectedPrintedPage": 106,
+      "expectedPrintedPage": 108,
       "expectedParagraphs": [],
       "sourceQuestion": "What is a classification variable?"
     },
@@ -341,7 +341,7 @@
       "id": "r43",
       "kind": "reworded",
       "question": "What makes tabulation by sex of holder complicated?",
-      "expectedPrintedPage": 112,
+      "expectedPrintedPage": 114,
       "expectedParagraphs": [],
       "sourceQuestion": "Why is tabulating sex of holder complex?"
     },
@@ -349,7 +349,7 @@
       "id": "r44",
       "kind": "reworded",
       "question": "For what two purposes is community-level data used in tables?",
-      "expectedPrintedPage": 116,
+      "expectedPrintedPage": 118,
       "expectedParagraphs": [],
       "sourceQuestion": "What are the two main uses of community-level data in tabulation?"
     },
@@ -357,7 +357,7 @@
       "id": "r45",
       "kind": "reworded",
       "question": "Which metadata standards does the WCA 2030 refer to?",
-      "expectedPrintedPage": 119,
+      "expectedPrintedPage": 121,
       "expectedParagraphs": [],
       "sourceQuestion": "What metadata standards are mentioned in WCA 2030?"
     },
@@ -365,7 +365,7 @@
       "id": "r46",
       "kind": "reworded",
       "question": "Which geographic value-added products are recommended for dissemination?",
-      "expectedPrintedPage": 121,
+      "expectedPrintedPage": 123,
       "expectedParagraphs": [],
       "sourceQuestion": "What value-added geographic products does WCA 2030 recommend?"
     },
@@ -373,7 +373,7 @@
       "id": "r47",
       "kind": "reworded",
       "question": "In which situations should the census operation make use of social media?",
-      "expectedPrintedPage": 123,
+      "expectedPrintedPage": 125,
       "expectedParagraphs": [],
       "sourceQuestion": "When should social media be used in the census operation?"
     },
@@ -381,7 +381,7 @@
       "id": "r48",
       "kind": "reworded",
       "question": "What should be kept in a census data archive?",
-      "expectedPrintedPage": 124,
+      "expectedPrintedPage": 126,
       "expectedParagraphs": [],
       "sourceQuestion": "What should a census data archive include?"
     },
@@ -389,7 +389,7 @@
       "id": "r49",
       "kind": "reworded",
       "question": "What is the reason for recording the respondent for an agricultural holding?",
-      "expectedPrintedPage": 134,
+      "expectedPrintedPage": 137,
       "expectedParagraphs": [],
       "sourceQuestion": "Why collect the respondent for the agricultural holding?"
     },
@@ -397,7 +397,7 @@
       "id": "r50",
       "kind": "reworded",
       "question": "How does precision agriculture assist farmers?",
-      "expectedPrintedPage": 155,
+      "expectedPrintedPage": 158,
       "expectedParagraphs": [],
       "sourceQuestion": "What does precision agriculture help farmers do?"
     },
@@ -405,7 +405,7 @@
       "id": "r51",
       "kind": "reworded",
       "question": "What is the Annex 4 definition of woodland under the forestry theme?",
-      "expectedPrintedPage": 167,
+      "expectedPrintedPage": 170,
       "expectedParagraphs": [],
       "sourceQuestion": "How does Annex 4 define woodland for Theme 11?"
     },
@@ -413,7 +413,7 @@
       "id": "r52",
       "kind": "reworded",
       "question": "How should own-use production workers be handled under Theme 9?",
-      "expectedPrintedPage": 195,
+      "expectedPrintedPage": 197,
       "expectedParagraphs": [],
       "sourceQuestion": "How are own-use production workers on holdings treated for WCA Theme 9?"
     },
@@ -421,7 +421,7 @@
       "id": "r53",
       "kind": "reworded",
       "question": "Explain what an agriculture structure survey is.",
-      "expectedPrintedPage": 201,
+      "expectedPrintedPage": 203,
       "expectedParagraphs": [],
       "sourceQuestion": "What is an agriculture structure survey?"
     },
@@ -429,7 +429,7 @@
       "id": "r54",
       "kind": "reworded",
       "question": "What are the primary aims of the agricultural census?",
-      "expectedPrintedPage": 6,
+      "expectedPrintedPage": 7,
       "expectedParagraphs": [],
       "sourceQuestion": "What are the main objectives of the census of agriculture?"
     },
@@ -437,7 +437,7 @@
       "id": "r55",
       "kind": "reworded",
       "question": "Which items and themes from earlier programmes were dropped in the WCA 2030?",
-      "expectedPrintedPage": 9,
+      "expectedPrintedPage": 10,
       "expectedParagraphs": [],
       "sourceQuestion": "Which themes and items were omitted from the WCA 2030?"
     },
@@ -445,7 +445,7 @@
       "id": "r56",
       "kind": "reworded",
       "question": "Explain the statistical farm register and the census role in building it.",
-      "expectedPrintedPage": 20,
+      "expectedPrintedPage": 21,
       "expectedParagraphs": [],
       "sourceQuestion": "What is a statistical farm register and how does the agricultural census contribute to it?"
     },
@@ -453,7 +453,7 @@
       "id": "r57",
       "kind": "reworded",
       "question": "How does a reporting system differ from a census of agriculture?",
-      "expectedPrintedPage": 18,
+      "expectedPrintedPage": 19,
       "expectedParagraphs": [],
       "sourceQuestion": "What is the difference between a reporting system and an agricultural census?"
     },
@@ -461,7 +461,7 @@
       "id": "r58",
       "kind": "reworded",
       "question": "Is it possible to run the agricultural and population censuses as one joint exercise?",
-      "expectedPrintedPage": 30,
+      "expectedPrintedPage": 31,
       "expectedParagraphs": [],
       "sourceQuestion": "Can the agricultural census and the population census be conducted as a single joint operation?"
     },
@@ -469,7 +469,7 @@
       "id": "r59",
       "kind": "reworded",
       "question": "Explain the fishing module in a census of agriculture.",
-      "expectedPrintedPage": 34,
+      "expectedPrintedPage": 35,
       "expectedParagraphs": [],
       "sourceQuestion": "What is a fishing module in the context of the agricultural census?"
     },
@@ -477,7 +477,7 @@
       "id": "r60",
       "kind": "reworded",
       "question": "What counts as a non-household sector holding?",
-      "expectedPrintedPage": 76,
+      "expectedPrintedPage": 78,
       "expectedParagraphs": [],
       "sourceQuestion": "What is a non-household-sector holding?"
     },
@@ -485,7 +485,7 @@
       "id": "r61",
       "kind": "reworded",
       "question": "How do you identify the holder if the household head is not the holder?",
-      "expectedPrintedPage": 41,
+      "expectedPrintedPage": 43,
       "expectedParagraphs": [],
       "sourceQuestion": "How should the agricultural holder be identified when the household head and holder differ?"
     },
@@ -493,7 +493,7 @@
       "id": "r62",
       "kind": "reworded",
       "question": "What are the drawbacks of using a cut-off threshold?",
-      "expectedPrintedPage": 43,
+      "expectedPrintedPage": 45,
       "expectedParagraphs": [],
       "sourceQuestion": "What are the disadvantages of applying a cut-off threshold?"
     },
@@ -501,7 +501,7 @@
       "id": "r63",
       "kind": "reworded",
       "question": "When should the agricultural census ideally be timed?",
-      "expectedPrintedPage": 44,
+      "expectedPrintedPage": 46,
       "expectedParagraphs": [],
       "sourceQuestion": "What is the recommended timing for the census of agriculture?"
     },
@@ -509,7 +509,7 @@
       "id": "r64",
       "kind": "reworded",
       "question": "How is a census of agriculture carried out under the modular approach?",
-      "expectedPrintedPage": 49,
+      "expectedPrintedPage": 51,
       "expectedParagraphs": [],
       "sourceQuestion": "What is the modular approach to conducting an agricultural census?"
     },
@@ -517,7 +517,7 @@
       "id": "r65",
       "kind": "reworded",
       "question": "In what ways can registers and administrative data support an agricultural census?",
-      "expectedPrintedPage": 52,
+      "expectedPrintedPage": 54,
       "expectedParagraphs": [],
       "sourceQuestion": "How can administrative records and registers be used in an agricultural census?"
     },
@@ -525,7 +525,7 @@
       "id": "r66",
       "kind": "reworded",
       "question": "Which enumeration methods can be used in an agricultural census?",
-      "expectedPrintedPage": 56,
+      "expectedPrintedPage": 58,
       "expectedParagraphs": [],
       "sourceQuestion": "What methods of enumeration are used in agricultural censuses?"
     },
@@ -533,7 +533,7 @@
       "id": "r67",
       "kind": "reworded",
       "question": "What is the total count of essential items in WCA 2030?",
-      "expectedPrintedPage": 64,
+      "expectedPrintedPage": 66,
       "expectedParagraphs": [],
       "sourceQuestion": "How many essential items are there in the WCA 2030?"
     },
@@ -541,7 +541,7 @@
       "id": "r68",
       "kind": "reworded",
       "question": "Which themes contain only additional items?",
-      "expectedPrintedPage": 95,
+      "expectedPrintedPage": 97,
       "expectedParagraphs": [],
       "sourceQuestion": "Which themes have only additional items in the WCA 2030?"
     },
@@ -549,7 +549,7 @@
       "id": "r69",
       "kind": "reworded",
       "question": "What is the purpose of collecting the sex of the agricultural holder?",
-      "expectedPrintedPage": 76,
+      "expectedPrintedPage": 78,
       "expectedParagraphs": [],
       "sourceQuestion": "Why is data on the sex of the agricultural holder collected?"
     },
@@ -557,7 +557,7 @@
       "id": "r70",
       "kind": "reworded",
       "question": "How do land use and land cover differ?",
-      "expectedPrintedPage": 80,
+      "expectedPrintedPage": 82,
       "expectedParagraphs": [],
       "sourceQuestion": "What is the difference between land use and land cover?"
     },
@@ -565,7 +565,7 @@
       "id": "r71",
       "kind": "reworded",
       "question": "Define land tenure and list the tenure types WCA 2030 recognises.",
-      "expectedPrintedPage": 85,
+      "expectedPrintedPage": 87,
       "expectedParagraphs": [],
       "sourceQuestion": "What is land tenure and what types are recognised in the WCA 2030?"
     },
@@ -573,7 +573,7 @@
       "id": "r72",
       "kind": "reworded",
       "question": "How should the area of mixed and intercropped crops be measured?",
-      "expectedPrintedPage": 88,
+      "expectedPrintedPage": 90,
       "expectedParagraphs": [],
       "sourceQuestion": "How are intercropped and mixed crops measured in the agricultural census?"
     },
@@ -581,7 +581,7 @@
       "id": "r73",
       "kind": "reworded",
       "question": "How does the number of animals differ from the number of female breeding animals?",
-      "expectedPrintedPage": 93,
+      "expectedPrintedPage": 95,
       "expectedParagraphs": [],
       "sourceQuestion": "What is the difference between number of animals and number of female breeding animals?"
     },
@@ -589,7 +589,7 @@
       "id": "r74",
       "kind": "reworded",
       "question": "Do Themes 7 and 8 include any essential items?",
-      "expectedPrintedPage": 95,
+      "expectedPrintedPage": 97,
       "expectedParagraphs": [],
       "sourceQuestion": "Are there essential items in Theme 7 or Theme 8?"
     },
@@ -597,7 +597,7 @@
       "id": "r75",
       "kind": "reworded",
       "question": "How does WCA 2030 define aquaculture?",
-      "expectedPrintedPage": 84,
+      "expectedPrintedPage": 86,
       "expectedParagraphs": [],
       "sourceQuestion": "What is aquaculture as defined in the WCA 2030?"
     },
@@ -605,7 +605,7 @@
       "id": "r76",
       "kind": "reworded",
       "question": "What is the reason for collecting community-level information in the census?",
-      "expectedPrintedPage": 100,
+      "expectedPrintedPage": 102,
       "expectedParagraphs": [],
       "sourceQuestion": "Why is community-level data collected in the agricultural census?"
     },
@@ -613,7 +613,7 @@
       "id": "r77",
       "kind": "reworded",
       "question": "Through which channels should census results be disseminated?",
-      "expectedPrintedPage": 120,
+      "expectedPrintedPage": 122,
       "expectedParagraphs": [],
       "sourceQuestion": "What are the recommended modes of disseminating agricultural census results?"
     },
@@ -621,7 +621,7 @@
       "id": "r78",
       "kind": "reworded",
       "question": "Which ISIC categories fall within the scope of the census of agriculture?",
-      "expectedPrintedPage": 130,
+      "expectedPrintedPage": 132,
       "expectedParagraphs": [],
       "sourceQuestion": "What ISIC categories are covered by the agricultural census scope?"
     },
@@ -629,7 +629,7 @@
       "id": "r79",
       "kind": "reworded",
       "question": "What reference age is recommended for the agricultural holder?",
-      "expectedPrintedPage": 136,
+      "expectedPrintedPage": 139,
       "expectedParagraphs": [],
       "sourceQuestion": "What is the recommended age reference for the agricultural holder?"
     },
@@ -637,7 +637,7 @@
       "id": "r80",
       "kind": "reworded",
       "question": "Which frames are suitable for the household sector in an agricultural census?",
-      "expectedPrintedPage": 53,
+      "expectedPrintedPage": 55,
       "expectedParagraphs": [],
       "sourceQuestion": "What types of frames can be used for the household sector in an agricultural census?"
     },
@@ -645,7 +645,7 @@
       "id": "n01",
       "kind": "new",
       "question": "A household leases land to grow crops in a season other than the census season. Does it still count as an agricultural holding?",
-      "expectedPrintedPage": 39,
+      "expectedPrintedPage": 41,
       "expectedParagraphs": [
         "4.17"
       ],
@@ -655,7 +655,7 @@
       "id": "n02",
       "kind": "new",
       "question": "How are a field and a plot related to a parcel?",
-      "expectedPrintedPage": 40,
+      "expectedPrintedPage": 42,
       "expectedParagraphs": [
         "4.20"
       ],
@@ -665,7 +665,7 @@
       "id": "n03",
       "kind": "new",
       "question": "What is the alternative to setting a minimum size limit for holdings?",
-      "expectedPrintedPage": 42,
+      "expectedPrintedPage": 44,
       "expectedParagraphs": [
         "4.35"
       ],
@@ -675,7 +675,7 @@
       "id": "n04",
       "kind": "new",
       "question": "What should the census reference day be when the day of enumeration is used?",
-      "expectedPrintedPage": 43,
+      "expectedPrintedPage": 45,
       "expectedParagraphs": [
         "4.38"
       ],
@@ -685,7 +685,7 @@
       "id": "n05",
       "kind": "new",
       "question": "Why conduct the agricultural census soon after the population and housing census?",
-      "expectedPrintedPage": 43,
+      "expectedPrintedPage": 45,
       "expectedParagraphs": [
         "4.41"
       ],
@@ -695,7 +695,7 @@
       "id": "n06",
       "kind": "new",
       "question": "What are the two types of agricultural holdings?",
-      "expectedPrintedPage": 37,
+      "expectedPrintedPage": 39,
       "expectedParagraphs": [
         "4.5"
       ],
@@ -705,7 +705,7 @@
       "id": "n07",
       "kind": "new",
       "question": "What is the classical approach to the census?",
-      "expectedPrintedPage": 48,
+      "expectedPrintedPage": 50,
       "expectedParagraphs": [
         "5.6"
       ],
@@ -715,7 +715,7 @@
       "id": "n08",
       "kind": "new",
       "question": "In the modular approach, which part is collected on a complete enumeration basis and which by sampling?",
-      "expectedPrintedPage": 50,
+      "expectedPrintedPage": 52,
       "expectedParagraphs": [
         "5.12"
       ],
@@ -725,7 +725,7 @@
       "id": "n09",
       "kind": "new",
       "question": "What conditions make a farm register a good frame for the census?",
-      "expectedPrintedPage": 52,
+      "expectedPrintedPage": 54,
       "expectedParagraphs": [
         "5.24"
       ],
@@ -735,7 +735,7 @@
       "id": "n10",
       "kind": "new",
       "question": "How can the population census provide a frame without a maintained farm register?",
-      "expectedPrintedPage": 53,
+      "expectedPrintedPage": 55,
       "expectedParagraphs": [
         "5.27"
       ],
@@ -745,7 +745,7 @@
       "id": "n11",
       "kind": "new",
       "question": "What are the disadvantages of pen and paper interviewing?",
-      "expectedPrintedPage": 56,
+      "expectedPrintedPage": 58,
       "expectedParagraphs": [
         "5.45"
       ],
@@ -755,7 +755,7 @@
       "id": "n12",
       "kind": "new",
       "question": "How can drones be used in a census?",
-      "expectedPrintedPage": 57,
+      "expectedPrintedPage": 59,
       "expectedParagraphs": [
         "5.51"
       ],
@@ -765,7 +765,7 @@
       "id": "n13",
       "kind": "new",
       "question": "How are pixels used with earth observation data for crop statistics?",
-      "expectedPrintedPage": 60,
+      "expectedPrintedPage": 62,
       "expectedParagraphs": [
         "5.63"
       ],
@@ -775,7 +775,7 @@
       "id": "n14",
       "kind": "new",
       "question": "What does the plus sign mean in the lists of items?",
-      "expectedPrintedPage": 64,
+      "expectedPrintedPage": 66,
       "expectedParagraphs": [
         "6.7"
       ],
@@ -785,17 +785,17 @@
       "id": "n15",
       "kind": "new",
       "question": "Why does the WCA 2030 propose community-level items?",
-      "expectedPrintedPage": 72,
+      "expectedPrintedPage": 74,
       "expectedParagraphs": [
         "6.16"
       ],
-      "mustContain": "decentralised planning"
+      "mustContain": "decentralized planning"
     },
     {
       "id": "n16",
       "kind": "new",
       "question": "Can both essential and additional items be used to create frames for supplementary modules?",
-      "expectedPrintedPage": 63,
+      "expectedPrintedPage": 65,
       "expectedParagraphs": [
         "6.4"
       ],
@@ -805,7 +805,7 @@
       "id": "n17",
       "kind": "new",
       "question": "Which concept of household size is recommended, persons present or usual residents?",
-      "expectedPrintedPage": 77,
+      "expectedPrintedPage": 79,
       "expectedParagraphs": [
         "7.1.17"
       ],
@@ -815,7 +815,7 @@
       "id": "n18",
       "kind": "new",
       "question": "How long is the cycle that separates temporary from permanent meadows and pastures?",
-      "expectedPrintedPage": 82,
+      "expectedPrintedPage": 84,
       "expectedParagraphs": [
         "7.2.21"
       ],
@@ -825,7 +825,7 @@
       "id": "n19",
       "kind": "new",
       "question": "How are agroforestry systems treated in forest and other wooded land?",
-      "expectedPrintedPage": 84,
+      "expectedPrintedPage": 86,
       "expectedParagraphs": [
         "7.2.33"
       ],
@@ -835,7 +835,7 @@
       "id": "n20",
       "kind": "new",
       "question": "How is common land used by several holdings allocated?",
-      "expectedPrintedPage": 86,
+      "expectedPrintedPage": 88,
       "expectedParagraphs": [
         "7.2.45"
       ],
@@ -845,7 +845,7 @@
       "id": "n21",
       "kind": "new",
       "question": "Do items 0301 to 0308 ask whether holdings are equipped for irrigation?",
-      "expectedPrintedPage": 87,
+      "expectedPrintedPage": 89,
       "expectedParagraphs": [
         "7.3.4"
       ],
@@ -855,7 +855,7 @@
       "id": "n22",
       "kind": "new",
       "question": "What is excluded from the area harvested?",
-      "expectedPrintedPage": 88,
+      "expectedPrintedPage": 90,
       "expectedParagraphs": [
         "7.4.4"
       ],
@@ -865,7 +865,7 @@
       "id": "n23",
       "kind": "new",
       "question": "How is the area assigned to crops in an inter-planted plot?",
-      "expectedPrintedPage": 88,
+      "expectedPrintedPage": 90,
       "expectedParagraphs": [
         "7.4.10"
       ],
@@ -875,7 +875,7 @@
       "id": "n24",
       "kind": "new",
       "question": "What are the three forms of animal manure?",
-      "expectedPrintedPage": 91,
+      "expectedPrintedPage": 93,
       "expectedParagraphs": [
         "7.4.28"
       ],
@@ -885,7 +885,7 @@
       "id": "n25",
       "kind": "new",
       "question": "What are plant growth regulators?",
-      "expectedPrintedPage": 94,
+      "expectedPrintedPage": 96,
       "expectedParagraphs": [
         "7.6.3"
       ],
@@ -895,7 +895,7 @@
       "id": "n26",
       "kind": "new",
       "question": "Should the immigrant status of workers be collected for Item 0903?",
-      "expectedPrintedPage": 98,
+      "expectedPrintedPage": 100,
       "expectedParagraphs": [
         "7.9.19"
       ],
@@ -905,7 +905,7 @@
       "id": "n27",
       "kind": "new",
       "question": "Which factors should be considered when choosing the unit for a community survey?",
-      "expectedPrintedPage": 101,
+      "expectedPrintedPage": 103,
       "expectedParagraphs": [
         "8.9"
       ],
@@ -915,7 +915,7 @@
       "id": "n28",
       "kind": "new",
       "question": "How does the organisation of holding fieldwork shape community data collection?",
-      "expectedPrintedPage": 101,
+      "expectedPrintedPage": 103,
       "expectedParagraphs": [
         "8.12"
       ],
@@ -925,7 +925,7 @@
       "id": "n29",
       "kind": "new",
       "question": "What role can community officials play in the holding survey?",
-      "expectedPrintedPage": 102,
+      "expectedPrintedPage": 104,
       "expectedParagraphs": [
         "8.14"
       ],
@@ -935,7 +935,7 @@
       "id": "n30",
       "kind": "new",
       "question": "Why is the area of holding a useful classification variable, and what are its limits?",
-      "expectedPrintedPage": 111,
+      "expectedPrintedPage": 113,
       "expectedParagraphs": [
         "9.15"
       ],
@@ -945,7 +945,7 @@
       "id": "n31",
       "kind": "new",
       "question": "Why is household size used as a classification variable?",
-      "expectedPrintedPage": 112,
+      "expectedPrintedPage": 114,
       "expectedParagraphs": [
         "9.19"
       ],
@@ -955,7 +955,7 @@
       "id": "n32",
       "kind": "new",
       "question": "What is the age of the holder classification variable meant for?",
-      "expectedPrintedPage": 112,
+      "expectedPrintedPage": 114,
       "expectedParagraphs": [
         "9.23"
       ],
@@ -965,7 +965,7 @@
       "id": "n33",
       "kind": "new",
       "question": "Will the main census report contain many cross-tabulations?",
-      "expectedPrintedPage": 115,
+      "expectedPrintedPage": 117,
       "expectedParagraphs": [
         "9.31"
       ],
@@ -975,7 +975,7 @@
       "id": "n34",
       "kind": "new",
       "question": "How can cross-tabulating community-level and holding-level data help check quality?",
-      "expectedPrintedPage": 116,
+      "expectedPrintedPage": 118,
       "expectedParagraphs": [
         "9.35"
       ],
@@ -985,7 +985,7 @@
       "id": "n35",
       "kind": "new",
       "question": "Which types of soilless farming does Annex 4 distinguish for protected-cover crops?",
-      "expectedPrintedPage": 144,
+      "expectedPrintedPage": 147,
       "expectedParagraphs": [],
       "mustContain": "Hydroponic covers a range of methods used to grow agricultural crops without using soil"
     },
@@ -993,7 +993,7 @@
       "id": "n36",
       "kind": "new",
       "question": "Which marital status categories are recommended for household members?",
-      "expectedPrintedPage": 163,
+      "expectedPrintedPage": 166,
       "expectedParagraphs": [],
       "mustContain": "marital status categories should be based on international standards"
     },
@@ -1001,7 +1001,7 @@
       "id": "n37",
       "kind": "new",
       "question": "How is organic agriculture defined in Annex 4?",
-      "expectedPrintedPage": 151,
+      "expectedPrintedPage": 154,
       "expectedParagraphs": [],
       "mustContain": "Organic agriculture is a holistic production management system"
     },
@@ -1009,7 +1009,7 @@
       "id": "n38",
       "kind": "new",
       "question": "Which classification of fishing gear is recommended for Item 1207?",
-      "expectedPrintedPage": 171,
+      "expectedPrintedPage": 174,
       "expectedParagraphs": [],
       "mustContain": "International Standard Statistical Classification of Fishing Gears"
     },
@@ -1017,7 +1017,7 @@
       "id": "n39",
       "kind": "new",
       "question": "In the crop classification, which crops are listed as temporary fibre crops?",
-      "expectedPrintedPage": 179,
+      "expectedPrintedPage": 181,
       "expectedParagraphs": [],
       "mustContain": "Temporary fibre crops"
     },
@@ -1025,7 +1025,7 @@
       "id": "n40",
       "kind": "new",
       "question": "What is the botanical name of sisal in the alphabetical list of crops?",
-      "expectedPrintedPage": 187,
+      "expectedPrintedPage": 189,
       "expectedParagraphs": [],
       "mustContain": "Sisal Agave sisalana"
     },

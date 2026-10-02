@@ -80,12 +80,12 @@ describe('B1 — machine-readable outline', () => {
   it('spot-checks: Chapter 7 themes and numbered Chapter 4 sections', () => {
     const theme2 = OUTLINE.find(e => e.id === 'ch7-theme2')!;
     expect(theme2.title.startsWith('Theme 2: Land')).toBe(true);
-    expect(theme2.printedStart).toBe(79);
-    expect(theme2.printedEnd).toBe(86);
+    expect(theme2.printedStart).toBe(81);
+    expect(theme2.printedEnd).toBe(88);
 
     const s42 = OUTLINE.find(e => e.id === 'ch4-4.2')!;
     expect(s42.title).toBe('Statistical Unit');
     expect(s42.number).toBe(4.2);
-    expect(s42.printedStart).toBe(37);
+    expect(s42.printedStart).toBe(39);
   });
 });
